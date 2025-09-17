@@ -1,21 +1,26 @@
 using UnityEngine;
 
+/// <summary>
+/// Handles seed purchasing logic.
+/// </summary>
 public class SeedShop : MonoBehaviour
 {
-    public GameObject seedPrefab;
-    public Canvas canvas;
     public int seedCost = 2;
 
+    /// <summary>
+    /// Attempts to buy a seed by spending money and adding to inventory.
+    /// </summary>
     public void BuySeed()
     {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("GameManager instance is missing.");
+            return;
+        }
+
         if (GameManager.Instance.SpendMoney(seedCost))
         {
-            // Spawn inside the canvas
-            GameObject seed = Instantiate(seedPrefab, canvas.transform);
-
-            // Reset position to the center of the screen
-            RectTransform rectTransform = seed.GetComponent<RectTransform>();
-            rectTransform.anchoredPosition = Vector2.zero;
+            GameManager.Instance.AddSeed(1);
         }
         else
         {

@@ -1,9 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
-/// <summary>
-/// Manages game state, including money, seed inventory, and UI updates.
-/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -14,35 +12,48 @@ public class GameManager : MonoBehaviour
 
     [Header("Seed Inventory")]
     public int seedCount = 0;
-    public TextMeshProUGUI seedText;
+
+    [Header("Flower Inventory")]
+    public int flowerCount = 0;
 
     [Header("UI")]
     public TextMeshProUGUI moneyText;
+    public TextMeshProUGUI seedText;
+    public TextMeshProUGUI flowerText;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            // Uncomment if you want persistence across scenes
-            // DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // ✅ keep between scenes
+            SceneManager.sceneLoaded += OnSceneLoaded; // listen for scene changes
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // ✅ prevent duplicates
         }
     }
 
     private void Start()
     {
         currentMoney = startingMoney;
-        UpdateMoneyUI();
-        UpdateSeedUI();
+        UpdateAllUI();
     }
 
-    /// <summary>
-    /// Attempts to spend the specified amount of money.
-    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Try to re-hook UI automatically when entering a new scene
+        UIInitializer uiInit = FindObjectOfType<UIInitializer>();
+        if (uiInit != null)
+        {
+            moneyText = uiInit.moneyText;
+            seedText = uiInit.seedText;
+            flowerText = uiInit.flowerText;
+            UpdateAllUI();
+        }
+    }
+
     public bool SpendMoney(int amount)
     {
         if (currentMoney >= amount)
@@ -51,68 +62,21 @@ public class GameManager : MonoBehaviour
             UpdateMoneyUI();
             return true;
         }
-        else
-        {
-            Debug.Log("Not enough money!");
-            return false;
-        }
+        return false;
     }
 
-    /// <summary>
-    /// Adds the specified amount of money.
-    /// </summary>
-    public void AddMoney(int amount)
+    public void AddMoney(int amount) { currentMoney += amount; UpdateMoneyUI(); }
+    public void AddSeed(int amount) { seedCount += amount; UpdateSeedUI(); }
+    public void AddFlower(int amount) { flowerCount += amount; UpdateFlowerUI(); }
+
+    public void UpdateAllUI()
     {
-        currentMoney += amount;
         UpdateMoneyUI();
-    }
-
-    /// <summary>
-    /// Adds the specified amount of seeds.
-    /// </summary>
-    public void AddSeed(int amount)
-    {
-        seedCount += amount;
         UpdateSeedUI();
+        UpdateFlowerUI();
     }
 
-    /// <summary>
-    /// Attempts to spend the specified amount of seeds.
-    /// </summary>
-    public bool SpendSeed(int amount)
-    {
-        if (seedCount >= amount)
-        {
-            seedCount -= amount;
-            UpdateSeedUI();
-            return true;
-        }
-        else
-        {
-            Debug.Log("Not enough seeds!");
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// Updates the money display UI.
-    /// </summary>
-    private void UpdateMoneyUI()
-    {
-        if (moneyText != null)
-            moneyText.text = $"Money: ${currentMoney}";
-        else
-            Debug.LogWarning("MoneyText UI reference is missing.");
-    }
-
-    /// <summary>
-    /// Updates the seed display UI.
-    /// </summary>
-    private void UpdateSeedUI()
-    {
-        if (seedText != null)
-            seedText.text = $"Seeds: {seedCount}";
-        else
-            Debug.LogWarning("SeedText UI reference is missing.");
-    }
+    private void UpdateMoneyUI() { if (moneyText) moneyText.text = "Money: $" + currentMoney; }
+    private void UpdateSeedUI() { if (seedText) seedText.text = "Seeds: " + seedCount; }
+    private void UpdateFlowerUI() { if (flowerText) flowerText.text = "Flowers: " + flowerCount; }
 }

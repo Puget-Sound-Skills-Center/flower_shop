@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 235359701}
   - component: {fileID: 235359700}
   m_Layer: 5
-  m_Name: flowerText
+  m_Name: FlowerText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1058,6 +1058,7 @@ GameObject:
   - component: {fileID: 1130938330}
   - component: {fileID: 1130938329}
   - component: {fileID: 1130938333}
+  - component: {fileID: 1130938334}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1164,6 +1165,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2832345af48a54eb93778f58a59775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
+--- !u!114 &1130938334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130938328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735569630cd15f848869dc0b3870b797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1145858757
@@ -1273,7 +1289,7 @@ Transform:
   m_GameObject: {fileID: 1246141852}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -951.1, y: -400.58, z: 0}
+  m_LocalPosition: {x: -951.03, y: -407.71, z: 0}
   m_LocalScale: {x: 0.56691843, y: 0.583627, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1292,6 +1308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f43fbe5be66ff468cc1b9fcdbd3dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  potID: 1
   growTime: 20
   emptyPotSprite: {fileID: 3112589160528298819, guid: 399cfa569860c7f4dace9316f0b0e87a, type: 3}
   growthStages:

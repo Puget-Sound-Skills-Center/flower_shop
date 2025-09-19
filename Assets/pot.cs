@@ -19,47 +19,42 @@ public class Pot : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogError("Pot: SpriteRenderer component missing.");
-            enabled = false;
-            return;
-        }
-        if (emptyPotSprite != null)
-            spriteRenderer.sprite = emptyPotSprite;
-        else
-            Debug.LogWarning("Pot: emptyPotSprite not assigned.");
-        if (timerText != null)
-            timerText.text = "";
-        else
-            Debug.LogWarning("Pot: timerText UI reference is missing.");
+        spriteRenderer.sprite = emptyPotSprite;
+        if (timerText != null) timerText.text = "";
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        if (GameManager.Instance != null && GameManager.Instance.potIsGrowing)
+        // 🔄 Always refresh UI on room re-entry
+        if (GameManager.Instance != null)
         {
-            StartGrowthRoutine();
+            GameManager.Instance.UpdateAllUI();
+
+            if (GameManager.Instance.potIsGrowing)
+            {
+                StartGrowthRoutine();
+            }
+            else
+            {
+                spriteRenderer.sprite = emptyPotSprite;
+                if (timerText != null) timerText.text = "";
+            }
         }
     }
 
     private void OnMouseDown()
     {
-        var gm = GameManager.Instance;
-        if (gm == null)
-        {
-            Debug.LogError("Pot: GameManager instance is missing.");
-            return;
-        }
-        if (gm.potIsGrowing) return;
-        if (gm.seedCount <= 0)
-        {
-            Debug.Log("Pot: Not enough seeds to plant.");
-            return;
-        }
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.potIsGrowing) return;   // already growing
+        if (GameManager.Instance.seedCount <= 0) return; // no seeds
 
-        gm.AddSeed(-1);
-        gm.StartPotGrowth(growTime);
+        // Use one seed
+        GameManager.Instance.AddSeed(-1);
+
+        // Start pot growth in GameManager
+        GameManager.Instance.StartPotGrowth(growTime);
+
+        // Start visuals
         StartGrowthRoutine();
     }
 
@@ -73,33 +68,32 @@ public class Pot : MonoBehaviour
     {
         while (true)
         {
-            var gm = GameManager.Instance;
-            if (gm == null)
-            {
-                Debug.LogError("Pot: GameManager instance is missing during growth.");
-                break;
-            }
+            if (GameManager.Instance == null) break;
 
-            if (gm.GetPotState(out float remaining, out float totalGrow))
+            // Ask GameManager for remaining time
+            if (GameManager.Instance.GetPotState(out float remaining, out float totalGrow))
             {
-                if (timerText != null)
-                    timerText.text = Mathf.Ceil(remaining).ToString() + "s";
+                // Update timer
+                if (timerText != null) timerText.text = Mathf.Ceil(remaining).ToString() + "s";
 
+                // Update sprite based on progress
                 float progress = 1f - Mathf.Clamp01(remaining / totalGrow);
                 if (growthStages != null && growthStages.Length > 0)
                 {
                     int stageIndex = Mathf.FloorToInt(progress * growthStages.Length);
                     stageIndex = Mathf.Clamp(stageIndex, 0, growthStages.Length - 1);
-                    if (growthStages[stageIndex] != null)
-                        spriteRenderer.sprite = growthStages[stageIndex];
-                    else
-                        Debug.LogWarning($"Pot: growthStages[{stageIndex}] is not assigned.");
+                    spriteRenderer.sprite = growthStages[stageIndex];
                 }
             }
             else
             {
+                // Growth finished
+                GameManager.Instance.AddFlower(1); // ✅ give flower to player
+
+                // Reset visuals
                 spriteRenderer.sprite = emptyPotSprite;
                 if (timerText != null) timerText.text = "";
+
                 break;
             }
 

@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 178254307}
   - component: {fileID: 178254309}
   - component: {fileID: 178254308}
+  - component: {fileID: 178254310}
   m_Layer: 5
   m_Name: Money Text
   m_TagString: Untagged
@@ -153,8 +154,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -661, y: 331.49}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -618, y: 342.85}
+  m_SizeDelta: {x: 156.362, y: 19.851}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &178254308
 MonoBehaviour:
@@ -255,6 +256,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178254306}
   m_CullTransparentMesh: 1
+--- !u!114 &178254310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178254306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4edf1f4cddf6244aac378d3bc9bea28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingMoney: 100
+  currentMoney: 0
+  seedCount: 0
+  flowerCount: 0
+  moneyText: {fileID: 178254308}
+  seedText: {fileID: 864639938}
+  flowerText: {fileID: 1257354047}
+  potIsGrowing: 0
+  potEndTime: 0
+  potGrowTime: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -990,7 +1013,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 730.2132, y: 370.3543}
+  m_AnchoredPosition: {x: 730.21, y: 342.85}
   m_SizeDelta: {x: 155.8578, y: 24.0905}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &864639938
@@ -1126,7 +1149,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 728.04, y: 293.9694}
+  m_AnchoredPosition: {x: 729.6, y: 259}
   m_SizeDelta: {x: 154.64, y: 26.9693}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1257354047
@@ -1461,7 +1484,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1606960051
 RectTransform:
   m_ObjectHideFlags: 0

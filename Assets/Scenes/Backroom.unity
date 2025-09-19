@@ -435,7 +435,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2381, y: 865}
+  m_AnchoredPosition: {x: 1727, y: 635}
   m_SizeDelta: {x: 65.832, y: 39.505}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &546516243
@@ -523,7 +523,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: -0.000022887356, z: -9.685047, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -943,6 +943,9 @@ MonoBehaviour:
   moneyText: {fileID: 1068449090}
   seedText: {fileID: 758250679}
   flowerText: {fileID: 235359700}
+  potIsGrowing: 1
+  potEndTime: 0
+  potGrowTime: 0
 --- !u!114 &1068449090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1148,6 +1151,7 @@ RectTransform:
   - {fileID: 758250678}
   - {fileID: 235359699}
   - {fileID: 389534885}
+  - {fileID: 1629295103}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1289,8 +1293,8 @@ Transform:
   m_GameObject: {fileID: 1246141852}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -951.03, y: -407.71, z: 0}
-  m_LocalScale: {x: 0.56691843, y: 0.583627, z: 0}
+  m_LocalPosition: {x: -945.78, y: -391.65, z: 0}
+  m_LocalScale: {x: 0.7875721, y: 0.806018, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 546516242}
@@ -1308,13 +1312,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35f43fbe5be66ff468cc1b9fcdbd3dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  potID: 1
   growTime: 20
   emptyPotSprite: {fileID: 3112589160528298819, guid: 399cfa569860c7f4dace9316f0b0e87a, type: 3}
-  growthStages:
-  - {fileID: -4800048273288714210, guid: efa1ad2514593854ba28384a68db29eb, type: 3}
-  - {fileID: 5198855509115883526, guid: ede0b7383550f1d408fd2d2d3aa4e081, type: 3}
-  - {fileID: -4432405956718285657, guid: 6f4e5059106a3154dbc58be5d8e2d039, type: 3}
+  growthStages: []
   timerText: {fileID: 546516243}
 --- !u!61 &1246141855
 BoxCollider2D:
@@ -1417,6 +1417,55 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1629295102
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1629295103}
+  - component: {fileID: 1629295104}
+  m_Layer: 5
+  m_Name: RoomManger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1629295103
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629295102}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1130938332}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1629295104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629295102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45f2a2099ef2e9d42bd3a51fae7906ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rooms: []
 --- !u!1 &1768246532
 GameObject:
   m_ObjectHideFlags: 0

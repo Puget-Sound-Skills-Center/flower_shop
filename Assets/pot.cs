@@ -19,13 +19,35 @@ public class Pot : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = emptyPotSprite;
-        if (timerText != null) timerText.text = "";
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("Pot: SpriteRenderer component missing.");
+            enabled = false;
+            return;
+        }
+        if (emptyPotSprite != null)
+            spriteRenderer.sprite = emptyPotSprite;
+        else
+            Debug.LogWarning("Pot: emptyPotSprite not assigned.");
+        if (timerText != null)
+            timerText.text = "";
+        else
+            Debug.LogWarning("Pot: timerText UI reference is missing.");
     }
 
     private void OnEnable()
     {
-        // 🔄 Always refresh UI on room re-entry
+        RoomManager.OnRoomSwitched += RefreshUI;
+        RefreshUI();
+    }
+
+    private void OnDisable()
+    {
+        RoomManager.OnRoomSwitched -= RefreshUI;
+    }
+
+    private void RefreshUI()
+    {
         if (GameManager.Instance != null)
         {
             GameManager.Instance.UpdateAllUI();
@@ -44,17 +66,21 @@ public class Pot : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (GameManager.Instance == null) return;
-        if (GameManager.Instance.potIsGrowing) return;   // already growing
-        if (GameManager.Instance.seedCount <= 0) return; // no seeds
+        var gm = GameManager.Instance;
+        if (gm == null)
+        {
+            Debug.LogError("Pot: GameManager instance is missing.");
+            return;
+        }
+        if (gm.potIsGrowing) return;
+        if (gm.seedCount <= 0)
+        {
+            Debug.Log("Pot: Not enough seeds to plant.");
+            return;
+        }
 
-        // Use one seed
-        GameManager.Instance.AddSeed(-1);
-
-        // Start pot growth in GameManager
-        GameManager.Instance.StartPotGrowth(growTime);
-
-        // Start visuals
+        gm.AddSeed(-1);
+        gm.StartPotGrowth(growTime);
         StartGrowthRoutine();
     }
 
@@ -68,29 +94,33 @@ public class Pot : MonoBehaviour
     {
         while (true)
         {
-            if (GameManager.Instance == null) break;
-
-            // Ask GameManager for remaining time
-            if (GameManager.Instance.GetPotState(out float remaining, out float totalGrow))
+            var gm = GameManager.Instance;
+            if (gm == null)
             {
-                // Update timer
-                if (timerText != null) timerText.text = Mathf.Ceil(remaining).ToString() + "s";
+                Debug.LogError("Pot: GameManager instance is missing during growth.");
+                break;
+            }
 
-                // Update sprite based on progress
+            if (gm.GetPotState(out float remaining, out float totalGrow))
+            {
+                if (timerText != null)
+                    timerText.text = Mathf.Ceil(remaining).ToString() + "s";
+
                 float progress = 1f - Mathf.Clamp01(remaining / totalGrow);
                 if (growthStages != null && growthStages.Length > 0)
                 {
                     int stageIndex = Mathf.FloorToInt(progress * growthStages.Length);
                     stageIndex = Mathf.Clamp(stageIndex, 0, growthStages.Length - 1);
-                    spriteRenderer.sprite = growthStages[stageIndex];
+                    if (growthStages[stageIndex] != null)
+                        spriteRenderer.sprite = growthStages[stageIndex];
+                    else
+                        Debug.LogWarning($"Pot: growthStages[{stageIndex}] is not assigned.");
                 }
             }
             else
             {
-                // Growth finished
-                GameManager.Instance.AddFlower(1); // ✅ give flower to player
+                gm.AddFlower(1);
 
-                // Reset visuals
                 spriteRenderer.sprite = emptyPotSprite;
                 if (timerText != null) timerText.text = "";
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System; // Add this for Action
 
 public class RoomManager : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class RoomManager : MonoBehaviour
     [Header("Rooms")]
     public GameObject[] rooms;   // Assign all room GameObjects in Inspector
     private int currentRoomIndex = 0;
+
+    public static event Action OnRoomSwitched; // Add this event
 
     private void Awake()
     {
@@ -21,7 +24,6 @@ public class RoomManager : MonoBehaviour
             return;
         }
 
-        // Optional: Validate rooms array
         if (rooms == null || rooms.Length == 0)
         {
             Debug.LogError("RoomManager: No rooms assigned in the Inspector.");
@@ -56,6 +58,7 @@ public class RoomManager : MonoBehaviour
         {
             rooms[roomIndex].SetActive(true);
             currentRoomIndex = roomIndex;
+            OnRoomSwitched?.Invoke(); // Notify listeners
         }
         else
         {

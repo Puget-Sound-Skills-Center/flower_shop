@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 62906475}
   - component: {fileID: 62906474}
   - component: {fileID: 62906473}
-  - component: {fileID: 62906472}
   m_Layer: 5
   m_Name: NextSceneButton (2)
   m_TagString: Untagged
@@ -155,22 +154,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 516.7995, y: 0.36029792}
-  m_SizeDelta: {x: 85.8938, y: 799.71}
+  m_AnchoredPosition: {x: 351.96, y: 0.00041962}
+  m_SizeDelta: {x: 55.631, y: 529.59}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &62906472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 62906470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 226182877656e8b4da443ae7982e8366, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneToLoad: MainGameplay
 --- !u!114 &62906473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +285,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 377.85, y: 159}
+  m_AnchoredPosition: {x: 311.85, y: 85}
   m_SizeDelta: {x: 190.86, y: 22.5589}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &235359700
@@ -387,7 +373,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0.8687978, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -417,7 +403,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &263049303
 Transform:
   m_ObjectHideFlags: 0
@@ -446,6 +432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32df255fdf16e394d9ede9b1b6b17e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
 --- !u!1 &389534884
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,7 +447,6 @@ GameObject:
   - component: {fileID: 389534889}
   - component: {fileID: 389534888}
   - component: {fileID: 389534887}
-  - component: {fileID: 389534886}
   m_Layer: 5
   m_Name: NextSceneButton
   m_TagString: Untagged
@@ -482,22 +470,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 917.0528, y: 0.00014472}
-  m_SizeDelta: {x: 85.8938, y: 799.71}
+  m_AnchoredPosition: {x: 917.05, y: -0.000010278}
+  m_SizeDelta: {x: 85.897, y: 780.71}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &389534886
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389534884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 226182877656e8b4da443ae7982e8366, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneToLoad: MainGameplay
 --- !u!114 &389534887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -708,9 +683,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2832345af48a54eb93778f58a59775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moneyText: {fileID: 0}
-  seedText: {fileID: 0}
-  flowerText: {fileID: 0}
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
 --- !u!114 &418510610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -757,7 +732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1859, y: 722}
+  m_AnchoredPosition: {x: 1870, y: 635}
   m_SizeDelta: {x: 65.832, y: 39.505}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &546516243
@@ -975,9 +950,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2832345af48a54eb93778f58a59775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moneyText: {fileID: 0}
-  seedText: {fileID: 0}
-  flowerText: {fileID: 0}
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
 --- !u!114 &566947785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1024,7 +999,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000030517578}
+  m_AnchoredPosition: {x: 0, y: -0.000061035156}
   m_SizeDelta: {x: 0, y: -0.00012207031}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &568284868
@@ -1110,6 +1085,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32df255fdf16e394d9ede9b1b6b17e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
 --- !u!1 &743914280
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,7 +1226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 378, y: 202.29}
+  m_AnchoredPosition: {x: 312, y: 124}
   m_SizeDelta: {x: 190.558, y: 26.514}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &758250679
@@ -1500,7 +1478,6 @@ GameObject:
   - component: {fileID: 996239109}
   - component: {fileID: 996239108}
   - component: {fileID: 996239107}
-  - component: {fileID: 996239106}
   m_Layer: 5
   m_Name: NextSceneButton (1)
   m_TagString: Untagged
@@ -1524,22 +1501,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 516.7995, y: -0.6397021}
-  m_SizeDelta: {x: 85.8938, y: 799.71}
+  m_AnchoredPosition: {x: 353.21, y: -0.00018311}
+  m_SizeDelta: {x: 51.212, y: 529.59}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &996239106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 996239104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 226182877656e8b4da443ae7982e8366, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneToLoad: MainGameplay
 --- !u!114 &996239107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1669,7 +1633,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -360, y: 205}
+  m_AnchoredPosition: {x: -192, y: 124}
   m_SizeDelta: {x: 139.4955, y: 21.092}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1068449089
@@ -2024,7 +1988,7 @@ Transform:
   m_GameObject: {fileID: 1246141852}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -950.6147, y: -407.4307, z: 0}
+  m_LocalPosition: {x: -945.5, y: -391.9, z: 0}
   m_LocalScale: {x: 0.7347095, y: 0.78205186, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2196,6 +2160,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32df255fdf16e394d9ede9b1b6b17e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moneyText: {fileID: 1068449090}
+  seedText: {fileID: 758250679}
+  flowerText: {fileID: 235359700}
 --- !u!1 &1629295102
 GameObject:
   m_ObjectHideFlags: 0

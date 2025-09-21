@@ -9,12 +9,20 @@ public class Pot : MonoBehaviour
     public float growTime = 20f;
     public Sprite emptyPotSprite;
     public Sprite[] growthStages; // from sprout → full grown
+    public Sprite readyToHarvestSprite; // 🌼 sprite when ready
 
     [Header("Timer UI")]
     public TextMeshProUGUI timerText;
 
+    [Header("Harvest Popup")]
+    public GameObject harvestPopupPrefab;
+    public Transform popupSpawnPoint; // Optional: where popup spawns
+
     private SpriteRenderer spriteRenderer;
     private Coroutine growRoutine;
+
+    private bool isGrowing = false;
+    private bool readyToHarvest = false;
 
     private void Awake()
     {
@@ -33,34 +41,25 @@ public class Pot : MonoBehaviour
             timerText.text = "";
         else
             Debug.LogWarning("Pot: timerText UI reference is missing.");
+        if (readyToHarvestSprite == null)
+            Debug.LogWarning("Pot: readyToHarvestSprite not assigned.");
+        if (harvestPopupPrefab == null)
+            Debug.LogWarning("Pot: harvestPopupPrefab not assigned.");
     }
 
     private void OnEnable()
     {
-        RoomManager.OnRoomSwitched += RefreshUI;
-        RefreshUI();
-    }
-
-    private void OnDisable()
-    {
-        RoomManager.OnRoomSwitched -= RefreshUI;
-    }
-
-    private void RefreshUI()
-    {
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && GameManager.Instance.potIsGrowing)
         {
-            GameManager.Instance.UpdateAllUI();
-
-            if (GameManager.Instance.potIsGrowing)
-            {
-                StartGrowthRoutine();
-            }
-            else
-            {
+            StartGrowthRoutine();
+        }
+        else
+        {
+            isGrowing = false;
+            readyToHarvest = false;
+            if (spriteRenderer != null && emptyPotSprite != null)
                 spriteRenderer.sprite = emptyPotSprite;
-                if (timerText != null) timerText.text = "";
-            }
+            if (timerText != null) timerText.text = "";
         }
     }
 
@@ -72,7 +71,15 @@ public class Pot : MonoBehaviour
             Debug.LogError("Pot: GameManager instance is missing.");
             return;
         }
-        if (gm.potIsGrowing) return;
+
+        if (readyToHarvest)
+        {
+            HarvestFlower();
+            return;
+        }
+
+        if (isGrowing || gm.potIsGrowing) return;
+
         if (gm.seedCount <= 0)
         {
             Debug.Log("Pot: Not enough seeds to plant.");
@@ -92,6 +99,9 @@ public class Pot : MonoBehaviour
 
     private IEnumerator GrowthCoroutine()
     {
+        isGrowing = true;
+        readyToHarvest = false;
+
         while (true)
         {
             var gm = GameManager.Instance;
@@ -119,10 +129,15 @@ public class Pot : MonoBehaviour
             }
             else
             {
-                gm.AddFlower(1);
+                isGrowing = false;
+                readyToHarvest = true;
 
-                spriteRenderer.sprite = emptyPotSprite;
-                if (timerText != null) timerText.text = "";
+                if (readyToHarvestSprite != null)
+                    spriteRenderer.sprite = readyToHarvestSprite;
+                else if (spriteRenderer != null && emptyPotSprite != null)
+                    spriteRenderer.sprite = emptyPotSprite;
+
+                if (timerText != null) timerText.text = "Ready!";
 
                 break;
             }
@@ -131,5 +146,38 @@ public class Pot : MonoBehaviour
         }
 
         growRoutine = null;
+    }
+
+    private void HarvestFlower()
+    {
+        readyToHarvest = false;
+        isGrowing = false;
+        if (spriteRenderer != null && emptyPotSprite != null)
+            spriteRenderer.sprite = emptyPotSprite;
+        if (timerText != null) timerText.text = "";
+
+        var gm = GameManager.Instance;
+        if (gm != null)
+            gm.AddFlower(1);
+        else
+            Debug.LogError("Pot: GameManager instance is missing during harvest.");
+
+        // 🌟 Spawn floating popup
+        if (harvestPopupPrefab != null)
+        {
+            Transform spawn = popupSpawnPoint != null ? popupSpawnPoint : transform;
+            GameObject popup = Instantiate(harvestPopupPrefab, spawn.position, Quaternion.identity);
+
+            // Ensure it appears inside UI Canvas
+            Canvas canvas = GameObject.FindObjectOfType<Canvas>();
+            if (canvas != null)
+            {
+                popup.transform.SetParent(canvas.transform, false);
+            }
+            else
+            {
+                Debug.LogWarning("Pot: No Canvas found for popup.");
+            }
+        }
     }
 }

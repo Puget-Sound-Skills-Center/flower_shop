@@ -137,7 +137,7 @@ public class Pot : MonoBehaviour
                 else if (spriteRenderer != null && emptyPotSprite != null)
                     spriteRenderer.sprite = emptyPotSprite;
 
-                if (timerText != null) timerText.text = "Ready!";
+                if (timerText != null) timerText.text = "!";
 
                 break;
             }

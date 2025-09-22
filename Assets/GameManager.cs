@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class GameManager : MonoBehaviour
     public float potEndTime;   // Time.realtimeSinceStartup when growth ends
     public float potGrowTime;  // total grow time
 
+    [Header("Decorations")]
+    public List<DecorationUnlock> gardenDecorations;
+
+    public int totalFlowersSold = 0; // Track cumulative progress
+
     private void Awake()
     {
         if (Instance == null)
@@ -35,7 +41,16 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
+
+        // Null checks for UI references
+        if (moneyText == null)
+            Debug.LogWarning("GameManager: moneyText UI reference is missing.");
+        if (seedText == null)
+            Debug.LogWarning("GameManager: seedText UI reference is missing.");
+        if (flowerText == null)
+            Debug.LogWarning("GameManager: flowerText UI reference is missing.");
     }
 
     // ---- Pot API ----
@@ -89,7 +104,51 @@ public class GameManager : MonoBehaviour
         UpdateFlowerUI();
     }
 
-    private void UpdateMoneyUI() { if (moneyText) moneyText.text = "Money: $" + currentMoney; }
-    private void UpdateSeedUI() { if (seedText) seedText.text = "Seeds: " + seedCount; }
-    private void UpdateFlowerUI() { if (flowerText) flowerText.text = "Flowers: " + flowerCount; }
+    public void SellFlowers(int sellPricePerFlower, TextMeshProUGUI resultText = null)
+    {
+        if (flowerCount <= 0)
+        {
+            if (resultText != null)
+                resultText.text = "No flowers to sell!";
+            return;
+        }
+
+        int earnings = flowerCount * sellPricePerFlower;
+
+        currentMoney += earnings;
+        totalFlowersSold += flowerCount; // Track sold progress
+        flowerCount = 0; // Reset after selling
+
+        if (resultText != null)
+            resultText.text = "Sold flowers for $" + earnings;
+
+        UpdateAllUI();
+        CheckForDecorationUnlocks();
+    }
+
+    private void CheckForDecorationUnlocks()
+    {
+        if (gardenDecorations == null) return;
+        foreach (var deco in gardenDecorations)
+        {
+            if (deco != null && !deco.unlocked && totalFlowersSold >= deco.flowersRequired)
+            {
+                deco.unlocked = true;
+                Debug.Log("Unlocked decoration: " + deco.name);
+            }
+        }
+    }
+
+    [System.Serializable]
+    public class DecorationUnlock
+    {
+        public string name;
+        public int flowersRequired;
+        public GameObject decorationPrefab; // Prefab to spawn when unlocked
+        public bool unlocked = false;
+    }
+
+    private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
+    private void UpdateSeedUI() { if (seedText != null) seedText.text = "Seeds: " + seedCount; }
+    private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
 }

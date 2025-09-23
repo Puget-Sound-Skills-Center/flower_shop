@@ -257,37 +257,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 51359635}
   m_CullTransparentMesh: 1
---- !u!1 &52833691
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 52833692}
-  m_Layer: 0
-  m_Name: FlowerBed
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &52833692
+--- !u!4 &52833692 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+  m_PrefabInstance: {fileID: 5717913438258851530}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 52833691}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 332469813}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &62906470
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,6 +394,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 62906470}
   m_CullTransparentMesh: 1
+--- !u!1 &156244659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 156244661}
+  - component: {fileID: 156244660}
+  m_Layer: 0
+  m_Name: GardenRoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &156244660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156244659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f82acc94832c9948bf89ed53dabfee2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  decorationParent: {fileID: 332469813}
+--- !u!4 &156244661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156244659}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.0588417, y: 4.3839197, z: -3.1161106}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &159852138
 GameObject:
   m_ObjectHideFlags: 0
@@ -1312,7 +1331,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &667888246
 Transform:
   m_ObjectHideFlags: 0
@@ -1345,37 +1364,11 @@ MonoBehaviour:
   moneyText: {fileID: 1068449090}
   seedText: {fileID: 758250679}
   flowerText: {fileID: 235359700}
---- !u!1 &742948618
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 742948619}
-  m_Layer: 0
-  m_Name: GardenLamp
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &742948619
+--- !u!4 &742948619 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+  m_PrefabInstance: {fileID: 5093437894481016992}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 742948618}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 332469813}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &743914280
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,7 +2639,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1294032339
 Transform:
   m_ObjectHideFlags: 0
@@ -3152,6 +3145,120 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1001 &5093437894481016992
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 332469813}
+    m_Modifications:
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -747.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -227.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1223126385535240368, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4677069380035168469, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+      propertyPath: m_Name
+      value: GardenLamp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e6d0f9d43f9eae84291b88ae55967205, type: 3}
+--- !u!1001 &5717913438258851530
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 332469813}
+    m_Modifications:
+    - target: {fileID: 3576750636401015924, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_Name
+      value: FlowerBed
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -757.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -227.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886381267450392786, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ec576552cf552484b946b75f82cab8cd, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3159,6 +3266,7 @@ SceneRoots:
   - {fileID: 1974731099}
   - {fileID: 1145858760}
   - {fileID: 1629295103}
+  - {fileID: 156244661}
   - {fileID: 263049303}
   - {fileID: 667888246}
   - {fileID: 1294032339}

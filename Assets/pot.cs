@@ -148,6 +148,38 @@ public class Pot : MonoBehaviour
         growRoutine = null;
     }
 
+    public FlowerData currentFlower; // The flower this pot is growing
+
+    private IEnumerator GrowthCoroutine()
+    {
+        isGrowing = true;
+        readyToHarvest = false;
+
+        float elapsed = 0f;
+        while (elapsed < currentFlower.growTime)
+        {
+            elapsed += Time.deltaTime;
+
+            if (timerText != null)
+                timerText.text = Mathf.Ceil(currentFlower.growTime - elapsed) + "s";
+
+            // Update sprite stage
+            float progress = elapsed / currentFlower.growTime;
+            int stageIndex = Mathf.FloorToInt(progress * currentFlower.growthStages.Length);
+            stageIndex = Mathf.Clamp(stageIndex, 0, currentFlower.growthStages.Length - 1);
+            spriteRenderer.sprite = currentFlower.growthStages[stageIndex];
+
+            yield return null;
+        }
+
+        isGrowing = false;
+        readyToHarvest = true;
+
+        spriteRenderer.sprite = currentFlower.readySprite;
+        if (timerText != null) timerText.text = "Ready!";
+    }
+
+
     private void HarvestFlower()
     {
         readyToHarvest = false;

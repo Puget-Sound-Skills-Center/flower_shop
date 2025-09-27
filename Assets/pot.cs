@@ -5,11 +5,8 @@ using System.Collections;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Pot : MonoBehaviour
 {
-    [Header("Growth settings")]
-    public float growTime = 20f;
-    public Sprite emptyPotSprite;
-    public Sprite[] growthStages; // from sprout → full grown
-    public Sprite readyToHarvestSprite; // 🌼 sprite when ready
+    [Header("Pot Sprites")]
+    public Sprite emptyPotSprite; // Assign in Inspector
 
     [Header("Timer UI")]
     public TextMeshProUGUI timerText;
@@ -24,6 +21,8 @@ public class Pot : MonoBehaviour
     private bool isGrowing = false;
     private bool readyToHarvest = false;
 
+    public FlowerData currentFlower; // The flower this pot is growing
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -33,6 +32,7 @@ public class Pot : MonoBehaviour
             enabled = false;
             return;
         }
+        spriteRenderer.enabled = true;
         if (emptyPotSprite != null)
             spriteRenderer.sprite = emptyPotSprite;
         else
@@ -41,26 +41,20 @@ public class Pot : MonoBehaviour
             timerText.text = "";
         else
             Debug.LogWarning("Pot: timerText UI reference is missing.");
-        if (readyToHarvestSprite == null)
-            Debug.LogWarning("Pot: readyToHarvestSprite not assigned.");
         if (harvestPopupPrefab == null)
             Debug.LogWarning("Pot: harvestPopupPrefab not assigned.");
     }
 
     private void OnEnable()
     {
-        if (GameManager.Instance != null && GameManager.Instance.potIsGrowing)
+        isGrowing = false;
+        readyToHarvest = false;
+        if (spriteRenderer != null && emptyPotSprite != null)
         {
-            StartGrowthRoutine();
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = emptyPotSprite;
         }
-        else
-        {
-            isGrowing = false;
-            readyToHarvest = false;
-            if (spriteRenderer != null && emptyPotSprite != null)
-                spriteRenderer.sprite = emptyPotSprite;
-            if (timerText != null) timerText.text = "";
-        }
+        if (timerText != null) timerText.text = "";
     }
 
     private void OnMouseDown()
@@ -78,7 +72,7 @@ public class Pot : MonoBehaviour
             return;
         }
 
-        if (isGrowing || gm.potIsGrowing) return;
+        if (isGrowing) return;
 
         if (gm.seedCount <= 0)
         {
@@ -86,8 +80,14 @@ public class Pot : MonoBehaviour
             return;
         }
 
+        if (gm.selectedFlower == null)
+        {
+            Debug.LogWarning("Pot: No flower selected to plant.");
+            return;
+        }
+
         gm.AddSeed(-1);
-        gm.StartPotGrowth(growTime);
+        currentFlower = gm.selectedFlower;
         StartGrowthRoutine();
     }
 
@@ -102,72 +102,38 @@ public class Pot : MonoBehaviour
         isGrowing = true;
         readyToHarvest = false;
 
-        while (true)
-        {
-            var gm = GameManager.Instance;
-            if (gm == null)
-            {
-                Debug.LogError("Pot: GameManager instance is missing during growth.");
-                break;
-            }
-
-            if (gm.GetPotState(out float remaining, out float totalGrow))
-            {
-                if (timerText != null)
-                    timerText.text = Mathf.Ceil(remaining).ToString() + "s";
-
-                float progress = 1f - Mathf.Clamp01(remaining / totalGrow);
-                if (growthStages != null && growthStages.Length > 0)
-                {
-                    int stageIndex = Mathf.FloorToInt(progress * growthStages.Length);
-                    stageIndex = Mathf.Clamp(stageIndex, 0, growthStages.Length - 1);
-                    if (growthStages[stageIndex] != null)
-                        spriteRenderer.sprite = growthStages[stageIndex];
-                    else
-                        Debug.LogWarning($"Pot: growthStages[{stageIndex}] is not assigned.");
-                }
-            }
-            else
-            {
-                isGrowing = false;
-                readyToHarvest = true;
-
-                if (readyToHarvestSprite != null)
-                    spriteRenderer.sprite = readyToHarvestSprite;
-                else if (spriteRenderer != null && emptyPotSprite != null)
-                    spriteRenderer.sprite = emptyPotSprite;
-
-                if (timerText != null) timerText.text = "!";
-
-                break;
-            }
-
-            yield return null;
-        }
-
-        growRoutine = null;
-    }
-
-    public FlowerData currentFlower; // The flower this pot is growing
-
-    private IEnumerator GrowthCoroutine()
-    {
-        isGrowing = true;
-        readyToHarvest = false;
-
         float elapsed = 0f;
-        while (elapsed < currentFlower.growTime)
+        float growTime = currentFlower != null ? currentFlower.growTime : 20f;
+        Sprite[] stages = currentFlower != null ? currentFlower.growthStages : null;
+
+        while (elapsed < growTime)
         {
             elapsed += Time.deltaTime;
 
             if (timerText != null)
-                timerText.text = Mathf.Ceil(currentFlower.growTime - elapsed) + "s";
+                timerText.text = Mathf.Ceil(growTime - elapsed) + "s";
 
             // Update sprite stage
-            float progress = elapsed / currentFlower.growTime;
-            int stageIndex = Mathf.FloorToInt(progress * currentFlower.growthStages.Length);
-            stageIndex = Mathf.Clamp(stageIndex, 0, currentFlower.growthStages.Length - 1);
-            spriteRenderer.sprite = currentFlower.growthStages[stageIndex];
+            if (spriteRenderer != null && stages != null && stages.Length > 0)
+            {
+                float progress = elapsed / growTime;
+                int stageIndex = Mathf.FloorToInt(progress * stages.Length);
+                stageIndex = Mathf.Clamp(stageIndex, 0, stages.Length - 1);
+                if (stages[stageIndex] != null)
+                {
+                    spriteRenderer.enabled = true;
+                    spriteRenderer.sprite = stages[stageIndex];
+                }
+                else
+                {
+                    Debug.LogWarning($"Pot: growthStages[{stageIndex}] is not assigned for flower '{currentFlower.flowerName}'.");
+                }
+            }
+            else if (spriteRenderer != null && emptyPotSprite != null)
+            {
+                spriteRenderer.enabled = true;
+                spriteRenderer.sprite = emptyPotSprite;
+            }
 
             yield return null;
         }
@@ -175,17 +141,29 @@ public class Pot : MonoBehaviour
         isGrowing = false;
         readyToHarvest = true;
 
-        spriteRenderer.sprite = currentFlower.readySprite;
+        if (spriteRenderer != null && currentFlower != null && currentFlower.readySprite != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = currentFlower.readySprite;
+        }
+        else if (spriteRenderer != null && emptyPotSprite != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = emptyPotSprite;
+        }
         if (timerText != null) timerText.text = "Ready!";
+        growRoutine = null;
     }
-
 
     private void HarvestFlower()
     {
         readyToHarvest = false;
         isGrowing = false;
         if (spriteRenderer != null && emptyPotSprite != null)
+        {
+            spriteRenderer.enabled = true;
             spriteRenderer.sprite = emptyPotSprite;
+        }
         if (timerText != null) timerText.text = "";
 
         var gm = GameManager.Instance;

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Forget-Me-Not
   growthStages: []
-  readySprite: {fileID: 0}
+  readySprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   growTime: 20
   sellValue: 5

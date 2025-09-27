@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI seedText;
     public TextMeshProUGUI flowerText;
+    public Image selectedFlowerIcon; // Assign in Inspector for selected flower icon
 
     // ---- Pot state (single pot only) ----
     public bool potIsGrowing = false;
@@ -31,12 +33,16 @@ public class GameManager : MonoBehaviour
 
     public int totalFlowersSold = 0; // Track cumulative progress
 
+    [HideInInspector]
+    public FlowerData selectedFlower; // The currently selected flower type
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             currentMoney = startingMoney;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -51,6 +57,8 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("GameManager: seedText UI reference is missing.");
         if (flowerText == null)
             Debug.LogWarning("GameManager: flowerText UI reference is missing.");
+        if (selectedFlowerIcon == null)
+            Debug.Log("GameManager: selectedFlowerIcon UI reference is not assigned (optional).");
     }
 
     // ---- Pot API ----
@@ -102,8 +110,32 @@ public class GameManager : MonoBehaviour
         UpdateMoneyUI();
         UpdateSeedUI();
         UpdateFlowerUI();
+        UpdateSelectedFlowerUI();
     }
 
+    private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
+    private void UpdateSeedUI() { if (seedText != null) seedText.text = "Seeds: " + seedCount; }
+    private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
+
+    // ---- Selected Flower UI ----
+    public void UpdateSelectedFlowerUI()
+    {
+        if (selectedFlowerIcon != null)
+        {
+            if (selectedFlower != null && selectedFlower.readySprite != null)
+            {
+                selectedFlowerIcon.sprite = selectedFlower.readySprite;
+                selectedFlowerIcon.enabled = true;
+            }
+            else
+            {
+                selectedFlowerIcon.sprite = null;
+                selectedFlowerIcon.enabled = false;
+            }
+        }
+    }
+
+    // ---- Selling Flowers ----
     public void SellFlowers(int sellPricePerFlower, TextMeshProUGUI resultText = null)
     {
         if (flowerCount <= 0)
@@ -147,8 +179,4 @@ public class GameManager : MonoBehaviour
         public GameObject decorationPrefab; // Prefab to spawn when unlocked
         public bool unlocked = false;
     }
-
-    private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
-    private void UpdateSeedUI() { if (seedText != null) seedText.text = "Seeds: " + seedCount; }
-    private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
 }

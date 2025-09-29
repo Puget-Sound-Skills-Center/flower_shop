@@ -5,6 +5,7 @@ using UnityEngine;
 /// </summary>
 public class SeedShop : MonoBehaviour
 {
+    public FlowerData flower; // Assign the FlowerData in Inspector
     public int seedCost = 2;
 
     /// <summary>
@@ -12,14 +13,18 @@ public class SeedShop : MonoBehaviour
     /// </summary>
     public void BuySeed()
     {
-        // Null check for GameManager instance
         if (GameManager.Instance == null)
         {
             Debug.LogError("GameManager instance is missing.");
             return;
         }
 
-        // Ensure seedCost is positive
+        if (flower == null)
+        {
+            Debug.LogWarning("SeedShop: No flower assigned to buy.");
+            return;
+        }
+
         if (seedCost <= 0)
         {
             Debug.LogWarning("Seed cost must be greater than zero.");
@@ -29,7 +34,8 @@ public class SeedShop : MonoBehaviour
         // Attempt to spend money and add seed
         if (GameManager.Instance.SpendMoney(seedCost))
         {
-            GameManager.Instance.AddSeed(1);
+            GameManager.Instance.AddSeed(flower, 1); // Add the correct seed type
+            Debug.Log("Bought 1 " + flower.flowerName + " seed!");
         }
         else
         {

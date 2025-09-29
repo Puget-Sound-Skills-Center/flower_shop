@@ -8,4 +8,5 @@ public class FlowerData : ScriptableObject
     public Sprite readySprite;       // Final fully grown sprite
     public float growTime = 20f;     // Growth duration in seconds
     public int sellValue = 5;        // Value when sold
+    public int seedCost = 2;         // Seed Cost 
 }

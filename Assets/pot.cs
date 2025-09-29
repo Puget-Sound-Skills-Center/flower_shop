@@ -81,19 +81,19 @@ public class Pot : MonoBehaviour
 
         if (isGrowing) return;
 
-        if (gm.seedCount <= 0)
-        {
-            Debug.Log("Pot: Not enough seeds to plant.");
-            return;
-        }
-
         if (gm.selectedFlower == null)
         {
             Debug.LogWarning("Pot: No flower selected to plant.");
             return;
         }
 
-        gm.AddSeed(-1);
+        // ✅ Check inventory for that specific flower
+        if (!gm.UseSeed(gm.selectedFlower))
+        {
+            Debug.Log("Pot: Not enough of this seed type to plant.");
+            return;
+        }
+
         currentFlower = gm.selectedFlower;
         StartGrowthRoutine();
     }

@@ -822,8 +822,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -204.3877, y: 0.0018615723}
-  m_SizeDelta: {x: -1591.65, y: -472.49}
+  m_AnchoredPosition: {x: -204.38776, y: -0.0016174316}
+  m_SizeDelta: {x: -1591.65, y: -501.63}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &158902605
 MonoBehaviour:
@@ -838,7 +838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.10980392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.03137255}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -950,7 +950,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242, y: 133.13}
+  m_AnchoredPosition: {x: 391.37, y: 213.29999}
   m_SizeDelta: {x: 191.8166, y: 22.0806}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &235359700
@@ -1169,8 +1169,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 917.05, y: -0.00073051}
-  m_SizeDelta: {x: 85.897, y: 765.77}
+  m_AnchoredPosition: {x: 917.05, y: -0.0002346}
+  m_SizeDelta: {x: 85.897, y: 812.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &389534887
 MonoBehaviour:
@@ -1645,7 +1645,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1475.9998, y: 556}
+  m_AnchoredPosition: {x: 1661, y: 593}
   m_SizeDelta: {x: 61.17, y: 37.487}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &546516243
@@ -2247,7 +2247,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242.63, y: 108.83}
+  m_AnchoredPosition: {x: 392, y: 189}
   m_SizeDelta: {x: 190.558, y: 26.514}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &758250679
@@ -2943,7 +2943,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -229, y: 123}
+  m_AnchoredPosition: {x: -403, y: 206}
   m_SizeDelta: {x: 139.4955, y: 21.092}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1068449089
@@ -2960,15 +2960,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingMoney: 100
   currentMoney: 0
-  seedCount: 0
   flowerCount: 0
   moneyText: {fileID: 1068449090}
   seedText: {fileID: 758250679}
   flowerText: {fileID: 235359700}
   selectedFlowerIcon: {fileID: 805714737}
-  potIsGrowing: 1
-  potEndTime: 0
-  potGrowTime: 0
   gardenDecorations: []
   totalFlowersSold: 0
   selectedFlower: {fileID: 0}
@@ -3060,7 +3056,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -0.5429611}
+  m_margin: {x: 0.6498337, y: 0, z: 0, w: -0.5429611}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3494,8 +3490,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 694.5419, y: -264.76}
-  m_SizeDelta: {x: -1818.444, y: -675.28}
+  m_AnchoredPosition: {x: 694.5419, y: -281.09}
+  m_SizeDelta: {x: -1818.444, y: -716.93}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1137521801
 MonoBehaviour:
@@ -3510,7 +3506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.07058824}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.05490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3642,8 +3638,8 @@ Transform:
   m_GameObject: {fileID: 1246141852}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -945.89, y: -383.97, z: 0}
-  m_LocalScale: {x: 0.93097407, y: 0.9354064, z: 0}
+  m_LocalPosition: {x: -950.5567, y: -407.1076, z: 0}
+  m_LocalScale: {x: 0.8288014, y: 0.9766771, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 546516242}
@@ -4136,6 +4132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31c13f74630b8e4db1baac89e4b69b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flower: {fileID: 0}
   seedCost: 2
 --- !u!114 &1768246535
 MonoBehaviour:

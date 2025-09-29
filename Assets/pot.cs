@@ -7,6 +7,13 @@ public class Pot : MonoBehaviour
 {
     [Header("Pot Sprites")]
     public Sprite emptyPotSprite; // Assign in Inspector
+    public Sprite sproutSprite;   // Assign in Inspector (can be same as growthStages[0] or a unique sprout)
+
+    [Header("Growth Timing")]
+    [Range(0f, 2f)]
+    public float emptyToSproutTime = 0.5f; // Seconds to show empty pot before sprout
+    [Range(0.05f, 0.5f)]
+    public float sproutPercent = 0.2f; // % of growTime spent in sprout stage
 
     [Header("Timer UI")]
     public TextMeshProUGUI timerText;
@@ -106,35 +113,68 @@ public class Pot : MonoBehaviour
         float growTime = currentFlower != null ? currentFlower.growTime : 20f;
         Sprite[] stages = currentFlower != null ? currentFlower.growthStages : null;
 
-        while (elapsed < growTime)
+        // Show empty pot at the very start
+        if (spriteRenderer != null && emptyPotSprite != null)
         {
-            elapsed += Time.deltaTime;
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = emptyPotSprite;
+        }
 
+        // Show empty pot for adjustable time
+        if (emptyToSproutTime > 0f)
+            yield return new WaitForSeconds(emptyToSproutTime);
+
+        // Show sprout for adjustable percent of growTime
+        float sproutTime = growTime * sproutPercent;
+        float sproutElapsed = 0f;
+        if (sproutSprite != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = sproutSprite;
+        }
+        else if (stages != null && stages.Length > 0 && stages[0] != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = stages[0];
+        }
+        else if (emptyPotSprite != null)
+        {
+            spriteRenderer.enabled = true;
+            spriteRenderer.sprite = emptyPotSprite;
+        }
+
+        while (sproutElapsed < sproutTime)
+        {
+            sproutElapsed += Time.deltaTime;
+            elapsed += Time.deltaTime;
+            if (timerText != null)
+                timerText.text = Mathf.Ceil(growTime - elapsed) + "s";
+            yield return null;
+        }
+
+        // Transition through remaining growth stages
+        float remainingTime = growTime - sproutTime;
+        float stageElapsed = 0f;
+        int numStages = stages != null ? stages.Length : 0;
+        while (stageElapsed < remainingTime)
+        {
+            stageElapsed += Time.deltaTime;
+            elapsed += Time.deltaTime;
             if (timerText != null)
                 timerText.text = Mathf.Ceil(growTime - elapsed) + "s";
 
-            // Update sprite stage
-            if (spriteRenderer != null && stages != null && stages.Length > 0)
+            if (spriteRenderer != null && numStages > 1)
             {
-                float progress = elapsed / growTime;
-                int stageIndex = Mathf.FloorToInt(progress * stages.Length);
-                stageIndex = Mathf.Clamp(stageIndex, 0, stages.Length - 1);
+                // Interpolate from stage 1 to last
+                float stageProgress = stageElapsed / remainingTime;
+                int stageIndex = 1 + Mathf.FloorToInt(stageProgress * (numStages - 2));
+                stageIndex = Mathf.Clamp(stageIndex, 1, numStages - 1);
                 if (stages[stageIndex] != null)
                 {
                     spriteRenderer.enabled = true;
                     spriteRenderer.sprite = stages[stageIndex];
                 }
-                else
-                {
-                    Debug.LogWarning($"Pot: growthStages[{stageIndex}] is not assigned for flower '{currentFlower.flowerName}'.");
-                }
             }
-            else if (spriteRenderer != null && emptyPotSprite != null)
-            {
-                spriteRenderer.enabled = true;
-                spriteRenderer.sprite = emptyPotSprite;
-            }
-
             yield return null;
         }
 
@@ -151,7 +191,7 @@ public class Pot : MonoBehaviour
             spriteRenderer.enabled = true;
             spriteRenderer.sprite = emptyPotSprite;
         }
-        if (timerText != null) timerText.text = "Ready!";
+        if (timerText != null) timerText.text = "!";
         growRoutine = null;
     }
 

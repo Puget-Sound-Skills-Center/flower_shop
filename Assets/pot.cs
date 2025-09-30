@@ -67,11 +67,7 @@ public class Pot : MonoBehaviour
     private void OnMouseDown()
     {
         var gm = GameManager.Instance;
-        if (gm == null)
-        {
-            Debug.LogError("Pot: GameManager instance is missing.");
-            return;
-        }
+        if (gm == null) return;
 
         if (readyToHarvest)
         {
@@ -87,22 +83,14 @@ public class Pot : MonoBehaviour
             return;
         }
 
-        // ✅ Check inventory for that specific flower
+        // ✅ Check seed count before planting
         if (!gm.UseSeed(gm.selectedFlower))
         {
-            Debug.Log("Pot: Not enough of this seed type to plant.");
+            Debug.Log("Pot: Not enough seeds of " + gm.selectedFlower.flowerName);
             return;
         }
-
-        currentFlower = gm.selectedFlower;
-        StartGrowthRoutine();
     }
 
-    private void StartGrowthRoutine()
-    {
-        if (growRoutine != null) StopCoroutine(growRoutine);
-        growRoutine = StartCoroutine(GrowthCoroutine());
-    }
 
     private IEnumerator GrowthCoroutine()
     {

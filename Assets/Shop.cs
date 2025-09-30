@@ -29,7 +29,7 @@ public class Shop : MonoBehaviour
         }
 
         int prevFlowerCount = GameManager.Instance.flowerCount;
-        GameManager.Instance.SellFlowers(sellPricePerFlower, sellResultText);
+       // GameManager.Instance.SellFlowers(sellPricePerFlower, sellResultText);
 
         // If no flowers, start coroutine to reset text
         if (prevFlowerCount <= 0 && sellResultText != null)

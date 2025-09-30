@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     public int startingMoney = 100;
     public int currentMoney;
 
+    [Header("Seed Inventory (by flower type)")]
+    private Dictionary<FlowerData, int> seedInventory = new Dictionary<FlowerData, int>();
+
     [Header("Flower Inventory")]
     public int flowerCount = 0;
 
@@ -18,18 +21,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI seedText;
     public TextMeshProUGUI flowerText;
-    public Image selectedFlowerIcon; // Shows the currently selected flower
+    public Image selectedFlowerIcon;
 
-    // ---- Seed Inventory ----
-    private Dictionary<FlowerData, int> seedInventory = new Dictionary<FlowerData, int>();
-
-    [Header("Decorations")]
-    public List<DecorationUnlock> gardenDecorations;
-
-    public int totalFlowersSold = 0;
-
-    [HideInInspector]
-    public FlowerData selectedFlower; // Current selection from seed shop
+    [HideInInspector] public FlowerData selectedFlower;
 
     private void Awake()
     {
@@ -46,39 +40,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ---- Money ----
-    public bool SpendMoney(int amount)
-    {
-        if (currentMoney >= amount)
-        {
-            currentMoney -= amount;
-            UpdateMoneyUI();
-            return true;
-        }
-        return false;
-    }
-
-    public void AddMoney(int amount)
-    {
-        currentMoney += amount;
-        UpdateMoneyUI();
-    }
-
     // ---- Seeds ----
-    public void BuySeed(FlowerData flower)
-    {
-        if (flower == null) return;
-
-        if (SpendMoney(flower.seedCost))
-        {
-            if (!seedInventory.ContainsKey(flower))
-                seedInventory[flower] = 0;
-
-            seedInventory[flower]++;
-        }
-        UpdateSeedUI();
-    }
-
     public void AddSeed(FlowerData flower, int amount)
     {
         if (flower == null) return;
@@ -88,13 +50,8 @@ public class GameManager : MonoBehaviour
 
         seedInventory[flower] += amount;
 
-        // Ensure it doesn't go below 0
-        if (seedInventory[flower] < 0)
-            seedInventory[flower] = 0;
-
         UpdateSeedUI();
     }
-
 
     public bool UseSeed(FlowerData flower)
     {
@@ -106,23 +63,30 @@ public class GameManager : MonoBehaviour
             UpdateSeedUI();
             return true;
         }
+
         return false;
     }
 
     public int GetSeedCount(FlowerData flower)
     {
         if (flower == null) return 0;
-        if (seedInventory.ContainsKey(flower))
-            return seedInventory[flower];
-        return 0;
+        return seedInventory.ContainsKey(flower) ? seedInventory[flower] : 0;
     }
 
-    // ---- Flowers ----
-    public void AddFlower(int amount)
+    // ---- Money / Flowers ----
+    public bool SpendMoney(int amount)
     {
-        flowerCount += amount;
-        UpdateFlowerUI();
+        if (currentMoney >= amount)
+        {
+            currentMoney -= amount;
+            UpdateMoneyUI();
+            return true;
+        }
+        return false;
     }
+
+    public void AddMoney(int amount) { currentMoney += amount; UpdateMoneyUI(); }
+    public void AddFlower(int amount) { flowerCount += amount; UpdateFlowerUI(); }
 
     // ---- UI Updates ----
     public void UpdateAllUI()
@@ -133,32 +97,19 @@ public class GameManager : MonoBehaviour
         UpdateSelectedFlowerUI();
     }
 
-    private void UpdateMoneyUI()
-    {
-        if (moneyText != null)
-            moneyText.text = "$" + currentMoney;
-    }
+    private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
 
     private void UpdateSeedUI()
     {
-        if (seedText != null)
+        if (seedText != null && selectedFlower != null)
         {
-            // Show total seeds across all types
-            int total = 0;
-            foreach (var kvp in seedInventory)
-                total += kvp.Value;
-
-            seedText.text = "Seeds: " + total;
+            int count = GetSeedCount(selectedFlower);
+            seedText.text = $"{selectedFlower.flowerName} Seeds: {count}";
         }
     }
 
-    private void UpdateFlowerUI()
-    {
-        if (flowerText != null)
-            flowerText.text = "Flowers: " + flowerCount;
-    }
+    private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
 
-    // ---- Selected Flower UI ----
     public void UpdateSelectedFlowerUI()
     {
         if (selectedFlowerIcon != null)
@@ -174,49 +125,7 @@ public class GameManager : MonoBehaviour
                 selectedFlowerIcon.enabled = false;
             }
         }
-    }
 
-    // ---- Selling Flowers ----
-    public void SellFlowers(int sellPricePerFlower, TextMeshProUGUI resultText = null)
-    {
-        if (flowerCount <= 0)
-        {
-            if (resultText != null)
-                resultText.text = "No flowers to sell!";
-            return;
-        }
-
-        int earnings = flowerCount * sellPricePerFlower;
-        currentMoney += earnings;
-        totalFlowersSold += flowerCount;
-        flowerCount = 0;
-
-        if (resultText != null)
-            resultText.text = "Sold flowers for $" + earnings;
-
-        UpdateAllUI();
-        CheckForDecorationUnlocks();
-    }
-
-    private void CheckForDecorationUnlocks()
-    {
-        if (gardenDecorations == null) return;
-        foreach (var deco in gardenDecorations)
-        {
-            if (deco != null && !deco.unlocked && totalFlowersSold >= deco.flowersRequired)
-            {
-                deco.unlocked = true;
-                Debug.Log("Unlocked decoration: " + deco.name);
-            }
-        }
-    }
-
-    [System.Serializable]
-    public class DecorationUnlock
-    {
-        public string name;
-        public int flowersRequired;
-        public GameObject decorationPrefab;
-        public bool unlocked = false;
+        UpdateSeedUI(); // refresh seed count when selection changes
     }
 }

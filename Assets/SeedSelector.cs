@@ -1,85 +1,55 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class SeedSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class SeedSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public FlowerData flower;    // The flower this button represents
-    public Button button;        // The UI button
-    public Image highlightImage; // Optional: assign in Inspector for selection highlight
+    [Header("Flower Data")]
+    public FlowerData flowerToSelect;
 
-    private bool isSelected = false;
+    [Header("Highlight")]
+    public Image highlightImage; // Assign the highlight image in Inspector
 
-    private void Start()
+    private void Awake()
     {
-        if (button == null)
-        {
-            Debug.LogWarning("SeedSelector: Button reference is missing.");
-            return;
-        }
-        if (flower == null)
-        {
-            Debug.LogWarning("SeedSelector: FlowerData reference is missing.");
-            button.interactable = false;
-            return;
-        }
-        button.onClick.AddListener(OnSelectFlower);
-
         if (highlightImage != null)
-            highlightImage.enabled = false;
+            highlightImage.enabled = false; // Start hidden
     }
 
-    private void OnDestroy()
-    {
-        if (button != null)
-            button.onClick.RemoveListener(OnSelectFlower);
-    }
-
+    // Hover highlight ON
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isSelected && highlightImage != null)
+        if (highlightImage != null)
             highlightImage.enabled = true;
     }
 
+    // Hover highlight OFF (unless selected)
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isSelected && highlightImage != null)
+        if (highlightImage != null && GameManager.Instance.selectedFlower != flowerToSelect)
             highlightImage.enabled = false;
     }
 
-    private void OnSelectFlower()
+    // Click to select this seed
+    public void OnPointerClick(PointerEventData eventData)
     {
-        if (flower == null)
-        {
-            Debug.LogWarning("SeedSelector: No flower assigned for selection.");
-            return;
-        }
         if (GameManager.Instance == null)
         {
-            Debug.LogError("SeedSelector: GameManager instance is missing.");
+            Debug.LogError("GameManager instance missing!");
             return;
         }
 
-        GameManager.Instance.selectedFlower = flower;
-
-        // If you have a UI update method, call it
+        GameManager.Instance.selectedFlower = flowerToSelect;
         GameManager.Instance.UpdateSelectedFlowerUI();
 
-        // Highlight logic: disable all, enable this
+        Debug.Log("Selected seed: " + flowerToSelect.name);
+
+        // Turn off other highlights
         SeedSelector[] allSelectors = FindObjectsOfType<SeedSelector>();
         foreach (SeedSelector selector in allSelectors)
         {
-            selector.SetSelected(false);
+            if (selector.highlightImage != null)
+                selector.highlightImage.enabled = (selector == this);
         }
-        SetSelected(true);
-
-        Debug.Log("Selected flower: " + flower.flowerName);
-    }
-
-    public void SetSelected(bool selected)
-    {
-        isSelected = selected;
-        if (highlightImage != null)
-            highlightImage.enabled = selected;
     }
 }

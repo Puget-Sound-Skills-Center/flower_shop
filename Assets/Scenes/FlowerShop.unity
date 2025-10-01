@@ -153,8 +153,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000076294, y: 88}
-  m_SizeDelta: {x: 200.8981, y: 38.316}
+  m_AnchoredPosition: {x: 0.0000076294, y: 92.14102}
+  m_SizeDelta: {x: 200.8981, y: 46.598}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &51359637
 MonoBehaviour:
@@ -292,8 +292,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 354, y: 0.0003891}
-  m_SizeDelta: {x: 47.0072, y: 491.81}
+  m_AnchoredPosition: {x: 519.5536, y: 0.66690946}
+  m_SizeDelta: {x: 80.4704, y: 815.35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &62906473
 MonoBehaviour:
@@ -848,8 +848,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000076294, y: -33.727}
-  m_SizeDelta: {x: 330.3412, y: 230.88}
+  m_AnchoredPosition: {x: 0.0000076294, y: -73.894}
+  m_SizeDelta: {x: 330.3412, y: 311.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &159852140
 MonoBehaviour:
@@ -1018,7 +1018,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &263049303
 Transform:
   m_ObjectHideFlags: 0
@@ -1195,7 +1195,7 @@ GameObject:
   - component: {fileID: 417404708}
   - component: {fileID: 417404707}
   m_Layer: 5
-  m_Name: Highlight
+  m_Name: highlightImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1271,7 +1271,6 @@ GameObject:
   - component: {fileID: 422640983}
   - component: {fileID: 422640982}
   - component: {fileID: 422640981}
-  - component: {fileID: 422640985}
   m_Layer: 5
   m_Name: SeedPacket
   m_TagString: Untagged
@@ -1313,8 +1312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f37f880d4094f408f91c87536ee555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 95f40210658a26a41966217957d61921, type: 2}
-  button: {fileID: 422640982}
+  flowerToSelect: {fileID: 11400000, guid: 95f40210658a26a41966217957d61921, type: 2}
   highlightImage: {fileID: 417404707}
 --- !u!114 &422640982
 MonoBehaviour:
@@ -1359,19 +1357,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 422640983}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1768246534}
-        m_TargetAssemblyTypeName: SeedShop, Assembly-CSharp
-        m_MethodName: BuySeed
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &422640983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1410,20 +1396,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 422640979}
   m_CullTransparentMesh: 1
---- !u!114 &422640985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 422640979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31c13f74630b8e4db1baac89e4b69b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 95f40210658a26a41966217957d61921, type: 2}
-  seedCost: 2
 --- !u!1 &546516241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2121,7 +2093,6 @@ GameObject:
   - component: {fileID: 780210090}
   - component: {fileID: 780210089}
   - component: {fileID: 780210088}
-  - component: {fileID: 780210092}
   m_Layer: 5
   m_Name: SeedPacket (2)
   m_TagString: Untagged
@@ -2163,8 +2134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f37f880d4094f408f91c87536ee555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 8f092973fca1a6e4698ddda1cfa8dd68, type: 2}
-  button: {fileID: 780210089}
+  flowerToSelect: {fileID: 11400000, guid: 8f092973fca1a6e4698ddda1cfa8dd68, type: 2}
   highlightImage: {fileID: 2122092995}
 --- !u!114 &780210089
 MonoBehaviour:
@@ -2209,19 +2179,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 780210090}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1768246534}
-        m_TargetAssemblyTypeName: SeedShop, Assembly-CSharp
-        m_MethodName: BuySeed
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &780210090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2260,20 +2218,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 780210086}
   m_CullTransparentMesh: 1
---- !u!114 &780210092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 780210086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31c13f74630b8e4db1baac89e4b69b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 8f092973fca1a6e4698ddda1cfa8dd68, type: 2}
-  seedCost: 2
 --- !u!1 &805714735
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,7 +2305,7 @@ GameObject:
   - component: {fileID: 887710001}
   - component: {fileID: 887710000}
   m_Layer: 5
-  m_Name: Highlight (1)
+  m_Name: highlightImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2614,6 +2558,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingMoney: 100
   currentMoney: 0
+  seedCount: 0
   flowerCount: 0
   moneyText: {fileID: 1068449090}
   seedText: {fileID: 758250679}
@@ -2898,7 +2843,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -15}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1096792524
@@ -2944,7 +2889,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1096792525}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1768246534}
+        m_TargetAssemblyTypeName: SeedShop, Assembly-CSharp
+        m_MethodName: SellFlower
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1096792525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3312,13 +3269,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   emptyPotSprite: {fileID: -6592407927776795226, guid: de62dcbc2bde7fa4b862e12ab01bd5f8, type: 3}
-  sproutSprite: {fileID: 0}
+  sproutSprite: {fileID: 3425245928688566138, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   emptyToSproutTime: 0.5
   sproutPercent: 0.2
   timerText: {fileID: 546516243}
   harvestPopupPrefab: {fileID: 4707889061162602174, guid: e4df78cd47f99be4388e4def1b0b72f0, type: 3}
   popupSpawnPoint: {fileID: 0}
-  currentFlower: {fileID: 11400000, guid: 95f40210658a26a41966217957d61921, type: 2}
 --- !u!61 &1246141855
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3436,7 +3392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1294032339
 Transform:
   m_ObjectHideFlags: 0
@@ -3593,7 +3549,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rooms:
   - {fileID: 1294032338}
-  - {fileID: 0}
   - {fileID: 263049302}
 --- !u!1 &1744763617
 GameObject:
@@ -3608,7 +3563,6 @@ GameObject:
   - component: {fileID: 1744763621}
   - component: {fileID: 1744763620}
   - component: {fileID: 1744763619}
-  - component: {fileID: 1744763623}
   m_Layer: 5
   m_Name: SeedPacket (1)
   m_TagString: Untagged
@@ -3650,8 +3604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22f37f880d4094f408f91c87536ee555, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 2e30d90a21b5d7b43b81c0690fbc2dc2, type: 2}
-  button: {fileID: 1744763620}
+  flowerToSelect: {fileID: 11400000, guid: 2e30d90a21b5d7b43b81c0690fbc2dc2, type: 2}
   highlightImage: {fileID: 887710000}
 --- !u!114 &1744763620
 MonoBehaviour:
@@ -3696,19 +3649,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1744763621}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1768246534}
-        m_TargetAssemblyTypeName: SeedShop, Assembly-CSharp
-        m_MethodName: BuySeed
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1744763621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3747,20 +3688,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744763617}
   m_CullTransparentMesh: 1
---- !u!114 &1744763623
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1744763617}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31c13f74630b8e4db1baac89e4b69b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 2e30d90a21b5d7b43b81c0690fbc2dc2, type: 2}
-  seedCost: 2
 --- !u!1 &1768246532
 GameObject:
   m_ObjectHideFlags: 0
@@ -3813,8 +3740,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e31c13f74630b8e4db1baac89e4b69b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flower: {fileID: 11400000, guid: 95f40210658a26a41966217957d61921, type: 2}
   seedCost: 2
+  sellPrice: 5
+  sellFeedbackText: {fileID: 51359637}
+  feedbackDuration: 2
 --- !u!114 &1768246535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4108,7 +4037,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -0.00012207031, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4271,7 +4200,7 @@ GameObject:
   - component: {fileID: 2122092996}
   - component: {fileID: 2122092995}
   m_Layer: 5
-  m_Name: Highlight (2)
+  m_Name: highlightImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

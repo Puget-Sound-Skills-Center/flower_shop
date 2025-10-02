@@ -47,22 +47,22 @@ public class Pot : MonoBehaviour
 
         if (isGrowing) return;
 
-        if (!gm.UseSeed())
+        // Determine which seed we can actually plant
+        FlowerData flowerToPlant = gm.GetPlantableFlower(gm.selectedFlower);
+        if (flowerToPlant == null)
         {
-            Debug.Log("No seeds available!");
+            Debug.Log("No seeds available to plant!");
             return;
         }
 
-        if (gm.selectedFlower == null)
-        {
-            Debug.Log("No flower selected!");
-            gm.AddSeed(1); // refund seed
-            return;
-        }
+        // Consume seed
+        gm.UseSeed(flowerToPlant);
 
-        currentFlower = gm.selectedFlower;
+        // Start growth
+        currentFlower = flowerToPlant;
         StartGrowthRoutine();
     }
+
 
     private void StartGrowthRoutine()
     {

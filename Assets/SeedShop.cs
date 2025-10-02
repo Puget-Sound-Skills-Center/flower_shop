@@ -16,7 +16,7 @@ public class SeedShop : MonoBehaviour
 
     private Coroutine feedbackCoroutine;
 
-    public void BuySeed()
+    public void BuySeed(FlowerData flower)
     {
         if (GameManager.Instance == null)
         {
@@ -24,16 +24,23 @@ public class SeedShop : MonoBehaviour
             return;
         }
 
+        if (flower == null)
+        {
+            Debug.LogError("No flower assigned for purchase.");
+            return;
+        }
+
         if (GameManager.Instance.SpendMoney(seedCost))
         {
-            GameManager.Instance.AddSeed(1);
-            ShowFeedback("Bought 1 seed!");
+            GameManager.Instance.AddSeed(flower, 1);
+            ShowFeedback("Bought 1 " + flower.name + " seed!");
         }
         else
         {
             ShowFeedback("Not enough money to buy a seed!");
         }
     }
+
 
     public void SellFlower()
     {
@@ -48,7 +55,7 @@ public class SeedShop : MonoBehaviour
         {
             GameManager.Instance.AddFlower(-1); // remove 1 flower
             GameManager.Instance.AddMoney(sellPrice); // add money
-            ShowFeedback("Sold flower for $" + sellPrice + "!");
+            ShowFeedback("Sold  for $" + sellPrice + "!");
         }
         else
         {

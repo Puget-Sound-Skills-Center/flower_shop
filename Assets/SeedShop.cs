@@ -16,19 +16,50 @@ public class SeedShop : MonoBehaviour
 
     private Coroutine feedbackCoroutine;
 
-    public void BuySeed(FlowerData flower)
+    // Reference to the confirmation window prefab (assign in Inspector)
+    public GameObject confirmationWindowPrefab;
+
+    private GameObject currentConfirmation;
+
+    /// <summary>
+    /// Called when player clicks "Buy" on a seed packet
+    /// </summary>
+    public void ShowBuyConfirmation(FlowerData flower, Transform spawnPoint)
     {
-        if (GameManager.Instance == null)
+        if (confirmationWindowPrefab == null)
         {
-            Debug.LogError("GameManager instance is missing.");
+            Debug.LogError("Confirmation prefab not assigned!");
             return;
         }
 
-        if (flower == null)
+        // Destroy any existing window
+        if (currentConfirmation != null)
+            Destroy(currentConfirmation);
+
+        // Spawn next to the packet
+        currentConfirmation = Instantiate(confirmationWindowPrefab, spawnPoint.position, Quaternion.identity);
+
+        // Make sure it’s on canvas
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas != null)
+            currentConfirmation.transform.SetParent(canvas.transform, false);
+
+        // Set up text
+        TextMeshProUGUI confirmText = currentConfirmation.GetComponentInChildren<TextMeshProUGUI>();
+        if (confirmText != null)
+            confirmText.text = $"Buy 1 {flower.name} seed for ${seedCost}?";
+
+        // Hook up buttons
+        ConfirmationWindow window = currentConfirmation.GetComponent<ConfirmationWindow>();
+        if (window != null)
         {
-            Debug.LogError("No flower assigned for purchase.");
-            return;
+            window.Setup(() => { ConfirmBuy(flower); }, CancelBuy);
         }
+    }
+
+    private void ConfirmBuy(FlowerData flower)
+    {
+        if (GameManager.Instance == null) return;
 
         if (GameManager.Instance.SpendMoney(seedCost))
         {
@@ -37,25 +68,31 @@ public class SeedShop : MonoBehaviour
         }
         else
         {
-            ShowFeedback("Not enough money to buy a seed!");
+            ShowFeedback("Not enough money!");
+        }
+
+        CancelBuy(); // close popup
+    }
+
+    private void CancelBuy()
+    {
+        if (currentConfirmation != null)
+        {
+            Destroy(currentConfirmation);
+            currentConfirmation = null;
         }
     }
 
-
+    // ---- Sell Flower ----
     public void SellFlower()
     {
-        if (GameManager.Instance == null)
-        {
-            Debug.LogError("GameManager instance is missing.");
-            return;
-        }
+        if (GameManager.Instance == null) return;
 
-        // Check if player has flowers to sell
         if (GameManager.Instance.flowerCount > 0)
         {
-            GameManager.Instance.AddFlower(-1); // remove 1 flower
-            GameManager.Instance.AddMoney(sellPrice); // add money
-            ShowFeedback("Sold  for $" + sellPrice + "!");
+            GameManager.Instance.AddFlower(-1);
+            GameManager.Instance.AddMoney(sellPrice);
+            ShowFeedback("Sold for $" + sellPrice + "!");
         }
         else
         {
@@ -63,11 +100,11 @@ public class SeedShop : MonoBehaviour
         }
     }
 
+    // ---- Feedback UI ----
     private void ShowFeedback(string message)
     {
         if (sellFeedbackText == null) return;
 
-        // Stop any existing coroutine
         if (feedbackCoroutine != null)
             StopCoroutine(feedbackCoroutine);
 

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: 'Velora Lily '
   growthStages: []
-  readySprite: {fileID: 0}
-  growTime: 20
+  readySprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
+  growTime: 5
   sellValue: 5
+  seedCost: 2

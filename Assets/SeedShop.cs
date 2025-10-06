@@ -105,14 +105,24 @@ public class SeedShop : MonoBehaviour
     {
         if (sellFeedbackText == null) return;
 
-        if (feedbackCoroutine != null)
-            StopCoroutine(feedbackCoroutine);
+        // If the dissolve component exists, use it
+        TextWaterfallDissolve dissolve = sellFeedbackText.GetComponent<TextWaterfallDissolve>();
+        if (dissolve != null)
+        {
+            dissolve.PlayDissolve(message);
+        }
+        else
+        {
+            // Fallback to old static display if dissolve missing
+            sellFeedbackText.text = message;
+            sellFeedbackText.gameObject.SetActive(true);
 
-        sellFeedbackText.text = message;
-        sellFeedbackText.gameObject.SetActive(true);
-
-        feedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay());
+            if (feedbackCoroutine != null)
+                StopCoroutine(feedbackCoroutine);
+            feedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay());
+        }
     }
+
 
     private IEnumerator HideFeedbackAfterDelay()
     {

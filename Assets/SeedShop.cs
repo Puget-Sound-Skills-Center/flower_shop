@@ -8,22 +8,21 @@ public class SeedShop : MonoBehaviour
     public int seedCost = 2;
 
     [Header("Flower Sell Settings")]
-    public int sellPrice = 5; // How much one flower sells for
+    public int sellPrice = 5;
 
     [Header("Player Feedback")]
-    public TextMeshProUGUI sellFeedbackText; // Assign in Inspector
-    public float feedbackDuration = 2f;      // Seconds feedback stays visible
+    public TextMeshProUGUI sellFeedbackText; // Text near Sell button
+    public TextMeshProUGUI buyFeedbackText;  // New text near Seed area
+    public float feedbackDuration = 2f;
 
-    private Coroutine feedbackCoroutine;
+    private Coroutine sellFeedbackRoutine;
+    private Coroutine buyFeedbackRoutine;
 
-    // Reference to the confirmation window prefab (assign in Inspector)
+    [Header("Confirmation Window")]
     public GameObject confirmationWindowPrefab;
-
     private GameObject currentConfirmation;
 
-    /// <summary>
-    /// Called when player clicks "Buy" on a seed packet
-    /// </summary>
+    // -------- BUY SEED --------
     public void ShowBuyConfirmation(FlowerData flower, Transform spawnPoint)
     {
         if (confirmationWindowPrefab == null)
@@ -32,24 +31,19 @@ public class SeedShop : MonoBehaviour
             return;
         }
 
-        // Destroy any existing window
         if (currentConfirmation != null)
             Destroy(currentConfirmation);
 
-        // Spawn next to the packet
         currentConfirmation = Instantiate(confirmationWindowPrefab, spawnPoint.position, Quaternion.identity);
 
-        // Make sure it’s on canvas
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas != null)
             currentConfirmation.transform.SetParent(canvas.transform, false);
 
-        // Set up text
         TextMeshProUGUI confirmText = currentConfirmation.GetComponentInChildren<TextMeshProUGUI>();
         if (confirmText != null)
             confirmText.text = $"Buy 1 {flower.name} seed for ${seedCost}?";
 
-        // Hook up buttons
         ConfirmationWindow window = currentConfirmation.GetComponent<ConfirmationWindow>();
         if (window != null)
         {
@@ -64,14 +58,14 @@ public class SeedShop : MonoBehaviour
         if (GameManager.Instance.SpendMoney(seedCost))
         {
             GameManager.Instance.AddSeed(flower, 1);
-            ShowFeedback("Bought 1 " + flower.name + " seed!");
+            ShowBuyFeedback($"Bought 1 {flower.name} seed!");
         }
         else
         {
-            ShowFeedback("Not enough money!");
+            ShowBuyFeedback("Not enough money!");
         }
 
-        CancelBuy(); // close popup
+        CancelBuy();
     }
 
     private void CancelBuy()
@@ -83,7 +77,7 @@ public class SeedShop : MonoBehaviour
         }
     }
 
-    // ---- Sell Flower ----
+    // -------- SELL FLOWER --------
     public void SellFlower()
     {
         if (GameManager.Instance == null) return;
@@ -92,42 +86,74 @@ public class SeedShop : MonoBehaviour
         {
             GameManager.Instance.AddFlower(-1);
             GameManager.Instance.AddMoney(sellPrice);
-            ShowFeedback("Sold for $" + sellPrice + "!");
+            ShowSellFeedback($"Sold for ${sellPrice}!");
         }
         else
         {
-            ShowFeedback("No flowers to sell!");
+            ShowSellFeedback("No flowers to sell!");
         }
     }
 
-    // ---- Feedback UI ----
-    private void ShowFeedback(string message)
+    // -------- FEEDBACK HANDLERS --------
+    private void ShowBuyFeedback(string message)
     {
-        if (sellFeedbackText == null) return;
+        if (buyFeedbackText == null)
+        {
+            Debug.LogWarning("Buy feedback text not assigned!");
+            return;
+        }
 
-        // If the dissolve component exists, use it
-        TextWaterfallDissolve dissolve = sellFeedbackText.GetComponent<TextWaterfallDissolve>();
+        // Prevent overlap: disable sell feedback if using the same object accidentally
+        if (buyFeedbackText == sellFeedbackText)
+        {
+            Debug.LogWarning("Buy and Sell feedback texts reference the same object! Please assign separate UI elements.");
+            return;
+        }
+
+        if (buyFeedbackRoutine != null)
+            StopCoroutine(buyFeedbackRoutine);
+
+        buyFeedbackText.text = message;
+        buyFeedbackText.gameObject.SetActive(true);
+
+        var dissolve = buyFeedbackText.GetComponent<TextWaterfallDissolve>();
         if (dissolve != null)
-        {
             dissolve.PlayDissolve(message);
-        }
         else
-        {
-            // Fallback to old static display if dissolve missing
-            sellFeedbackText.text = message;
-            sellFeedbackText.gameObject.SetActive(true);
-
-            if (feedbackCoroutine != null)
-                StopCoroutine(feedbackCoroutine);
-            feedbackCoroutine = StartCoroutine(HideFeedbackAfterDelay());
-        }
+            buyFeedbackRoutine = StartCoroutine(HideAfterDelay(buyFeedbackText));
     }
 
+    private void ShowSellFeedback(string message)
+    {
+        if (sellFeedbackText == null)
+        {
+            Debug.LogWarning("Sell feedback text not assigned!");
+            return;
+        }
 
-    private IEnumerator HideFeedbackAfterDelay()
+        if (sellFeedbackText == buyFeedbackText)
+        {
+            Debug.LogWarning("Sell and Buy feedback texts reference the same object! Please assign separate UI elements.");
+            return;
+        }
+
+        if (sellFeedbackRoutine != null)
+            StopCoroutine(sellFeedbackRoutine);
+
+        sellFeedbackText.text = message;
+        sellFeedbackText.gameObject.SetActive(true);
+
+        var dissolve = sellFeedbackText.GetComponent<TextWaterfallDissolve>();
+        if (dissolve != null)
+            dissolve.PlayDissolve(message);
+        else
+            sellFeedbackRoutine = StartCoroutine(HideAfterDelay(sellFeedbackText));
+    }
+
+    private IEnumerator HideAfterDelay(TextMeshProUGUI target)
     {
         yield return new WaitForSeconds(feedbackDuration);
-        if (sellFeedbackText != null)
-            sellFeedbackText.gameObject.SetActive(false);
+        if (target != null)
+            target.gameObject.SetActive(false);
     }
 }

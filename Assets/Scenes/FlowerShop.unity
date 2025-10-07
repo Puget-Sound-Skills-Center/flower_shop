@@ -345,9 +345,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2fe2f60397dcfc4b8f95726138486a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dissolveDuration: 1.5
-  holdDuration: 1
-  topToBottom: 1
+  letterDelay: 0.03
+  fadeOutSpeed: 1
 --- !u!1 &62906470
 GameObject:
   m_ObjectHideFlags: 0
@@ -1109,7 +1108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &263049303
 Transform:
   m_ObjectHideFlags: 0
@@ -4528,7 +4527,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1294032339
 Transform:
   m_ObjectHideFlags: 0
@@ -5117,6 +5116,7 @@ MonoBehaviour:
   seedCost: 2
   sellPrice: 5
   sellFeedbackText: {fileID: 51359637}
+  buyFeedbackText: {fileID: 0}
   feedbackDuration: 2
   confirmationWindowPrefab: {fileID: 4330327252744463950, guid: ce83f80d1723fd040945a42308ed44aa, type: 3}
 --- !u!114 &1768246535

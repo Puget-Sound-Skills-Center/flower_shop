@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 78b5fc02270ff5f4e87806ac473eae35
+guid: baae12bcdfefee145af84ff5b3ceee21
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7393499047454288295
-    second: LMC_0
+      213: -547160577485007320
+    second: bouquet desk_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -178,13 +178,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: LMC_0
+      name: bouquet desk_0
       rect:
         serializedVersion: 2
-        x: 1
+        x: 0
         y: 0
-        width: 31
-        height: 32
+        width: 701
+        height: 356
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -193,8 +193,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7a9a3b2163cfa9660800000000000000
-      internalID: 7393499047454288295
+      spriteID: 82698ef8a581868f0800000000000000
+      internalID: -547160577485007320
       vertices: []
       indices: 
       edges: []
@@ -213,7 +213,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      LMC_0: 7393499047454288295
+      bouquet desk_0: -547160577485007320
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

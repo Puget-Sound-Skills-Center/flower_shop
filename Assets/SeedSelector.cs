@@ -26,25 +26,37 @@ public class SeedSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     // Hover highlight OFF (unless selected)
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (highlightImage != null && GameManager.Instance.selectedFlower != flowerToSelect)
+        var gm = GameManager.Instance;
+        if (highlightImage == null) return;
+
+        // Safely check selectedFlower (GameManager may be null in tests / editor)
+        if (gm == null || gm.selectedFlower != flowerToSelect)
             highlightImage.enabled = false;
     }
 
     // Click to select this seed
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (GameManager.Instance == null)
+        if (flowerToSelect == null)
         {
-            Debug.LogError("GameManager instance missing!");
+            Debug.LogWarning($"SeedSelector on '{gameObject.name}' has no FlowerData assigned.");
             return;
         }
 
-        GameManager.Instance.selectedFlower = flowerToSelect;
-        GameManager.Instance.UpdateSelectedFlowerUI();
+        var gm = GameManager.Instance;
+        if (gm == null)
+        {
+            Debug.LogError("SeedSelector: GameManager instance missing!");
+            return;
+        }
 
-        Debug.Log("Selected seed: " + flowerToSelect.name);
+        // Set selected flower and update UI
+        gm.selectedFlower = flowerToSelect;
+        gm.UpdateSelectedFlowerUI();
 
-        // Turn off other highlights
+        Debug.Log($"Selected seed: {flowerToSelect.name} (selectedFlower set in GameManager)");
+
+        // Update highlight visuals: only this selector should show highlight
         SeedSelector[] allSelectors = FindObjectsOfType<SeedSelector>();
         foreach (SeedSelector selector in allSelectors)
         {

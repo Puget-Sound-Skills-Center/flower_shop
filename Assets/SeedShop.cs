@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.UI;
 
 public class SeedShop : MonoBehaviour
 {
@@ -22,6 +24,9 @@ public class SeedShop : MonoBehaviour
     public GameObject confirmationWindowPrefab;
     private GameObject currentConfirmation;
 
+    [Header("UI Canvas")]
+    public Canvas targetCanvas; // Assign your main UI canvas in the Inspector (falls back to FindObjectOfType)
+
     // -------- BUY SEED --------
     public void ShowBuyConfirmation(FlowerData flower, Transform spawnPoint)
     {
@@ -34,11 +39,28 @@ public class SeedShop : MonoBehaviour
         if (currentConfirmation != null)
             Destroy(currentConfirmation);
 
-        currentConfirmation = Instantiate(confirmationWindowPrefab, spawnPoint.position, Quaternion.identity);
-
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas != null)
+        // Find canvas (prefer assigned targetCanvas)
+        Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogWarning("SeedShop: No Canvas found in scene. Instantiating confirmation in world space.");
+            currentConfirmation = Instantiate(confirmationWindowPrefab, spawnPoint != null ? spawnPoint.position : transform.position, Quaternion.identity);
+        }
+        else
+        {
+            currentConfirmation = Instantiate(confirmationWindowPrefab);
             currentConfirmation.transform.SetParent(canvas.transform, false);
+
+            // Center the popup in the canvas
+            RectTransform popupRect = currentConfirmation.GetComponent<RectTransform>();
+            if (popupRect != null)
+            {
+                popupRect.anchorMin = new Vector2(0.5f, 0.5f);
+                popupRect.anchorMax = new Vector2(0.5f, 0.5f);
+                popupRect.pivot = new Vector2(0.5f, 0.5f);
+                popupRect.anchoredPosition = Vector2.zero;
+            }
+        }
 
         TextMeshProUGUI confirmText = currentConfirmation.GetComponentInChildren<TextMeshProUGUI>();
         if (confirmText != null)
@@ -47,7 +69,14 @@ public class SeedShop : MonoBehaviour
         ConfirmationWindow window = currentConfirmation.GetComponent<ConfirmationWindow>();
         if (window != null)
         {
-            window.Setup(() => { ConfirmBuy(flower); }, CancelBuy);
+            // Use explicit Action delegates to avoid delegate-typing/overload issues.
+            Action onConfirm = new Action(() => ConfirmBuy(flower));
+            Action onCancel = new Action(CancelBuy);
+            window.Setup(onConfirm, onCancel);
+        }
+        else
+        {
+            Debug.LogError("SeedShop: confirmationWindowPrefab does not contain a ConfirmationWindow component.");
         }
     }
 

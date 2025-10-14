@@ -19,12 +19,12 @@ public class GameManager : MonoBehaviour
 
     [Header("UI References (assign in Inspector)")]
     public TextMeshProUGUI moneyText;
-    public TextMeshProUGUI seedText;   // Shows seeds of currently selected flower
+    public TextMeshProUGUI seedText;
     public TextMeshProUGUI flowerText;
     public Image selectedFlowerIcon;
 
     [HideInInspector]
-    public FlowerData selectedFlower; // The currently selected flower type
+    public FlowerData selectedFlower;
 
     private void Awake()
     {
@@ -39,7 +39,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         UpdateAllUI();
     }
 
@@ -61,7 +60,6 @@ public class GameManager : MonoBehaviour
     {
         if (!seedInventory.ContainsKey(flower))
             seedInventory[flower] = 0;
-
         seedInventory[flower] += amount;
         UpdateSeedUI();
     }
@@ -69,7 +67,6 @@ public class GameManager : MonoBehaviour
     public bool UseSeed(FlowerData flower)
     {
         if (flower == null) return false;
-
         if (seedInventory.ContainsKey(flower) && seedInventory[flower] > 0)
         {
             seedInventory[flower]--;
@@ -89,17 +86,13 @@ public class GameManager : MonoBehaviour
     {
         if (requestedFlower != null && GetSeedCount(requestedFlower) > 0)
             return requestedFlower;
-
-        // fallback: pick any flower with seeds > 0
         foreach (var kvp in seedInventory)
         {
             if (kvp.Value > 0)
                 return kvp.Key;
         }
-
-        return null; // no seeds available
+        return null;
     }
-
 
     public void AddFlower(int amount) { flowerCount += amount; UpdateFlowerUI(); }
 
@@ -142,7 +135,6 @@ public class GameManager : MonoBehaviour
                 selectedFlowerIcon.enabled = false;
             }
         }
-
-        UpdateSeedUI(); // refresh seed count when switching flowers
+        UpdateSeedUI();
     }
 }

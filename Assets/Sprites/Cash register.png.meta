@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4e4d82aabdb80ba4698e9ced5922d9ce
+guid: 1506e9df6fbab82428bec5ba676a6e74
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3124949146848436715
-    second: seed_0
+      213: 4322916933237324581
+    second: Cash register_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -178,13 +178,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: seed_0
+      name: Cash register_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 2400
-        height: 1100
+        y: 2
+        width: 521
+        height: 470
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -193,8 +193,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: be1af0f31bc0e5b20800000000000000
-      internalID: 3124949146848436715
+      spriteID: 52bb1270c061efb30800000000000000
+      internalID: 4322916933237324581
       vertices: []
       indices: 
       edges: []
@@ -213,7 +213,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      seed_0: 3124949146848436715
+      Cash register_0: 4322916933237324581
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

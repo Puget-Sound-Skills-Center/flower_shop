@@ -13,19 +13,21 @@ public class SeedShop : MonoBehaviour
     public int sellPrice = 5;
 
     [Header("Player Feedback")]
-    public TextMeshProUGUI sellFeedbackText; // Text near Sell button
-    public TextMeshProUGUI buyFeedbackText;  // New text near Seed area
+    public TextMeshProUGUI buyFeedbackText;  // Only for Buy now
     public float feedbackDuration = 2f;
 
-    private Coroutine sellFeedbackRoutine;
     private Coroutine buyFeedbackRoutine;
+
+    [Header("Sell Popup Settings")]
+    public GameObject sellPopupPrefab;        // Prefab for '$5 Sold!' popup
+    public Transform sellPopupSpawnPoint;     // Where to spawn (e.g. near Sell button)
 
     [Header("Confirmation Window")]
     public GameObject confirmationWindowPrefab;
     private GameObject currentConfirmation;
 
     [Header("UI Canvas")]
-    public Canvas targetCanvas; // Assign your main UI canvas in the Inspector (falls back to FindObjectOfType)
+    public Canvas targetCanvas; // Assign main UI Canvas in Inspector
 
     // -------- BUY SEED --------
     public void ShowBuyConfirmation(FlowerData flower, Transform spawnPoint)
@@ -39,7 +41,6 @@ public class SeedShop : MonoBehaviour
         if (currentConfirmation != null)
             Destroy(currentConfirmation);
 
-        // Find canvas (prefer assigned targetCanvas)
         Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
         if (canvas == null)
         {
@@ -51,13 +52,10 @@ public class SeedShop : MonoBehaviour
             currentConfirmation = Instantiate(confirmationWindowPrefab);
             currentConfirmation.transform.SetParent(canvas.transform, false);
 
-            // Center the popup in the canvas
             RectTransform popupRect = currentConfirmation.GetComponent<RectTransform>();
             if (popupRect != null)
             {
-                popupRect.anchorMin = new Vector2(0.5f, 0.5f);
-                popupRect.anchorMax = new Vector2(0.5f, 0.5f);
-                popupRect.pivot = new Vector2(0.5f, 0.5f);
+                popupRect.anchorMin = popupRect.anchorMax = popupRect.pivot = new Vector2(0.5f, 0.5f);
                 popupRect.anchoredPosition = Vector2.zero;
             }
         }
@@ -69,14 +67,11 @@ public class SeedShop : MonoBehaviour
         ConfirmationWindow window = currentConfirmation.GetComponent<ConfirmationWindow>();
         if (window != null)
         {
-            // Use explicit Action delegates to avoid delegate-typing/overload issues.
-            Action onConfirm = new Action(() => ConfirmBuy(flower));
-            Action onCancel = new Action(CancelBuy);
-            window.Setup(onConfirm, onCancel);
+            window.Setup(() => ConfirmBuy(flower), CancelBuy);
         }
         else
         {
-            Debug.LogError("SeedShop: confirmationWindowPrefab does not contain a ConfirmationWindow component.");
+            Debug.LogError("SeedShop: confirmationWindowPrefab missing ConfirmationWindow component.");
         }
     }
 
@@ -115,27 +110,45 @@ public class SeedShop : MonoBehaviour
         {
             GameManager.Instance.AddFlower(-1);
             GameManager.Instance.AddMoney(sellPrice);
-            ShowSellFeedback($"Sold for ${sellPrice}!");
+
+            ShowSellPopup($"${sellPrice} Sold!", true);
         }
         else
         {
-            ShowSellFeedback("No flowers to sell!");
+            ShowSellPopup("No flowers to sell!", false);
         }
     }
 
-    // -------- FEEDBACK HANDLERS --------
+    // -------- POPUP HANDLER --------
+    private void ShowSellPopup(string message, bool success)
+    {
+        if (sellPopupPrefab == null)
+        {
+            Debug.LogWarning("SellPopup prefab not assigned!");
+            return;
+        }
+
+        Transform spawn = sellPopupSpawnPoint != null ? sellPopupSpawnPoint : transform;
+        GameObject popup = Instantiate(sellPopupPrefab, spawn.position, Quaternion.identity);
+
+        Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
+        if (canvas != null)
+            popup.transform.SetParent(canvas.transform, false);
+
+        TextMeshProUGUI popupText = popup.GetComponent<TextMeshProUGUI>();
+        if (popupText != null)
+        {
+            popupText.text = message;
+            popupText.color = success ? new Color(0.1f, 1f, 0.1f) : new Color(1f, 0.3f, 0.3f);
+        }
+    }
+
+    // -------- BUY FEEDBACK --------
     private void ShowBuyFeedback(string message)
     {
         if (buyFeedbackText == null)
         {
             Debug.LogWarning("Buy feedback text not assigned!");
-            return;
-        }
-
-        // Prevent overlap: disable sell feedback if using the same object accidentally
-        if (buyFeedbackText == sellFeedbackText)
-        {
-            Debug.LogWarning("Buy and Sell feedback texts reference the same object! Please assign separate UI elements.");
             return;
         }
 
@@ -150,33 +163,6 @@ public class SeedShop : MonoBehaviour
             dissolve.PlayDissolve(message);
         else
             buyFeedbackRoutine = StartCoroutine(HideAfterDelay(buyFeedbackText));
-    }
-
-    private void ShowSellFeedback(string message)
-    {
-        if (sellFeedbackText == null)
-        {
-            Debug.LogWarning("Sell feedback text not assigned!");
-            return;
-        }
-
-        if (sellFeedbackText == buyFeedbackText)
-        {
-            Debug.LogWarning("Sell and Buy feedback texts reference the same object! Please assign separate UI elements.");
-            return;
-        }
-
-        if (sellFeedbackRoutine != null)
-            StopCoroutine(sellFeedbackRoutine);
-
-        sellFeedbackText.text = message;
-        sellFeedbackText.gameObject.SetActive(true);
-
-        var dissolve = sellFeedbackText.GetComponent<TextWaterfallDissolve>();
-        if (dissolve != null)
-            dissolve.PlayDissolve(message);
-        else
-            sellFeedbackRoutine = StartCoroutine(HideAfterDelay(sellFeedbackText));
     }
 
     private IEnumerator HideAfterDelay(TextMeshProUGUI target)

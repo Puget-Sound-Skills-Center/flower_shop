@@ -71,7 +71,7 @@ public class SeedShop : MonoBehaviour
         }
         else
         {
-            Debug.LogError("SeedShop: confirmationWindowPrefab missing ConfirmationWindow component.");
+            Debug.LogError("SeedShop: confirmationWindowPrefab does not contain a ConfirmationWindow component.");
         }
     }
 
@@ -82,7 +82,7 @@ public class SeedShop : MonoBehaviour
         if (GameManager.Instance.SpendMoney(seedCost))
         {
             GameManager.Instance.AddSeed(flower, 1);
-            ShowBuyFeedback($"Bought 1 {flower.name} seed!");
+            ShowBuyFeedback($"Bought 1 {flower?.flowerName ?? flower?.name ?? "seed"}!");
         }
         else
         {

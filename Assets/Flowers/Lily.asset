@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Lily
   growthStages: []
-  readySprite: {fileID: 5162663697227671183, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  readySprite: {fileID: 2727736752311060635, guid: 62ac63902a9a6894090fd12f81996c10, type: 3}
   growTime: 20
   sellValue: 5
+  seedCost: 2

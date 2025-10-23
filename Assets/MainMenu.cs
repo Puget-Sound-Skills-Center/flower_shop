@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+      
         // Hide settings at start
         if (settingsPanel != null) settingsPanel.SetActive(false);
 
@@ -41,6 +42,8 @@ public class MainMenu : MonoBehaviour
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+        resolutionDropdown.onValueChanged.AddListener(SetResolution);
+
 
         // Set default volume
         if (volumeSlider != null)
@@ -72,8 +75,10 @@ public class MainMenu : MonoBehaviour
     public void SetResolution(int resolutionIndex)
     {
         Resolution res = resolutions[resolutionIndex];
-        Screen.SetResolution(res.width, res.height, Screen.fullScreen);
+        Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRate);
+        Debug.Log("Setting resolution to: " + res.width + "x" + res.height + " @ " + res.refreshRate + "Hz");
     }
+
 
     public void QuitGame()
     {

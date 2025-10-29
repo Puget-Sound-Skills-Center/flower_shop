@@ -118,6 +118,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private Dictionary<FlowerData, int> bouquetInventory = new Dictionary<FlowerData, int>();
+
+    public void AddBouquet(FlowerData flower)
+    {
+        if (flower == null)
+        {
+            Debug.LogWarning("GameManager: Tried to add a bouquet with null FlowerData.");
+            return;
+        }
+
+        if (!bouquetInventory.ContainsKey(flower))
+            bouquetInventory[flower] = 0;
+
+        bouquetInventory[flower]++;
+
+        Debug.Log($"Added 1 {flower.name} bouquet! Total: {bouquetInventory[flower]}");
+    }
+
+    public Dictionary<FlowerData, int> GetBouquetInventory()
+    {
+        return bouquetInventory;
+    }
+
+    public Dictionary<FlowerData, int> GetFlowerInventory()
+    {
+        // Returns current flowers harvested (already stored)
+        return new Dictionary<FlowerData, int> { { selectedFlower, flowerCount } };
+    }
+
+
+
     private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
 
     public void UpdateSelectedFlowerUI()

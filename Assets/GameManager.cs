@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +16,8 @@ public class GameManager : MonoBehaviour
     private Dictionary<FlowerData, int> seedInventory = new Dictionary<FlowerData, int>();
 
     [Header("Flower Inventory")]
-    public int flowerCount = 0;
+    private Dictionary<FlowerData, int> flowerInventory = new Dictionary<FlowerData, int>();
+
 
     [Header("UI References (assign in Inspector)")]
     public TextMeshProUGUI moneyText;
@@ -94,16 +96,31 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
-    public void AddFlower(int amount) { flowerCount += amount; UpdateFlowerUI(); }
-
-    // ---- UI Updates ----
-    public void UpdateAllUI()
+    public void AddFlower(FlowerData flower, int amount)
     {
-        UpdateMoneyUI();
-        UpdateSeedUI();
+        if (flower == null)
+        {
+            Debug.LogWarning("Tried to add a flower with null FlowerData.");
+            return;
+        }
+
+        if (!flowerInventory.ContainsKey(flower))
+            flowerInventory[flower] = 0;
+
+        flowerInventory[flower] += amount;
+
+        if (flowerInventory[flower] < 0)
+            flowerInventory[flower] = 0;
+
         UpdateFlowerUI();
-        UpdateSelectedFlowerUI();
     }
+
+    public int GetFlowerCount(FlowerData flower)
+    {
+        if (flower == null) return 0;
+        return flowerInventory.ContainsKey(flower) ? flowerInventory[flower] : 0;
+    }
+
 
     private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
 
@@ -143,13 +160,23 @@ public class GameManager : MonoBehaviour
 
     public Dictionary<FlowerData, int> GetFlowerInventory()
     {
-        // Returns current flowers harvested (already stored)
-        return new Dictionary<FlowerData, int> { { selectedFlower, flowerCount } };
+        return flowerInventory;
     }
 
 
 
-    private void UpdateFlowerUI() { if (flowerText != null) flowerText.text = "Flowers: " + flowerCount; }
+
+    private void UpdateFlowerUI()
+    {
+        if (flowerText == null) return;
+
+        int total = 0;
+        foreach (var kvp in flowerInventory)
+            total += kvp.Value;
+
+        flowerText.text = "Flowers: " + total;
+    }
+
 
     public void UpdateSelectedFlowerUI()
     {
@@ -168,4 +195,13 @@ public class GameManager : MonoBehaviour
         }
         UpdateSeedUI();
     }
+
+    public void UpdateAllUI()
+    {
+        UpdateMoneyUI();
+        UpdateSeedUI();
+        UpdateFlowerUI();
+        UpdateSelectedFlowerUI();
+    }
+
 }

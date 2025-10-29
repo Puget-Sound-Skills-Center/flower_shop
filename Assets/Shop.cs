@@ -32,25 +32,36 @@ public class Shop : MonoBehaviour
             return;
         }
 
-        int prevFlowerCount = GameManager.Instance.flowerCount;
+        var flowerInventory = GameManager.Instance.GetFlowerInventory();
 
-        // Sell all flowers for money
-        if (prevFlowerCount > 0)
+        int totalFlowers = 0;
+        int totalEarned = 0;
+
+        foreach (var kvp in flowerInventory)
         {
-            int totalEarned = prevFlowerCount * sellPricePerFlower;
-            GameManager.Instance.AddMoney(totalEarned);
-            GameManager.Instance.AddFlower(-prevFlowerCount);
+            totalFlowers += kvp.Value;
+            totalEarned += kvp.Value * sellPricePerFlower;
+            // Remove flowers from inventory
+            GameManager.Instance.AddFlower(kvp.Key, -kvp.Value);
+        }
 
+        if (totalFlowers > 0)
+        {
             if (sellResultText != null)
-                sellResultText.text = $"Sold {prevFlowerCount} flowers for ${totalEarned}!";
+                sellResultText.text = $"Sold {totalFlowers} flowers for ${totalEarned}!";
+            GameManager.Instance.AddMoney(totalEarned);
         }
         else
         {
             if (sellResultText != null)
                 sellResultText.text = "No flowers to sell!";
-            StartCoroutine(ResetResultText());
         }
+
+        LoadBouquetsOnShelf();
+
+        StartCoroutine(ResetResultText());
     }
+
 
     public void LoadBouquetsOnShelf()
     {

@@ -213,8 +213,9 @@ public class Pot : MonoBehaviour
         if (timerText != null) timerText.text = "";
 
         var gm = GameManager.Instance;
-        if (gm != null)
-            gm.AddFlower(1);
+        if (gm != null && currentFlower != null)
+            gm.AddFlower(currentFlower, 1);
+
 
         SpawnHarvestPopup();
     }

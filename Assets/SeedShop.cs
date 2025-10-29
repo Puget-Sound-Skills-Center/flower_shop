@@ -106,10 +106,15 @@ public class SeedShop : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        if (GameManager.Instance.flowerCount > 0)
+        var gm = GameManager.Instance;
+        if (gm == null) return;
+
+        var flower = gm.selectedFlower;
+        if (flower != null && gm.GetFlowerCount(flower) > 0)
         {
-            GameManager.Instance.AddFlower(-1);
-            GameManager.Instance.AddMoney(sellPrice);
+            gm.AddFlower(flower, -1);
+            gm.AddMoney(sellPrice);
+
 
             ShowSellPopup($"${sellPrice} Sold!", true);
         }

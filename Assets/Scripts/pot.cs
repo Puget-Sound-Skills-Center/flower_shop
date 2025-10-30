@@ -205,20 +205,36 @@ public class Pot : MonoBehaviour
 
         readyToHarvest = false;
         isGrowing = false;
+
+        // Keep a temporary reference before resetting
+        FlowerData harvestedFlower = currentFlower;
         currentFlower = null;
 
+        // Reset visuals
         if (potImage != null && emptyPotSprite != null)
             potImage.sprite = emptyPotSprite;
 
-        if (timerText != null) timerText.text = "";
+        if (timerText != null)
+            timerText.text = "";
 
         var gm = GameManager.Instance;
-        if (gm != null && currentFlower != null)
-            gm.AddFlower(currentFlower, 1);
-
+        if (gm != null && harvestedFlower != null)
+        {
+            gm.AddFlower(harvestedFlower, 1); // ✅ Add correct flower type
+            gm.UpdateAllUI();                  // ✅ Ensure UI refresh after update
+            Debug.Log($"Harvested {harvestedFlower.flowerName}, total now: {gm.GetFlowerCount(harvestedFlower)}");
+        }
+        else
+        {
+            Debug.LogWarning("Harvest failed: missing GameManager or harvestedFlower is null.");
+        }
 
         SpawnHarvestPopup();
+
+        Debug.Log($"Inventory now has {gm.GetFlowerInventory().Count} flower types tracked.");
+
     }
+
 
     private void SpawnHarvestPopup()
     {

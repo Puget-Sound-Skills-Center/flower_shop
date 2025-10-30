@@ -108,12 +108,12 @@ public class GameManager : MonoBehaviour
             flowerInventory[flower] = 0;
 
         flowerInventory[flower] += amount;
-
         if (flowerInventory[flower] < 0)
             flowerInventory[flower] = 0;
 
-        UpdateFlowerUI();
+        UpdateFlowerUI(); // UI refresh for totals
     }
+
 
     public int GetFlowerCount(FlowerData flower)
     {

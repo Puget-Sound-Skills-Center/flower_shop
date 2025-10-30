@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
@@ -89,14 +89,27 @@ public class BouquetDesk : MonoBehaviour
             case Stage.SelectFlower:
                 StartCoroutine(DoStage(Stage.Cut, "Cutting flower...", cutSprite));
                 break;
+
             case Stage.Cut:
                 StartCoroutine(DoStage(Stage.Wrap, "Wrapping flower...", wrappedSprite));
                 break;
+
             case Stage.Wrap:
                 StartCoroutine(DoStage(Stage.Ribbon, "Adding ribbon...", ribbonSprite));
                 break;
+
             case Stage.Ribbon:
+                // ✅ Instead of placing immediately, transition to next stage
+                StartCoroutine(DoStage(Stage.PlaceOnShelf, "Ready to place on shelf...", ribbonSprite));
+                break;
+
+            case Stage.PlaceOnShelf:
+                // ✅ Now we actually place it
                 PlaceOnShelf();
+                break;
+
+            case Stage.Complete:
+                stageText.text = "Bouquet complete!";
                 break;
         }
     }
@@ -105,6 +118,7 @@ public class BouquetDesk : MonoBehaviour
     {
         stageText.text = message;
         yield return new WaitForSeconds(stageDelay);
+
         flowerPreview.sprite = newSprite;
         currentStage = nextStage;
         stageText.text = $"Stage: {currentStage}";
@@ -112,8 +126,16 @@ public class BouquetDesk : MonoBehaviour
 
     private void PlaceOnShelf()
     {
-        stageText.text = "Bouquet ready!";
+        stageText.text = "Bouquet sent to shop!";
         GameManager.Instance.AddBouquet(selectedFlower);
+
+        currentStage = Stage.Complete;
+        StartCoroutine(CloseAfterDelay());
+    }
+
+    private IEnumerator CloseAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
         bouquetPanel.SetActive(false);
     }
 

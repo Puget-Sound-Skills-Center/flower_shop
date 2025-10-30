@@ -76,11 +76,20 @@ public class Shop : MonoBehaviour
 
         foreach (var kvp in GameManager.Instance.GetBouquetInventory())
         {
+            Debug.Log($"Loading bouquet: {kvp.Key.name} x{kvp.Value}");
             GameObject bouquet = Instantiate(bouquetDisplayPrefab, shelfArea);
             var img = bouquet.GetComponent<Image>();
             if (img != null)
+            {
                 img.sprite = kvp.Key.readySprite;
+                img.enabled = true;
+            }
+            else
+            {
+                Debug.LogWarning("Bouquet prefab missing Image component!");
+            }
         }
+
     }
 
     private IEnumerator ResetResultText()

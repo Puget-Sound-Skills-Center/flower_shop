@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using System.Collections.Generic;
 
 public class BouquetDesk : MonoBehaviour
 {
@@ -15,6 +14,10 @@ public class BouquetDesk : MonoBehaviour
     public Transform flowerSelectionArea;
     public Button nextButton;
     public Button closeButton;
+
+    [Header("Bouquet Shelf UI")]
+    public Transform bouquetShelfArea;          // Previously in Shop.cs
+    public GameObject bouquetDisplayPrefab;     // Previously in Shop.cs
 
     [Header("Sprites")]
     public Sprite defaultSprite;
@@ -30,57 +33,82 @@ public class BouquetDesk : MonoBehaviour
 
     private void Start()
     {
-        bouquetPanel.SetActive(false);
-        nextButton.onClick.AddListener(OnNextStage);
-        closeButton.onClick.AddListener(ClosePanel);
+        if (bouquetPanel != null)
+            bouquetPanel.SetActive(false);
+
+        if (nextButton != null)
+            nextButton.onClick.AddListener(OnNextStage);
+
+        if (closeButton != null)
+            closeButton.onClick.AddListener(ClosePanel);
     }
 
     public void OpenBouquetPanel()
     {
-        bouquetPanel.SetActive(true);
+        if (bouquetPanel != null)
+            bouquetPanel.SetActive(true);
+
         currentStage = Stage.SelectFlower;
-        stageText.text = "Stage: Select a Flower";
+        if (stageText != null)
+            stageText.text = "Stage: Select a Flower";
+
         SetupFlowerSelection();
-        flowerPreview.sprite = defaultSprite;
+
+        if (flowerPreview != null)
+            flowerPreview.sprite = defaultSprite;
+
+        if (nextButton != null)
+            nextButton.interactable = false;
     }
 
     private void SetupFlowerSelection()
     {
+        if (flowerSelectionArea == null) return;
+
         foreach (Transform child in flowerSelectionArea)
             Destroy(child.gameObject);
 
-        var flowers = GameManager.Instance.GetFlowerInventory();
+        var gm = GameManager.Instance;
+        if (gm == null) return;
+
+        var flowers = gm.GetFlowerInventory();
         foreach (var kvp in flowers)
         {
-            if (kvp.Value > 0)
-            {
-                GameObject buttonObj = new GameObject($"{kvp.Key.name}_Button");
-                buttonObj.transform.SetParent(flowerSelectionArea, false);
+            if (kvp.Key == null || kvp.Value <= 0) continue;
 
-                var btn = buttonObj.AddComponent<Button>();
-                var text = buttonObj.AddComponent<TextMeshProUGUI>();
-                text.text = $"{kvp.Key.name} ({kvp.Value})";
-                text.fontSize = 22;
-                text.alignment = TextAlignmentOptions.Center;
+            GameObject buttonObj = new GameObject($"{kvp.Key.name}_Button", typeof(RectTransform));
+            buttonObj.transform.SetParent(flowerSelectionArea, false);
 
-                FlowerData flower = kvp.Key;
-                btn.onClick.AddListener(() => SelectFlower(flower));
-            }
+            var btn = buttonObj.AddComponent<Button>();
+            var text = buttonObj.AddComponent<TextMeshProUGUI>();
+            text.text = $"{kvp.Key.name} ({kvp.Value})";
+            text.fontSize = 22;
+            text.alignment = TextAlignmentOptions.Center;
+
+            FlowerData flower = kvp.Key;
+            btn.onClick.AddListener(() => SelectFlower(flower));
         }
     }
 
     private void SelectFlower(FlowerData flower)
     {
         selectedFlower = flower;
-        flowerPreview.sprite = flower.readySprite;
-        stageText.text = $"Selected: {flower.name}";
+        if (flowerPreview != null && flower != null)
+            flowerPreview.sprite = flower.readySprite;
+
+        if (stageText != null && flower != null)
+            stageText.text = $"Selected: {flower.name}";
+
+        if (nextButton != null)
+            nextButton.interactable = true;
     }
 
     private void OnNextStage()
     {
         if (selectedFlower == null)
         {
-            stageText.text = "Please select a flower first!";
+            if (stageText != null)
+                stageText.text = "Please select a flower first!";
             return;
         }
 
@@ -89,58 +117,99 @@ public class BouquetDesk : MonoBehaviour
             case Stage.SelectFlower:
                 StartCoroutine(DoStage(Stage.Cut, "Cutting flower...", cutSprite));
                 break;
-
             case Stage.Cut:
                 StartCoroutine(DoStage(Stage.Wrap, "Wrapping flower...", wrappedSprite));
                 break;
-
             case Stage.Wrap:
                 StartCoroutine(DoStage(Stage.Ribbon, "Adding ribbon...", ribbonSprite));
                 break;
-
             case Stage.Ribbon:
-                // ✅ Instead of placing immediately, transition to next stage
                 StartCoroutine(DoStage(Stage.PlaceOnShelf, "Ready to place on shelf...", ribbonSprite));
                 break;
-
             case Stage.PlaceOnShelf:
-                // ✅ Now we actually place it
                 PlaceOnShelf();
                 break;
-
             case Stage.Complete:
-                stageText.text = "Bouquet complete!";
+                if (stageText != null)
+                    stageText.text = "Bouquet complete!";
                 break;
         }
     }
 
     private IEnumerator DoStage(Stage nextStage, string message, Sprite newSprite)
     {
-        stageText.text = message;
+        if (stageText != null)
+            stageText.text = message;
+
         yield return new WaitForSeconds(stageDelay);
 
-        flowerPreview.sprite = newSprite;
+        if (flowerPreview != null && newSprite != null)
+            flowerPreview.sprite = newSprite;
+
         currentStage = nextStage;
-        stageText.text = $"Stage: {currentStage}";
+        if (stageText != null)
+            stageText.text = $"Stage: {currentStage}";
     }
 
     private void PlaceOnShelf()
     {
-        stageText.text = "Bouquet sent to shop!";
+        if (selectedFlower == null)
+        {
+            if (stageText != null)
+                stageText.text = "Error: No flower selected!";
+            return;
+        }
+
+        // Add bouquet to GameManager
         GameManager.Instance.AddBouquet(selectedFlower);
 
-        currentStage = Stage.Complete;
-        StartCoroutine(CloseAfterDelay());
+        // Refresh bouquet shelf UI
+        UpdateBouquetShelfUI();
+
+        if (stageText != null)
+            stageText.text = "Bouquet sent to shelf!";
+
+        // Reset
+        selectedFlower = null;
+        if (bouquetPanel != null)
+            bouquetPanel.SetActive(false);
     }
 
-    private IEnumerator CloseAfterDelay()
+    private void UpdateBouquetShelfUI()
     {
-        yield return new WaitForSeconds(1f);
-        bouquetPanel.SetActive(false);
+        if (bouquetShelfArea == null || bouquetDisplayPrefab == null)
+        {
+            Debug.LogWarning("BouquetDesk: shelfArea or prefab not assigned.");
+            return;
+        }
+
+        // Clear existing display
+        foreach (Transform child in bouquetShelfArea)
+            Destroy(child.gameObject);
+
+        // Add all bouquets from GameManager
+        foreach (var kvp in GameManager.Instance.GetBouquetInventory())
+        {
+            for (int i = 0; i < kvp.Value; i++)
+            {
+                GameObject bouquetObj = Instantiate(bouquetDisplayPrefab, bouquetShelfArea);
+                var img = bouquetObj.GetComponent<Image>();
+                if (img != null)
+                {
+                    img.sprite = kvp.Key.readySprite;
+                    img.enabled = true;
+                }
+                else
+                {
+                    Debug.LogWarning("Bouquet prefab missing Image component!");
+                }
+            }
+        }
     }
 
     public void ClosePanel()
     {
-        bouquetPanel.SetActive(false);
+        if (bouquetPanel != null)
+            bouquetPanel.SetActive(false);
     }
 }

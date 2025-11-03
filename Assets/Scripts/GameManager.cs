@@ -204,4 +204,8 @@ public class GameManager : MonoBehaviour
         UpdateSelectedFlowerUI();
     }
 
+    internal void AddFlower(int v)
+    {
+        throw new NotImplementedException();
+    }
 }

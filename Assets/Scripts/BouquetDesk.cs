@@ -5,7 +5,7 @@ using System.Collections;
 
 public class BouquetDesk : MonoBehaviour
 {
-    public enum Stage { SelectFlower, Cut, Wrap, Ribbon, PlaceOnShelf, Complete }
+    public enum Stage { SelectFlower, Cut, Wrap, Ribbon, Complete }
 
     [Header("UI References")]
     public GameObject bouquetPanel;
@@ -16,8 +16,8 @@ public class BouquetDesk : MonoBehaviour
     public Button closeButton;
 
     [Header("Bouquet Shelf UI")]
-    public Transform bouquetShelfArea;          // Previously in Shop.cs
-    public GameObject bouquetDisplayPrefab;     // Previously in Shop.cs
+    public Transform bouquetShelfArea;
+    public GameObject bouquetDisplayPrefab;
 
     [Header("Sprites")]
     public Sprite defaultSprite;
@@ -124,10 +124,7 @@ public class BouquetDesk : MonoBehaviour
                 StartCoroutine(DoStage(Stage.Ribbon, "Adding ribbon...", ribbonSprite));
                 break;
             case Stage.Ribbon:
-                StartCoroutine(DoStage(Stage.PlaceOnShelf, "Ready to place on shelf...", ribbonSprite));
-                break;
-            case Stage.PlaceOnShelf:
-                PlaceOnShelf();
+                FinishBouquet(); // Skip "PlaceOnShelf"
                 break;
             case Stage.Complete:
                 if (stageText != null)
@@ -151,28 +148,33 @@ public class BouquetDesk : MonoBehaviour
             stageText.text = $"Stage: {currentStage}";
     }
 
-    private void PlaceOnShelf()
+    private void FinishBouquet()
     {
-        if (selectedFlower == null)
+        var gm = GameManager.Instance;
+        if (gm == null)
         {
-            if (stageText != null)
-                stageText.text = "Error: No flower selected!";
+            Debug.LogError("BouquetDesk: GameManager instance missing!");
             return;
         }
 
-        // Add bouquet to GameManager
-        GameManager.Instance.AddBouquet(selectedFlower);
+        // ✅ Remove one flower from inventory (consumed for bouquet)
+        gm.AddFlower(selectedFlower, -1);
 
-        // Refresh bouquet shelf UI
+        // ✅ Add the finished bouquet to the bouquet inventory
+        gm.AddBouquet(selectedFlower);
+
+        // ✅ Update the bouquet shelf UI to reflect the new addition
         UpdateBouquetShelfUI();
 
         if (stageText != null)
-            stageText.text = "Bouquet sent to shelf!";
+            stageText.text = $"Bouquet of {selectedFlower.name} completed!";
 
-        // Reset
+        // Reset selection
         selectedFlower = null;
-        if (bouquetPanel != null)
-            bouquetPanel.SetActive(false);
+        currentStage = Stage.Complete;
+
+        // Optionally auto-close after a delay
+        StartCoroutine(CloseAfterDelay());
     }
 
     private void UpdateBouquetShelfUI()
@@ -183,11 +185,9 @@ public class BouquetDesk : MonoBehaviour
             return;
         }
 
-        // Clear existing display
         foreach (Transform child in bouquetShelfArea)
             Destroy(child.gameObject);
 
-        // Add all bouquets from GameManager
         foreach (var kvp in GameManager.Instance.GetBouquetInventory())
         {
             for (int i = 0; i < kvp.Value; i++)
@@ -199,12 +199,15 @@ public class BouquetDesk : MonoBehaviour
                     img.sprite = kvp.Key.readySprite;
                     img.enabled = true;
                 }
-                else
-                {
-                    Debug.LogWarning("Bouquet prefab missing Image component!");
-                }
             }
         }
+    }
+
+    private IEnumerator CloseAfterDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+        if (bouquetPanel != null)
+            bouquetPanel.SetActive(false);
     }
 
     public void ClosePanel()

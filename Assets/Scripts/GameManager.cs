@@ -196,6 +196,22 @@ public class GameManager : MonoBehaviour
         UpdateSeedUI();
     }
 
+    private int potCount = 0;
+
+    public void AddPots(int amount)
+    {
+        potCount += amount;
+        if (potCount < 0) potCount = 0;
+    }
+
+    public int GetPots()
+    {
+        return potCount;
+    }
+
+    public int money;
+    
+
     public void UpdateAllUI()
     {
         UpdateMoneyUI();

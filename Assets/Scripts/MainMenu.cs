@@ -44,12 +44,11 @@ public class MainMenu : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
 
-
-        // Set default volume
-        if (volumeSlider != null)
+        if (volumeSlider != null && AudioManager.Instance != null)
         {
-            volumeSlider.value = AudioListener.volume;
+            volumeSlider.value = AudioManager.Instance.GetVolume();
         }
+
     }
 
     public void PlayGame()
@@ -69,8 +68,12 @@ public class MainMenu : MonoBehaviour
 
     public void SetVolume(float volume)
     {
-        AudioListener.volume = volume;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetVolume(volume);
+        }
     }
+
 
     public void SetResolution(int resolutionIndex)
     {

@@ -1,43 +1,91 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [Range(0f, 1f)]
-    public float masterVolume = 1f;
+    [Header("Audio Sources")]
+    public AudioSource musicSource;
+    public AudioSource sfxSource;
+
+    [Header("Volume Settings")]
+    [Range(0f, 1f)] public float musicVolume = 1f;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+
+    [Header("Sound Library")]
+    public List<Sound> sounds = new List<Sound>();
+
+    private Dictionary<string, Sound> soundDict = new Dictionary<string, Sound>();
 
     private void Awake()
     {
-        // Singleton pattern to persist across scenes
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        // Singleton pattern
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        // Load saved volume if available
-        if (PlayerPrefs.HasKey("MasterVolume"))
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        // Load saved volumes
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        ApplyVolumes();
+
+        // Build sound dictionary
+        foreach (Sound s in sounds)
         {
-            masterVolume = PlayerPrefs.GetFloat("MasterVolume");
-            AudioListener.volume = masterVolume;
+            soundDict[s.name] = s;
         }
     }
 
-    public void SetVolume(float volume)
+    private void ApplyVolumes()
     {
-        masterVolume = volume;
-        AudioListener.volume = masterVolume;
-        PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+        if (musicSource != null) musicSource.volume = musicVolume;
+        if (sfxSource != null) sfxSource.volume = sfxVolume;
     }
 
-    public float GetVolume()
+    public void SetMusicVolume(float volume)
     {
-        return masterVolume;
+        musicVolume = volume;
+        PlayerPrefs.SetFloat("MusicVolume", volume);
+        if (musicSource != null) musicSource.volume = volume;
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = volume;
+        PlayerPrefs.SetFloat("SFXVolume", volume);
+        if (sfxSource != null) sfxSource.volume = volume;
+    }
+
+    public void PlayMusic(string name)
+    {
+        if (soundDict.TryGetValue(name, out Sound s))
+        {
+            musicSource.clip = s.clip;
+            musicSource.loop = s.loop;
+            musicSource.Play();
+        }
+        else
+        {
+            Debug.LogWarning("Music not found: " + name);
+        }
+    }
+
+    public void PlaySFX(string name)
+    {
+        if (soundDict.TryGetValue(name, out Sound s))
+        {
+            sfxSource.PlayOneShot(s.clip, sfxVolume);
+        }
+        else
+        {
+            Debug.LogWarning("SFX not found: " + name);
+        }
     }
 }

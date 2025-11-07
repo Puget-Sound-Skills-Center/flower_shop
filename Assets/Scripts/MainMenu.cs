@@ -9,14 +9,14 @@ public class MainMenu : MonoBehaviour
     public GameObject settingsPanel;
 
     [Header("Settings UI")]
-    public Slider volumeSlider;
+    public Slider musicSlider;
+    public Slider sfxSlider;
     public TMP_Dropdown resolutionDropdown;
 
     private Resolution[] resolutions;
 
     private void Start()
     {
-      
         // Hide settings at start
         if (settingsPanel != null) settingsPanel.SetActive(false);
 
@@ -44,11 +44,21 @@ public class MainMenu : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
 
-        if (volumeSlider != null && AudioManager.Instance != null)
+        // Sync sliders with AudioManager
+        if (AudioManager.Instance != null)
         {
-            volumeSlider.value = AudioManager.Instance.GetVolume();
-        }
+            if (musicSlider != null)
+            {
+                musicSlider.value = AudioManager.Instance.musicVolume;
+                musicSlider.onValueChanged.AddListener(AudioManager.Instance.SetMusicVolume);
+            }
 
+            if (sfxSlider != null)
+            {
+                sfxSlider.value = AudioManager.Instance.sfxVolume;
+                sfxSlider.onValueChanged.AddListener(AudioManager.Instance.SetSFXVolume);
+            }
+        }
     }
 
     public void PlayGame()
@@ -66,22 +76,12 @@ public class MainMenu : MonoBehaviour
         if (settingsPanel != null) settingsPanel.SetActive(false);
     }
 
-    public void SetVolume(float volume)
-    {
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.SetVolume(volume);
-        }
-    }
-
-
     public void SetResolution(int resolutionIndex)
     {
         Resolution res = resolutions[resolutionIndex];
         Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRate);
         Debug.Log("Setting resolution to: " + res.width + "x" + res.height + " @ " + res.refreshRate + "Hz");
     }
-
 
     public void QuitGame()
     {

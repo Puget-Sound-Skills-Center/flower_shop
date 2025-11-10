@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.EventSystems;
 using System.Collections;
-using System.Collections.Generic;
 
 public class ComputerPanelManager : MonoBehaviour
 {
@@ -11,30 +10,22 @@ public class ComputerPanelManager : MonoBehaviour
     public CanvasGroup panelCanvasGroup;
     public Button closeButton;
 
-    [Header("Tab Buttons")]
-    public Button seedsTabButton;
+    [Header("Tabs")]
+    public GameObject seedTabContent;
+    public GameObject potsTabContent;
+    public Button seedTabButton;
     public Button potsTabButton;
-
-    [Header("Tab Content Areas")]
-    public Transform seedsTabContent;
-    public Transform potsTabContent;
-
-    [Header("Prefabs")]
-    public GameObject shopItemButtonPrefab;
-
-    [Header("Shop Data")]
-    public List<FlowerData> availableSeeds; // Use FlowerData for seeds
-    public int potCost = 10;
-    public int maxPotsToBuy = 10;
 
     [Header("Animation Settings")]
     public float fadeDuration = 0.25f;
 
     private bool isOpen = false;
     private Coroutine fadeRoutine;
+    private bool showingSeeds = true;
 
-    private enum Tab { Seeds, Pots }
-    private Tab currentTab;
+    [Header("Pot Prefab")]
+    public GameObject potButtonPrefab; // Assign your Pot prefab here
+
 
     private void Awake()
     {
@@ -42,13 +33,24 @@ public class ComputerPanelManager : MonoBehaviour
             computerPanel.SetActive(false);
 
         if (closeButton != null)
+        {
+            closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(ClosePanel);
+        }
 
-        if (seedsTabButton != null)
-            seedsTabButton.onClick.AddListener(() => SwitchTab(Tab.Seeds));
-
+        if (seedTabButton != null)
+        {
+            seedTabButton.onClick.RemoveAllListeners();
+            seedTabButton.onClick.AddListener(() => SwitchTab(true));
+        }
         if (potsTabButton != null)
-            potsTabButton.onClick.AddListener(() => SwitchTab(Tab.Pots));
+        {
+            potsTabButton.onClick.RemoveAllListeners();
+            potsTabButton.onClick.AddListener(() => SwitchTab(false));
+        }
+
+        // Start on the seeds tab
+        SwitchTab(true);
     }
 
     public void OpenPanel()
@@ -59,10 +61,14 @@ public class ComputerPanelManager : MonoBehaviour
         computerPanel.SetActive(true);
 
         if (panelCanvasGroup != null)
+        {
+            panelCanvasGroup.interactable = true;
+            panelCanvasGroup.blocksRaycasts = true;
             fadeRoutine = StartCoroutine(FadeCanvasGroup(panelCanvasGroup, 0f, 1f));
+        }
 
         isOpen = true;
-        SwitchTab(Tab.Seeds);
+        SwitchTab(true); // ensure seeds tab is active
     }
 
     public void ClosePanel()
@@ -70,10 +76,17 @@ public class ComputerPanelManager : MonoBehaviour
         if (computerPanel == null) return;
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
+
         if (panelCanvasGroup != null)
+        {
+            panelCanvasGroup.interactable = false;
+            panelCanvasGroup.blocksRaycasts = false;
             fadeRoutine = StartCoroutine(FadeAndDeactivate(panelCanvasGroup));
+        }
         else
+        {
             computerPanel.SetActive(false);
+        }
 
         isOpen = false;
     }
@@ -97,127 +110,93 @@ public class ComputerPanelManager : MonoBehaviour
         computerPanel.SetActive(false);
     }
 
-    // -------------------------------
-    // 🧩 TAB SWITCHING
-    // -------------------------------
-    private void SwitchTab(Tab tab)
+    // 🌱 TAB SWITCHING
+    private void SwitchTab(bool showSeeds)
     {
-        currentTab = tab;
-        bool isSeeds = (tab == Tab.Seeds);
+        showingSeeds = showSeeds;
 
-        if (seedsTabContent != null)
-            seedsTabContent.gameObject.SetActive(isSeeds);
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
 
-        if (potsTabContent != null)
-            potsTabContent.gameObject.SetActive(!isSeeds);
+        // Hide all tab content first
+        if (seedTabContent != null) seedTabContent.SetActive(false);
+        if (potsTabContent != null) potsTabContent.SetActive(false);
 
-        if (seedsTabButton != null)
-            HighlightTab(seedsTabButton, isSeeds);
-        if (potsTabButton != null)
-            HighlightTab(potsTabButton, !isSeeds);
-
-        if (isSeeds)
-            PopulateSeedShop();
+        // Show selected tab
+        if (showSeeds)
+        {
+            seedTabContent?.SetActive(true);
+        }
         else
-            PopulatePotShop();
+        {
+            potsTabContent?.SetActive(true);
+
+            // Populate pot buttons dynamically if prefab assigned
+            if (potButtonPrefab != null && potsTabContent != null)
+            {
+                // Clear previous children
+                foreach (Transform child in potsTabContent.transform)
+                    Destroy(child.gameObject);
+
+                // Example: create 5 pots (adjust as needed)
+                for (int i = 0; i < 5; i++)
+                {
+                    GameObject potBtn = Instantiate(potButtonPrefab, potsTabContent.transform);
+                    potBtn.name = $"PotButton_{i + 1}";
+
+                    // Optional: assign button text or price if prefab has a child TMP text
+                    var tmpText = potBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (tmpText != null)
+                        tmpText.text = $"Pot {i + 1} - $10"; // Example price
+
+                    // Optional: assign button click event
+                    var btn = potBtn.GetComponent<Button>();
+                    if (btn != null)
+                    {
+                        int price = 10; // Example price
+                        btn.onClick.AddListener(() => BuyPot(price));
+                    }
+                }
+            }
+        }
+
+        // Highlight tab buttons
+        HighlightTabButton(seedTabButton, showSeeds);
+        HighlightTabButton(potsTabButton, !showSeeds);
     }
 
-    private void HighlightTab(Button button, bool isActive)
+    private void BuyPot(int price)
     {
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.currentMoney >= price)
+        {
+            GameManager.Instance.SpendMoney(price);
+            Debug.Log($"Bought a pot for ${price}");
+            // Optional: Add pot inventory logic if you have it
+        }
+        else
+        {
+            Debug.Log("Not enough money to buy pot!");
+        }
+    }
+
+
+
+    private void HighlightTabButton(Button button, bool active)
+    {
+        if (button == null) return;
         var colors = button.colors;
-        colors.normalColor = isActive ? new Color(0.8f, 1f, 0.8f) : Color.white;
+        Color highlight = new Color(0.8f, 0.9f, 1f);
+        Color selected = new Color(0.7f, 0.85f, 1f);
+        colors.normalColor = active ? highlight : Color.white;
+        colors.selectedColor = active ? selected : Color.white;
+        colors.pressedColor = active ? highlight : Color.white;
+        colors.highlightedColor = active ? highlight : Color.white;
         button.colors = colors;
-    }
 
-    // -------------------------------
-    // 🌱 SEED SHOP
-    // -------------------------------
-    private void PopulateSeedShop()
-    {
-        if (seedsTabContent == null || shopItemButtonPrefab == null)
-        {
-            Debug.LogWarning("ComputerPanelManager: Missing references for Seed Shop.");
-            return;
-        }
-
-        foreach (Transform child in seedsTabContent)
-            Destroy(child.gameObject);
-
-        foreach (var flower in availableSeeds)
-        {
-            GameObject buttonObj = Instantiate(shopItemButtonPrefab, seedsTabContent);
-            var text = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
-            var button = buttonObj.GetComponent<Button>();
-
-            text.text = $"{flower.name} Seeds - ${flower.seedCost}";
-            button.onClick.AddListener(() => TryBuySeed(flower));
-        }
-    }
-
-    private void TryBuySeed(FlowerData flower)
-    {
-        var gm = GameManager.Instance;
-        if (gm == null) return;
-
-        if (gm.money >= flower.seedCost)
-        {
-            gm.AddMoney(-flower.seedCost);
-            gm.AddFlower(flower, 1); // Add one seed/flower
-            Debug.Log($"Bought seed: {flower.name}");
-        }
-        else
-        {
-            Debug.Log("Not enough money to buy seed!");
-        }
-    }
-
-    // -------------------------------
-    // 🏺 POT SHOP
-    // -------------------------------
-    private void PopulatePotShop()
-    {
-        if (potsTabContent == null || shopItemButtonPrefab == null)
-        {
-            Debug.LogWarning("ComputerPanelManager: Missing references for Pot Shop.");
-            return;
-        }
-
-        foreach (Transform child in potsTabContent)
-            Destroy(child.gameObject);
-
-        for (int i = 1; i <= maxPotsToBuy; i++)
-        {
-            int totalCost = i * potCost;
-
-            GameObject potItemObj = Instantiate(shopItemButtonPrefab, potsTabContent);
-            var potItem = potItemObj.GetComponent<PotShopItem>();
-
-            if (potItem != null)
-            {
-                potItem.SetupItem(i, totalCost);
-            }
-            else
-            {
-                Debug.LogWarning("PotShopItem prefab missing PotShopItem component!");
-            }
-        }
-    }
-
-
-    private void TryBuyPots(int count, int cost)
-    {
-        var gm = GameManager.Instance;
-        if (gm == null) return;
-
-        if (gm.money >= cost)
-        {
-            gm.AddMoney(-cost);
-            gm.AddPots(count);
-            Debug.Log($"Bought {count} pots for ${cost}");
-        }
-        else
-        {
-            Debug.Log("Not enough money to buy pots!");
-        }
+        var text = button.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        if (text != null)
+            text.color = active ? new Color(0.2f, 0.5f, 1f) : Color.black;
     }
 }

@@ -615,7 +615,7 @@ GameObject:
   - component: {fileID: 8243591104355725390}
   - component: {fileID: 5385504478002567652}
   m_Layer: 5
-  m_Name: PotShopItem
+  m_Name: PotShopItem 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -660,7 +660,6 @@ MonoBehaviour:
   costText: {fileID: 976057001744879510}
   ownedText: {fileID: 0}
   buyButton: {fileID: 8928425803780974565}
-  potName: 
-  bundleAmount: 10
-  cost: 15
-  owned: 0
+  potDisplayName: 
+  potsOnSale: 5
+  price: 10

@@ -5,52 +5,41 @@ using TMPro;
 public class PotShopItem : MonoBehaviour
 {
     [Header("UI References")]
-    public TMP_Text nameText;   // Shows the pot bundle name
-    public TMP_Text costText;   // Shows the cost ($)
-    public TMP_Text ownedText;  // Shows how many pots player owns
+    public TMP_Text nameText;
+    public TMP_Text costText;
+    public TMP_Text ownedText;
     public Button buyButton;
 
-    // Bundle data is fully assigned by PotsTab.cs
-    [HideInInspector] public string potName;
-    [HideInInspector] public int bundleAmount;
-    [HideInInspector] public int cost;
-    [HideInInspector] public int owned;
+    [HideInInspector] public string potDisplayName;
+    [HideInInspector] public int potsOnSale;
+    [HideInInspector] public int price;
+    private int owned;
 
-    // Callback to notify the parent tab when a purchase occurs
-    public System.Action OnPotPurchased;
+    public System.Action OnOwnedChanged;
 
-    private void Awake()
+    private void Start()
     {
-        // Always ensure buyButton is wired up
         if (buyButton != null)
         {
             buyButton.onClick.RemoveAllListeners();
             buyButton.onClick.AddListener(BuyPot);
         }
-        else
-        {
-            Debug.LogWarning("PotShopItem: buyButton not assigned.");
-        }
+
+        UpdateUI();
     }
 
-    /// <summary>
-    /// Update the UI with current bundle info
-    /// </summary>
     public void UpdateUI()
     {
         if (nameText != null)
-            nameText.text = $"{potName} ({bundleAmount})";
+            nameText.text = $"{potDisplayName} ({potsOnSale} pots)";
 
         if (costText != null)
-            costText.text = $"${cost}";
+            costText.text = $"${price}";
 
         if (ownedText != null)
             ownedText.text = $"Owned: {owned}";
     }
 
-    /// <summary>
-    /// Set the number of pots owned (used by PotsTab to refresh UI dynamically)
-    /// </summary>
     public void SetOwned(int ownedCount)
     {
         owned = ownedCount;
@@ -58,9 +47,6 @@ public class PotShopItem : MonoBehaviour
             ownedText.text = $"Owned: {owned}";
     }
 
-    /// <summary>
-    /// Handles buying this pot bundle
-    /// </summary>
     private void BuyPot()
     {
         var gm = GameManager.Instance;
@@ -70,22 +56,14 @@ public class PotShopItem : MonoBehaviour
             return;
         }
 
-        // Defensive: cost and bundleAmount should be positive
-        if (cost <= 0 || bundleAmount <= 0)
+        if (gm.SpendMoney(price))
         {
-            Debug.LogWarning($"PotShopItem: Invalid cost ({cost}) or bundleAmount ({bundleAmount}) for {potName}.");
-            return;
-        }
-
-        if (gm.SpendMoney(cost))
-        {
-            gm.AddPots(bundleAmount);
-            owned += bundleAmount;
+            gm.AddPots(potsOnSale);
+            owned += potsOnSale;
             UpdateUI();
 
-            Debug.Log($"Bought {bundleAmount} pots ({potName}) for ${cost}. Total owned: {owned}");
-
-            OnPotPurchased?.Invoke();
+            Debug.Log($"Bought {potsOnSale} pots for ${price}. Total owned: {owned}");
+            OnOwnedChanged?.Invoke();
         }
         else
         {

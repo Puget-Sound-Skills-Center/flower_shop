@@ -10,6 +10,10 @@ public class PotShopItem : MonoBehaviour
     public TMP_Text ownedText;
     public Button buyButton;
 
+    [Header("Backroom Parent")]
+    public GameObject growingAreaParent; // Assign the parent GameObject for spawned pots
+    public GameObject growingPotPrefab;  // Assign the actual Pot prefab to spawn
+
     [HideInInspector] public string potDisplayName;
     [HideInInspector] public int potsOnSale;
     [HideInInspector] public int price;
@@ -17,7 +21,7 @@ public class PotShopItem : MonoBehaviour
 
     public System.Action OnOwnedChanged;
 
-    private void Start()
+    private void Awake()
     {
         if (buyButton != null)
         {
@@ -56,18 +60,33 @@ public class PotShopItem : MonoBehaviour
             return;
         }
 
-        if (gm.SpendMoney(price))
-        {
-            gm.AddPots(potsOnSale);
-            owned += potsOnSale;
-            UpdateUI();
-
-            Debug.Log($"Bought {potsOnSale} pots for ${price}. Total owned: {owned}");
-            OnOwnedChanged?.Invoke();
-        }
-        else
+        if (!gm.SpendMoney(price))
         {
             Debug.Log("Not enough money to buy pot bundle.");
+            return;
         }
+
+        // Add pots to inventory
+        gm.AddPots(potsOnSale);
+        owned += potsOnSale;
+        UpdateUI();
+
+        // Spawn the pots in the backroom using just a parent GameObject
+        if (growingAreaParent != null && growingPotPrefab != null)
+        {
+            for (int i = 0; i < potsOnSale; i++)
+            {
+                GameObject newPot = Instantiate(growingPotPrefab, growingAreaParent.transform);
+                // Optional: offset each pot slightly so they don’t overlap
+                newPot.transform.localPosition = new Vector3(i * 1.5f, 0, 0);
+                newPot.transform.localRotation = Quaternion.identity;
+                newPot.transform.localScale = Vector3.one;
+            }
+        }
+
+        Debug.Log($"Bought {potsOnSale} pots ({potDisplayName}) for ${price}. Total owned: {owned}");
+
+        // Notify parent UI to refresh if needed
+        OnOwnedChanged?.Invoke();
     }
 }

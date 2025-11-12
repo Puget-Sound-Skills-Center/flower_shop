@@ -1,43 +1,36 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class PotsTab : MonoBehaviour
 {
     [Header("Prefabs & Layout")]
-    public Transform potGridParent; // Parent to hold pot prefabs
-    public PotShopItem[] potPrefabs; // Assign your prefabs here (Small, Medium, Large, etc.)
+    public Transform potGridParent;         // Parent to hold pot prefabs
+    public PotShopItem[] potPrefabs;        // Assign each unique prefab here
 
     [Header("Bundle Settings")]
     public string[] potNames = { "Small Pot Bundle", "Medium Pot Bundle", "Large Pot Bundle", "Mega Pot Bundle" };
-    public int[] potAmounts = { 5, 10, 20, 50 };  // Pots per bundle
-    public int[] potPrices = { 10, 20, 35, 75 };  // Price per bundle
+    public int[] potAmounts = { 5, 10, 20, 50 };
+    public int[] potPrices = { 10, 20, 35, 75 };
 
     private readonly List<PotShopItem> potItems = new();
 
     private void OnEnable()
     {
-        InitializePotItems();
+        SpawnPotItems();
         RefreshOwnedCounts();
     }
 
-    private void InitializePotItems()
+    private void SpawnPotItems()
     {
-        // Clear old items
+        // Clean old children
         foreach (Transform child in potGridParent)
-        {
             Destroy(child.gameObject);
-        }
+
         potItems.Clear();
 
-        // Safety checks
-        if (potGridParent == null)
+        if (potGridParent == null || potPrefabs == null || potPrefabs.Length == 0)
         {
-            Debug.LogWarning("PotsTab: potGridParent not assigned!");
-            return;
-        }
-        if (potPrefabs == null || potPrefabs.Length == 0)
-        {
-            Debug.LogWarning("PotsTab: No pot prefabs assigned!");
+            Debug.LogWarning("PotsTab: Missing references!");
             return;
         }
 
@@ -45,22 +38,23 @@ public class PotsTab : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            // Instantiate prefab into the parent container
             PotShopItem prefab = potPrefabs[i];
             PotShopItem item = Instantiate(prefab, potGridParent);
 
-            // Assign data
+            // Assign bundle data directly
             item.potDisplayName = potNames[i];
             item.potsOnSale = potAmounts[i];
             item.price = potPrices[i];
 
-            // Initialize UI
+            // Set initial owned count
+            item.SetOwned(GameManager.Instance != null ? GameManager.Instance.GetPots() : 0);
+
+            // Refresh the UI
             item.UpdateUI();
 
-            // Hook event for refreshing ownership
+            // Hook callback for dynamic updates
             item.OnOwnedChanged = RefreshOwnedCounts;
 
-            // Add to tracking list
             potItems.Add(item);
         }
     }
@@ -70,8 +64,6 @@ public class PotsTab : MonoBehaviour
         int ownedCount = GameManager.Instance != null ? GameManager.Instance.GetPots() : 0;
 
         foreach (var item in potItems)
-        {
             item.SetOwned(ownedCount);
-        }
     }
 }

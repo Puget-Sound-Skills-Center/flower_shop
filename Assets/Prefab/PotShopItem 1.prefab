@@ -660,6 +660,4 @@ MonoBehaviour:
   costText: {fileID: 976057001744879510}
   ownedText: {fileID: 0}
   buyButton: {fileID: 8928425803780974565}
-  potDisplayName: 
-  potsOnSale: 5
-  price: 10
+  potSpawner: {fileID: 0}

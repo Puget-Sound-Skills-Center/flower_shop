@@ -23,9 +23,10 @@ public class ComputerPanelManager : MonoBehaviour
     private Coroutine fadeRoutine;
     private bool showingSeeds = true;
 
-    [Header("Pot Prefab")]
-    public GameObject potButtonPrefab; // Assign your Pot prefab here
-
+    [Header("Tab Panel Sprite")]
+    public Image panelBackgroundImage; // Assign the panel's Image component here
+    public Sprite seedTabSprite;       // Sprite for the seeds tab
+    public Sprite potsTabSprite;       // Sprite for the pots tab
 
     private void Awake()
     {
@@ -43,6 +44,7 @@ public class ComputerPanelManager : MonoBehaviour
             seedTabButton.onClick.RemoveAllListeners();
             seedTabButton.onClick.AddListener(() => SwitchTab(true));
         }
+
         if (potsTabButton != null)
         {
             potsTabButton.onClick.RemoveAllListeners();
@@ -68,7 +70,7 @@ public class ComputerPanelManager : MonoBehaviour
         }
 
         isOpen = true;
-        SwitchTab(true); // ensure seeds tab is active
+        SwitchTab(true);
     }
 
     public void ClosePanel()
@@ -126,38 +128,18 @@ public class ComputerPanelManager : MonoBehaviour
         if (showSeeds)
         {
             seedTabContent?.SetActive(true);
+
+            // Swap background sprite
+            if (panelBackgroundImage != null && seedTabSprite != null)
+                panelBackgroundImage.sprite = seedTabSprite;
         }
         else
         {
             potsTabContent?.SetActive(true);
 
-            // Populate pot buttons dynamically if prefab assigned
-            if (potButtonPrefab != null && potsTabContent != null)
-            {
-                // Clear previous children
-                foreach (Transform child in potsTabContent.transform)
-                    Destroy(child.gameObject);
-
-                // Example: create 5 pots (adjust as needed)
-                for (int i = 0; i < 5; i++)
-                {
-                    GameObject potBtn = Instantiate(potButtonPrefab, potsTabContent.transform);
-                    potBtn.name = $"PotButton_{i + 1}";
-
-                    // Optional: assign button text or price if prefab has a child TMP text
-                    var tmpText = potBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                    if (tmpText != null)
-                        tmpText.text = $"Pot {i + 1} - $10"; // Example price
-
-                    // Optional: assign button click event
-                    var btn = potBtn.GetComponent<Button>();
-                    if (btn != null)
-                    {
-                        int price = 10; // Example price
-                        btn.onClick.AddListener(() => BuyPot(price));
-                    }
-                }
-            }
+            // Swap background sprite
+            if (panelBackgroundImage != null && potsTabSprite != null)
+                panelBackgroundImage.sprite = potsTabSprite;
         }
 
         // Highlight tab buttons
@@ -165,27 +147,11 @@ public class ComputerPanelManager : MonoBehaviour
         HighlightTabButton(potsTabButton, !showSeeds);
     }
 
-    private void BuyPot(int price)
-    {
-        if (GameManager.Instance == null) return;
-
-        if (GameManager.Instance.currentMoney >= price)
-        {
-            GameManager.Instance.SpendMoney(price);
-            Debug.Log($"Bought a pot for ${price}");
-            // Optional: Add pot inventory logic if you have it
-        }
-        else
-        {
-            Debug.Log("Not enough money to buy pot!");
-        }
-    }
-
-
 
     private void HighlightTabButton(Button button, bool active)
     {
         if (button == null) return;
+
         var colors = button.colors;
         Color highlight = new Color(0.8f, 0.9f, 1f);
         Color selected = new Color(0.7f, 0.85f, 1f);

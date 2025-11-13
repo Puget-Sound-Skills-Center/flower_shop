@@ -660,9 +660,9 @@ MonoBehaviour:
   costText: {fileID: 976057001744879510}
   ownedText: {fileID: 0}
   buyButton: {fileID: 8928425803780974565}
+  growingAreaManager: {fileID: 0}
   growingAreaParent: {fileID: 0}
   growingPotPrefab: {fileID: 8852064833998030599, guid: 793dca911117e4a498aa793644047ae0, type: 3}
-  growingAreaManager: {fileID: 0}
   potDisplayName: 
   potsOnSale: 0
   price: 0

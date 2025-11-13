@@ -21,6 +21,9 @@ public class ComputerPanelManager : MonoBehaviour
     public Sprite seedTabSprite;       // Sprite for the seeds tab
     public Sprite potsTabSprite;       // Sprite for the pots tab
 
+    [Header("Growing Area Reference")]
+    public GrowingAreaManager growingAreaManager;
+    // Assign the GrowingAreaManager from your scene here
 
     [Header("Animation Settings")]
     public float fadeDuration = 0.25f;
@@ -129,25 +132,36 @@ public class ComputerPanelManager : MonoBehaviour
         if (showSeeds)
         {
             seedTabContent?.SetActive(true);
-
-            // Swap background sprite
             if (panelBackgroundImage != null && seedTabSprite != null)
                 panelBackgroundImage.sprite = seedTabSprite;
         }
         else
         {
             potsTabContent?.SetActive(true);
-
-            // Swap background sprite
             if (panelBackgroundImage != null && potsTabSprite != null)
                 panelBackgroundImage.sprite = potsTabSprite;
+
+            // 🪴 Assign GrowingAreaManager to all PotShopItem prefabs currently in the PotsTabContent
+            if (growingAreaManager != null && potsTabContent != null)
+            {
+                foreach (Transform child in potsTabContent.transform)
+                {
+                    PotShopItem shopItem = child.GetComponent<PotShopItem>();
+                    if (shopItem != null)
+                    {
+                        shopItem.growingAreaManager = growingAreaManager;
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning("ComputerPanelManager: GrowingAreaManager or potsTabContent not assigned.");
+            }
         }
 
-        // Highlight tab buttons
         HighlightTabButton(seedTabButton, showSeeds);
         HighlightTabButton(potsTabButton, !showSeeds);
     }
-
 
     private void HighlightTabButton(Button button, bool active)
     {

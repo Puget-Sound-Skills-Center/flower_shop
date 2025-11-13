@@ -10,31 +10,20 @@ public class PotShopItem : MonoBehaviour
     public TMP_Text ownedText;
     public Button buyButton;
 
-    [Header("Backroom Assignment")]
-    [Tooltip("Assign either the GrowingAreaManager script or its parent GameObject.")]
-    public GrowingAreaManager growingAreaManager; // Preferred: assign script directly
-    public GameObject growingAreaParent;          // Alternative: assign parent GameObject
-
-    [Header("Pot Prefab")]
-    public GameObject growingPotPrefab; // Assign the actual Pot prefab to spawn
+    [Header("Growing Area")]
+    public GrowingAreaManager growingAreaManager; // Reference to the GrowingAreaManager
+    public GameObject growingPotPrefab;           // Prefab to spawn in the backroom
 
     [HideInInspector] public string potDisplayName;
     [HideInInspector] public int potsOnSale;
     [HideInInspector] public int price;
+
     private int owned;
 
     public System.Action OnOwnedChanged;
 
     private void Awake()
     {
-        // If only the parent is assigned, get the GrowingAreaManager from it
-        if (growingAreaManager == null && growingAreaParent != null)
-        {
-            growingAreaManager = growingAreaParent.GetComponent<GrowingAreaManager>();
-            if (growingAreaManager == null)
-                Debug.LogWarning("PotShopItem: growingAreaParent assigned but no GrowingAreaManager found on it.");
-        }
-
         if (buyButton != null)
         {
             buyButton.onClick.RemoveAllListeners();
@@ -65,35 +54,40 @@ public class PotShopItem : MonoBehaviour
 
     private void BuyPot()
     {
-        var gm = GameManager.Instance;
-        if (gm == null)
+        if (growingAreaManager == null || growingPotPrefab == null)
         {
-            Debug.LogWarning("PotShopItem: GameManager not found!");
+            Debug.LogWarning("PotShopItem: GrowingAreaManager or growingPotPrefab not assigned.");
             return;
         }
 
-        if (!gm.SpendMoney(price))
+        // Check available space
+        int availableSpace = growingAreaManager.maxPots - growingAreaManager.GetCurrentPotCount();
+        if (availableSpace <= 0)
+        {
+            Debug.Log("Cannot buy more pots. Growing area is full.");
+            return;
+        }
+
+        // Determine how many pots we can actually spawn
+        int potsToSpawn = Mathf.Min(potsOnSale, availableSpace);
+
+        // Check if player has enough money
+        var gm = GameManager.Instance;
+        if (gm == null || !gm.SpendMoney(price))
         {
             Debug.Log("Not enough money to buy pot bundle.");
             return;
         }
 
-        // Update inventory
-        gm.AddPots(potsOnSale);
-        owned += potsOnSale;
+        // Add pots to inventory
+        gm.AddPots(potsToSpawn);
+        owned += potsToSpawn;
         UpdateUI();
 
-        // Spawn pots in the growing area using GrowingAreaManager
-        if (growingAreaManager != null)
-        {
-            growingAreaManager.AddPots(potsOnSale);
-        }
-        else
-        {
-            Debug.LogWarning("PotShopItem: No GrowingAreaManager assigned or found on parent.");
-        }
+        // Spawn pots in the growing area
+        growingAreaManager.AddPots(potsToSpawn, growingPotPrefab);
 
-        Debug.Log($"Bought {potsOnSale} pots ({potDisplayName}) for ${price}. Total owned: {owned}");
+        Debug.Log($"Bought {potsToSpawn} pots ({potDisplayName}) for ${price}. Total owned: {owned}");
 
         OnOwnedChanged?.Invoke();
     }

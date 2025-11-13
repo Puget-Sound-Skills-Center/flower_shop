@@ -16,17 +16,18 @@ public class ComputerPanelManager : MonoBehaviour
     public Button seedTabButton;
     public Button potsTabButton;
 
+    [Header("Tab Panel Sprite")]
+    public Image panelBackgroundImage; // Assign the panel's Image component here
+    public Sprite seedTabSprite;       // Sprite for the seeds tab
+    public Sprite potsTabSprite;       // Sprite for the pots tab
+
+
     [Header("Animation Settings")]
     public float fadeDuration = 0.25f;
 
     private bool isOpen = false;
     private Coroutine fadeRoutine;
     private bool showingSeeds = true;
-
-    [Header("Tab Panel Sprite")]
-    public Image panelBackgroundImage; // Assign the panel's Image component here
-    public Sprite seedTabSprite;       // Sprite for the seeds tab
-    public Sprite potsTabSprite;       // Sprite for the pots tab
 
     private void Awake()
     {

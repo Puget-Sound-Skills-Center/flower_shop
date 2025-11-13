@@ -10,9 +10,13 @@ public class PotShopItem : MonoBehaviour
     public TMP_Text ownedText;
     public Button buyButton;
 
-    [Header("Backroom Parent")]
-    public GameObject growingAreaParent; // Assign the parent GameObject for spawned pots
-    public GameObject growingPotPrefab;  // Assign the actual Pot prefab to spawn
+    [Header("Backroom Assignment")]
+    [Tooltip("Assign either the GrowingAreaManager script or its parent GameObject.")]
+    public GrowingAreaManager growingAreaManager; // Preferred: assign script directly
+    public GameObject growingAreaParent;          // Alternative: assign parent GameObject
+
+    [Header("Pot Prefab")]
+    public GameObject growingPotPrefab; // Assign the actual Pot prefab to spawn
 
     [HideInInspector] public string potDisplayName;
     [HideInInspector] public int potsOnSale;
@@ -23,6 +27,14 @@ public class PotShopItem : MonoBehaviour
 
     private void Awake()
     {
+        // If only the parent is assigned, get the GrowingAreaManager from it
+        if (growingAreaManager == null && growingAreaParent != null)
+        {
+            growingAreaManager = growingAreaParent.GetComponent<GrowingAreaManager>();
+            if (growingAreaManager == null)
+                Debug.LogWarning("PotShopItem: growingAreaParent assigned but no GrowingAreaManager found on it.");
+        }
+
         if (buyButton != null)
         {
             buyButton.onClick.RemoveAllListeners();
@@ -66,27 +78,23 @@ public class PotShopItem : MonoBehaviour
             return;
         }
 
-        // Add pots to inventory
+        // Update inventory
         gm.AddPots(potsOnSale);
         owned += potsOnSale;
         UpdateUI();
 
-        // Spawn the pots in the backroom using just a parent GameObject
-        if (growingAreaParent != null && growingPotPrefab != null)
+        // Spawn pots in the growing area using GrowingAreaManager
+        if (growingAreaManager != null)
         {
-            for (int i = 0; i < potsOnSale; i++)
-            {
-                GameObject newPot = Instantiate(growingPotPrefab, growingAreaParent.transform);
-                // Optional: offset each pot slightly so they don’t overlap
-                newPot.transform.localPosition = new Vector3(i * 1.5f, 0, 0);
-                newPot.transform.localRotation = Quaternion.identity;
-                newPot.transform.localScale = Vector3.one;
-            }
+            growingAreaManager.AddPots(potsOnSale);
+        }
+        else
+        {
+            Debug.LogWarning("PotShopItem: No GrowingAreaManager assigned or found on parent.");
         }
 
         Debug.Log($"Bought {potsOnSale} pots ({potDisplayName}) for ${price}. Total owned: {owned}");
 
-        // Notify parent UI to refresh if needed
         OnOwnedChanged?.Invoke();
     }
 }

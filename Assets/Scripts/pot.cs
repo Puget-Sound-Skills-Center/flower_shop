@@ -1,292 +1,236 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
+using System;
 
+[RequireComponent(typeof(Collider2D))]
 public class Pot : MonoBehaviour
 {
-    [Header("Pot Sprites")]
+    [Header("Sprites")]
     public Sprite emptyPotSprite;
-    public Sprite sproutSprite;
+    public Sprite sproutSprite; // optional
 
     [Header("Growth Timing")]
-    [Tooltip("Seconds to show empty pot before sprout")]
-    public float emptyToSproutTime = 0.5f;
-    [Tooltip("Percent (0-1) of growTime spent in sprout stage")]
-    [Range(0f, 1f)]
-    public float sproutPercent = 0.2f;
+    public float sproutPercent = 0.2f; // percent of total time for sprout stage
 
-    [Header("Timer UI")]
-    public TextMeshProUGUI timerText;
+    [Header("UI")]
+    public TextMeshProUGUI timerText; // assign in inspector (can be null)
 
-    [Header("Harvest Popup")]
+    [Header("Harvest popup")]
     public GameObject harvestPopupPrefab;
     public Transform popupSpawnPoint;
-    [Tooltip("Optional: assign the Canvas to parent harvest popups to. If null code will attempt to FindObjectOfType<Canvas>().")]
-    public Canvas targetCanvas;
+    public Canvas targetCanvas; // optional: where to parent popups
 
-    private Image potImage;                       // UI Image used for pot visuals
-    private Coroutine growRoutine;
+    // --- internals ---
+    private UnityEngine.UI.Image uiImage;      // if pot is UI Image
+    private SpriteRenderer spriteRenderer;    // if pot is world sprite
+
+    // growth state
     private bool isGrowing = false;
     private bool readyToHarvest = false;
-    private FlowerData currentFlower;
+    private double plantedAtReal = 0.0;   // GlobalTime.RealNow when planted
+    private double growDuration = 0.0;    // seconds total
+    private FlowerData currentFlower;     // the FlowerData instance that this pot is growing
 
     private void Awake()
     {
-        potImage = GetComponentInChildren<Image>();
-        if (potImage == null)
-        {
-            Debug.LogError($"Pot ({name}): No UI Image found in children. Disabling Pot component.");
-            enabled = false;
-            return;
-        }
+        uiImage = GetComponentInChildren<UnityEngine.UI.Image>(); // for UI pot prefab
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // initialize visuals
-        potImage.sprite = emptyPotSprite;
+        // set initial sprite
+        if (uiImage != null && emptyPotSprite != null) uiImage.sprite = emptyPotSprite;
+        if (spriteRenderer != null && emptyPotSprite != null) spriteRenderer.sprite = emptyPotSprite;
+
         if (timerText != null) timerText.text = "";
-
-        // ensure values are sane
-        sproutPercent = Mathf.Clamp01(sproutPercent);
-        emptyToSproutTime = Mathf.Max(0f, emptyToSproutTime);
+        // ensure collider exists (for clicks)
+        if (GetComponent<Collider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
     }
 
-    private void OnValidate()
+    private void OnEnable()
     {
-        // editor-time clamping to avoid invalid inspector values
-        sproutPercent = Mathf.Clamp01(sproutPercent);
-        emptyToSproutTime = Mathf.Max(0f, emptyToSproutTime);
+        // update visuals immediately when re-enabled (room re-entered)
+        RefreshVisuals();
     }
 
-    /// <summary>
-    /// Called by UI Button OnClick() (hook this in the Button component).
-    /// If pot is ready to harvest it will harvest; otherwise it will attempt to plant.
-    /// </summary>
-    public void OnGrowButtonClick()
+    private void Update()
     {
-        if (!enabled || potImage == null)
+        // If not growing, nothing to update (except maybe a little idle behavior)
+        if (!isGrowing) return;
+
+        // compute elapsed using GlobalTime where possible
+        double now = (GlobalTime.Instance != null) ? GlobalTime.Instance.RealNow : Time.realtimeSinceStartupAsDouble;
+        double elapsed = now - plantedAtReal;
+
+        // clamp elapsed
+        if (elapsed < 0) elapsed = 0;
+
+        // If elapsed >= growDuration -> finish
+        if (elapsed >= growDuration)
         {
-            Debug.LogWarning($"Pot ({name}): OnGrowButtonClick called but component is disabled or missing Image.");
+            FinishGrowth();
             return;
         }
 
-        var gm = GameManager.Instance;
-        if (gm == null)
-        {
-            Debug.LogError("Pot: GameManager instance missing.");
-            return;
-        }
+        // Update timer text
+        double remaining = growDuration - elapsed;
+        if (timerText != null)
+            timerText.text = Mathf.Ceil((float)remaining) + "s";
 
-        if (readyToHarvest)
-        {
-            HarvestFlower();
-            return;
-        }
-
-        if (isGrowing)
-        {
-            Debug.Log("Pot: Already growing.");
-            return;
-        }
-
-        // select flower to plant (prefers selectedFlower, falls back to any available)
-        FlowerData flowerToPlant = gm.GetPlantableFlower(gm.selectedFlower);
-        if (flowerToPlant == null)
-        {
-            Debug.Log("Pot: No seeds available to plant.");
-            return;
-        }
-
-        // consume seed (GameManager.UseSeed is authoritative)
-        bool used = gm.UseSeed(flowerToPlant);
-        if (!used)
-        {
-            Debug.LogWarning($"Pot: Failed to use seed for {flowerToPlant?.flowerName ?? "unknown"}.");
-            return;
-        }
-
-        currentFlower = flowerToPlant;
-        StartGrowthRoutine();
+        // Update sprite stage based on progress
+        UpdateSpriteByProgress((float)(elapsed / growDuration));
     }
 
-    private void StartGrowthRoutine()
+    // Called when player plants a seed into this pot
+    // (Call this from wherever you currently initiate StartGrowth)
+    public void StartGrowth(FlowerData flower)
     {
-        if (currentFlower == null)
+        if (flower == null)
         {
-            Debug.LogError("Pot: currentFlower is null when starting growth. Aborting.");
+            Debug.LogWarning("Pot.StartGrowth: flower null.");
             return;
         }
 
-        if (growRoutine != null) StopCoroutine(growRoutine);
-        growRoutine = StartCoroutine(GrowthCoroutine());
-    }
-
-    private IEnumerator GrowthCoroutine()
-    {
+        // consume check should be done by caller (GameManager.UseSeed)
+        currentFlower = flower;
+        growDuration = Mathf.Max(0.1f, flower.growTime); // in seconds
+        plantedAtReal = (GlobalTime.Instance != null) ? GlobalTime.Instance.RealNow : Time.realtimeSinceStartupAsDouble;
         isGrowing = true;
         readyToHarvest = false;
 
-        // defensive snapshot
-        float elapsed = 0f;
-        float growTime = (currentFlower != null) ? currentFlower.growTime : 0f;
-        Sprite[] stages = (currentFlower != null) ? currentFlower.growthStages : null;
+        // immediate visual
+        if (timerText != null) timerText.text = Mathf.Ceil((float)growDuration) + "s";
+        if (sproutSprite != null) SetSprite(sproutSprite);
+        else if (flower.growthStages != null && flower.growthStages.Length > 0 && flower.growthStages[0] != null)
+            SetSprite(flower.growthStages[0]);
+    }
 
-        // ensure starting sprite
-        if (potImage != null && emptyPotSprite != null)
-            potImage.sprite = emptyPotSprite;
+    private void UpdateSpriteByProgress(float progress01)
+    {
+        if (currentFlower == null) return;
+        Sprite[] stages = currentFlower.growthStages;
+        if (stages == null || stages.Length == 0) return;
 
-        if (emptyToSproutTime > 0f)
-            yield return new WaitForSeconds(emptyToSproutTime);
+        // Sprout stage handled earlier; now map progress to stages[1..last]
+        // We'll compute stageIndex from 0..stages.Length-1
+        int totalStages = stages.Length;
+        int stageIndex = Mathf.Clamp(Mathf.FloorToInt(progress01 * (totalStages - 1)), 0, totalStages - 1);
+        // set sprite if valid
+        if (stages[stageIndex] != null)
+            SetSprite(stages[stageIndex]);
+    }
 
-        // sprout stage
-        float sproutTime = Mathf.Clamp01(sproutPercent) * growTime;
-        float sproutElapsed = 0f;
+    private void SetSprite(Sprite s)
+    {
+        if (uiImage != null) uiImage.sprite = s;
+        if (spriteRenderer != null) spriteRenderer.sprite = s;
+    }
 
-        if (potImage != null)
-        {
-            if (sproutSprite != null)
-                potImage.sprite = sproutSprite;
-            else if (stages != null && stages.Length > 0 && stages[0] != null)
-                potImage.sprite = stages[0];
-            else if (emptyPotSprite != null)
-                potImage.sprite = emptyPotSprite;
-        }
-
-        while (sproutElapsed < sproutTime)
-        {
-            sproutElapsed += Time.deltaTime;
-            elapsed += Time.deltaTime;
-            if (timerText != null)
-                timerText.text = Mathf.Ceil(Mathf.Max(0f, growTime - elapsed)) + "s";
-            yield return null;
-        }
-
-        // remaining growth stages
-        float remainingTime = Mathf.Max(0f, growTime - sproutTime);
-        float stageElapsed = 0f;
-        int numStages = stages != null ? stages.Length : 0;
-
-        while (stageElapsed < remainingTime)
-        {
-            stageElapsed += Time.deltaTime;
-            elapsed += Time.deltaTime;
-            if (timerText != null)
-                timerText.text = Mathf.Ceil(Mathf.Max(0f, growTime - elapsed)) + "s";
-
-            if (potImage != null && numStages > 1)
-            {
-                float stageProgress = remainingTime > 0f ? stageElapsed / remainingTime : 1f;
-                int stageIndex = 1 + Mathf.FloorToInt(stageProgress * (numStages - 2));
-                stageIndex = Mathf.Clamp(stageIndex, 1, numStages - 1);
-                if (stages[stageIndex] != null)
-                    potImage.sprite = stages[stageIndex];
-            }
-
-            yield return null;
-        }
-
-        // finished
+    private void FinishGrowth()
+    {
         isGrowing = false;
         readyToHarvest = true;
 
-        if (potImage != null && currentFlower != null && currentFlower.readySprite != null)
-            potImage.sprite = currentFlower.readySprite;
+        if (currentFlower != null && currentFlower.readySprite != null)
+            SetSprite(currentFlower.readySprite);
+        else if (emptyPotSprite != null)
+            SetSprite(emptyPotSprite);
 
         if (timerText != null) timerText.text = "!";
-        growRoutine = null;
     }
 
-    private void HarvestFlower()
+    // Called by your harvest interaction (button/click)
+    public void Harvest()
     {
-        if (!readyToHarvest && !isGrowing)
-        {
-            Debug.Log("Pot: Nothing to harvest.");
-            return;
-        }
+        if (!readyToHarvest) return;
 
         readyToHarvest = false;
         isGrowing = false;
 
-        // Keep a temporary reference before resetting
-        FlowerData harvestedFlower = currentFlower;
-        currentFlower = null;
+        // Reset sprite to empty
+        if (emptyPotSprite != null) SetSprite(emptyPotSprite);
+        if (timerText != null) timerText.text = "";
 
-        // Reset visuals
-        if (potImage != null && emptyPotSprite != null)
-            potImage.sprite = emptyPotSprite;
-
-        if (timerText != null)
-            timerText.text = "";
-
-        var gm = GameManager.Instance;
-        if (gm != null && harvestedFlower != null)
+        // Add flower to GameManager (store per-flower in your GameManager.AddFlower overload)
+        if (GameManager.Instance != null)
         {
-            gm.AddFlower(harvestedFlower, 1); // ✅ Add correct flower type
-            gm.UpdateAllUI();                  // ✅ Ensure UI refresh after update
-            Debug.Log($"Harvested {harvestedFlower.flowerName}, total now: {gm.GetFlowerCount(harvestedFlower)}");
+            // ensure you have AddFlower(FlowerData, int) implemented
+            GameManager.Instance.AddFlower(currentFlower, 1);
+        }
+
+        // spawn popup in canvas
+        if (harvestPopupPrefab != null)
+        {
+            Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
+            GameObject popup = Instantiate(harvestPopupPrefab);
+            if (canvas != null)
+                popup.transform.SetParent(canvas.transform, false);
+        }
+
+        currentFlower = null;
+    }
+
+    // Update visuals based on current state (call when entering room / enabling)
+    private void RefreshVisuals()
+    {
+        if (isGrowing)
+        {
+            // force an immediate Update pass to refresh timer/sprite
+            double now = (GlobalTime.Instance != null) ? GlobalTime.Instance.RealNow : Time.realtimeSinceStartupAsDouble;
+            double elapsed = now - plantedAtReal;
+            if (elapsed < 0) elapsed = 0;
+            if (elapsed >= growDuration)
+            {
+                FinishGrowth();
+            }
+            else
+            {
+                if (timerText != null) timerText.text = Mathf.Ceil((float)(growDuration - elapsed)) + "s";
+                UpdateSpriteByProgress((float)(elapsed / growDuration));
+            }
         }
         else
         {
-            Debug.LogWarning("Harvest failed: missing GameManager or harvestedFlower is null.");
-        }
-
-        SpawnHarvestPopup();
-
-        Debug.Log($"Inventory now has {gm.GetFlowerInventory().Count} flower types tracked.");
-
-    }
-
-
-    private void SpawnHarvestPopup()
-    {
-        if (harvestPopupPrefab == null) return;
-
-        // prefer explicitly assigned canvas
-        Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
-        if (canvas == null)
-        {
-            // fallback: instantiate in world space at spawn point
-            Transform spawn = popupSpawnPoint != null ? popupSpawnPoint : transform;
-            Instantiate(harvestPopupPrefab, spawn.position, Quaternion.identity);
-            return;
-        }
-
-        // Instantiate under canvas so UI scale/sorting is correct.
-        var popupGO = Instantiate(harvestPopupPrefab, canvas.transform, false);
-
-        // If spawn point provided, convert its world position to canvas local point and set anchoredPosition
-        if (popupSpawnPoint != null)
-        {
-            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-            RectTransform popupRect = popupGO.GetComponent<RectTransform>();
-            if (canvasRect != null && popupRect != null)
-            {
-                Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(Camera.main, popupSpawnPoint.position);
-                Camera cam = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, cam, out Vector2 localPoint))
-                {
-                    popupRect.anchoredPosition = localPoint;
-                }
-            }
+            // Not growing
+            if (emptyPotSprite != null) SetSprite(emptyPotSprite);
+            if (timerText != null) timerText.text = "";
         }
     }
 
-    private void OnDisable()
+    // Optional helper if you need to serialize pot state / restore
+    public PotState GetState()
     {
-        // stop background coroutine to avoid leaks when object disabled
-        if (growRoutine != null)
+        return new PotState
         {
-            StopCoroutine(growRoutine);
-            growRoutine = null;
-        }
+            isGrowing = this.isGrowing,
+            readyToHarvest = this.readyToHarvest,
+            plantedAtReal = this.plantedAtReal,
+            growDuration = this.growDuration,
+            flowerId = currentFlower != null ? currentFlower.name : null
+        };
     }
 
-    private void OnDestroy()
+    // Optional restore
+    public void RestoreState(PotState state, Func<string, FlowerData> flowerLookup)
     {
-        // ensure coroutine stopped on destroy as well
-        if (growRoutine != null)
-        {
-            StopCoroutine(growRoutine);
-            growRoutine = null;
-        }
+        if (state == null) return;
+        this.isGrowing = state.isGrowing;
+        this.readyToHarvest = state.readyToHarvest;
+        this.plantedAtReal = state.plantedAtReal;
+        this.growDuration = state.growDuration;
+
+        if (!string.IsNullOrEmpty(state.flowerId) && flowerLookup != null)
+            this.currentFlower = flowerLookup(state.flowerId);
+
+        RefreshVisuals();
+    }
+
+    [Serializable]
+    public class PotState
+    {
+        public bool isGrowing;
+        public bool readyToHarvest;
+        public double plantedAtReal;
+        public double growDuration;
+        public string flowerId;
     }
 }

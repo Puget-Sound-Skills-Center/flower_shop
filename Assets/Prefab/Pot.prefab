@@ -122,7 +122,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8423842950754621242}
         m_TargetAssemblyTypeName: Pot, Assembly-CSharp
-        m_MethodName: OnGrowButtonClick
+        m_MethodName: StartGrowth
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -298,7 +298,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8852064833998030599}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -307,10 +307,10 @@ RectTransform:
   - {fileID: 7939909783244597033}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 147.35, y: 139.803}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5108861011972551649
 CanvasRenderer:
@@ -419,12 +419,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   emptyPotSprite: {fileID: -6592407927776795226, guid: de62dcbc2bde7fa4b862e12ab01bd5f8, type: 3}
   sproutSprite: {fileID: -5593663558324774884, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
-  emptyToSproutTime: 0.5
   sproutPercent: 0.2
   timerText: {fileID: 3711593108320620032}
   harvestPopupPrefab: {fileID: 4707889061162602174, guid: e4df78cd47f99be4388e4def1b0b72f0, type: 3}
   popupSpawnPoint: {fileID: 0}
   targetCanvas: {fileID: 0}
+  harvestButton: {fileID: 7145214791725888811}
 --- !u!61 &1172572494723000706
 BoxCollider2D:
   m_ObjectHideFlags: 0

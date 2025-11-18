@@ -30,7 +30,7 @@ public class SeedSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (highlightImage == null) return;
 
         // Safely check selectedFlower (GameManager may be null in tests / editor)
-        if (gm == null || gm.selectedFlower != flowerToSelect)
+        if (gm == null || gm.SelectedFlowerData != flowerToSelect)
             highlightImage.enabled = false;
     }
 
@@ -51,7 +51,7 @@ public class SeedSelector : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
 
         // Set selected flower and update UI
-        gm.selectedFlower = flowerToSelect;
+        gm.SelectedFlowerData = flowerToSelect;
         gm.UpdateSelectedFlowerUI();
 
         Debug.Log($"Selected seed: {flowerToSelect.name} (selectedFlower set in GameManager)");

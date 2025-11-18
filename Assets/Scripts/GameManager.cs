@@ -12,12 +12,17 @@ public class GameManager : MonoBehaviour
     public int startingMoney = 100;
     public int currentMoney;
 
+    [Header("Selected Flower")]
+    public FlowerData SelectedFlowerData;   // <-- USED BY POTS!
+
     [Header("Seed Inventory")]
     private Dictionary<FlowerData, int> seedInventory = new Dictionary<FlowerData, int>();
 
-    [Header("Flower Inventory")]
+    [Header("Harvested Flower Inventory")]
     private Dictionary<FlowerData, int> flowerInventory = new Dictionary<FlowerData, int>();
 
+    [Header("Bouquet Inventory")]
+    private Dictionary<FlowerData, int> bouquetInventory = new Dictionary<FlowerData, int>();
 
     [Header("UI References (assign in Inspector)")]
     public TextMeshProUGUI moneyText;
@@ -25,9 +30,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI flowerText;
     public Image selectedFlowerIcon;
 
-    [HideInInspector]
-    public FlowerData selectedFlower;
 
+    // ------------------------------------------
+    // Singleton Setup
+    // ------------------------------------------
     private void Awake()
     {
         if (Instance == null)
@@ -41,10 +47,14 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         UpdateAllUI();
     }
 
-    // ---- Inventory Methods ----
+
+    // ------------------------------------------
+    // Money
+    // ------------------------------------------
     public bool SpendMoney(int amount)
     {
         if (currentMoney >= amount)
@@ -56,51 +66,60 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    public void AddMoney(int amount) { currentMoney += amount; UpdateMoneyUI(); }
+    public void AddMoney(int amount)
+    {
+        currentMoney += amount;
+        UpdateMoneyUI();
+    }
 
+
+    // ------------------------------------------
+    // Seeds
+    // ------------------------------------------
     public void AddSeed(FlowerData flower, int amount)
     {
+        if (flower == null) return;
+
         if (!seedInventory.ContainsKey(flower))
             seedInventory[flower] = 0;
+
         seedInventory[flower] += amount;
+
         UpdateSeedUI();
     }
 
     public bool UseSeed(FlowerData flower)
     {
         if (flower == null) return false;
+
         if (seedInventory.ContainsKey(flower) && seedInventory[flower] > 0)
         {
             seedInventory[flower]--;
             UpdateSeedUI();
             return true;
         }
+
         return false;
     }
 
     public int GetSeedCount(FlowerData flower)
     {
         if (flower == null) return 0;
-        return seedInventory.ContainsKey(flower) ? seedInventory[flower] : 0;
+
+        return seedInventory.ContainsKey(flower)
+            ? seedInventory[flower]
+            : 0;
     }
 
-    public FlowerData GetPlantableFlower(FlowerData requestedFlower)
-    {
-        if (requestedFlower != null && GetSeedCount(requestedFlower) > 0)
-            return requestedFlower;
-        foreach (var kvp in seedInventory)
-        {
-            if (kvp.Value > 0)
-                return kvp.Key;
-        }
-        return null;
-    }
 
+    // ------------------------------------------
+    // Harvested Flowers
+    // ------------------------------------------
     public void AddFlower(FlowerData flower, int amount)
     {
         if (flower == null)
         {
-            Debug.LogWarning("Tried to add a flower with null FlowerData.");
+            Debug.LogWarning("Tried to add flower with null FlowerData.");
             return;
         }
 
@@ -111,37 +130,33 @@ public class GameManager : MonoBehaviour
         if (flowerInventory[flower] < 0)
             flowerInventory[flower] = 0;
 
-        UpdateFlowerUI(); // UI refresh for totals
+        UpdateFlowerUI();
     }
-
 
     public int GetFlowerCount(FlowerData flower)
     {
         if (flower == null) return 0;
-        return flowerInventory.ContainsKey(flower) ? flowerInventory[flower] : 0;
+
+        return flowerInventory.ContainsKey(flower)
+            ? flowerInventory[flower]
+            : 0;
     }
 
 
-    private void UpdateMoneyUI() { if (moneyText != null) moneyText.text = "$" + currentMoney; }
-
-    private void UpdateSeedUI()
+    public Dictionary<FlowerData, int> GetFlowerInventory()
     {
-        if (seedText != null)
-        {
-            if (selectedFlower != null)
-                seedText.text = "Seeds: " + GetSeedCount(selectedFlower);
-            else
-                seedText.text = "Seeds: 0";
-        }
+        return flowerInventory;
     }
 
-    private Dictionary<FlowerData, int> bouquetInventory = new Dictionary<FlowerData, int>();
 
+    // ------------------------------------------
+    // Bouquets
+    // ------------------------------------------
     public void AddBouquet(FlowerData flower)
     {
         if (flower == null)
         {
-            Debug.LogWarning("GameManager: Tried to add a bouquet with null FlowerData.");
+            Debug.LogWarning("Tried to add a bouquet with null FlowerData.");
             return;
         }
 
@@ -150,7 +165,7 @@ public class GameManager : MonoBehaviour
 
         bouquetInventory[flower]++;
 
-        Debug.Log($"Added 1 {flower.name} bouquet! Total: {bouquetInventory[flower]}");
+        Debug.Log($"Added bouquet for {flower.name}. Total: {bouquetInventory[flower]}");
     }
 
     public Dictionary<FlowerData, int> GetBouquetInventory()
@@ -158,13 +173,26 @@ public class GameManager : MonoBehaviour
         return bouquetInventory;
     }
 
-    public Dictionary<FlowerData, int> GetFlowerInventory()
+
+    // ------------------------------------------
+    // UI
+    // ------------------------------------------
+    private void UpdateMoneyUI()
     {
-        return flowerInventory;
+        if (moneyText != null)
+            moneyText.text = "$" + currentMoney;
     }
 
-
-
+    private void UpdateSeedUI()
+    {
+        if (seedText != null)
+        {
+            if (SelectedFlowerData != null)
+                seedText.text = "Seeds: " + GetSeedCount(SelectedFlowerData);
+            else
+                seedText.text = "Seeds: 0";
+        }
+    }
 
     private void UpdateFlowerUI()
     {
@@ -177,14 +205,13 @@ public class GameManager : MonoBehaviour
         flowerText.text = "Flowers: " + total;
     }
 
-
     public void UpdateSelectedFlowerUI()
     {
         if (selectedFlowerIcon != null)
         {
-            if (selectedFlower != null && selectedFlower.readySprite != null)
+            if (SelectedFlowerData != null && SelectedFlowerData.readySprite != null)
             {
-                selectedFlowerIcon.sprite = selectedFlower.readySprite;
+                selectedFlowerIcon.sprite = SelectedFlowerData.readySprite;
                 selectedFlowerIcon.enabled = true;
             }
             else
@@ -193,9 +220,22 @@ public class GameManager : MonoBehaviour
                 selectedFlowerIcon.enabled = false;
             }
         }
+
         UpdateSeedUI();
     }
 
+    public void UpdateAllUI()
+    {
+        UpdateMoneyUI();
+        UpdateSeedUI();
+        UpdateFlowerUI();
+        UpdateSelectedFlowerUI();
+    }
+
+
+    // ------------------------------------------
+    // Pots
+    // ------------------------------------------
     private int potCount = 0;
 
     public void AddPots(int amount)
@@ -207,21 +247,5 @@ public class GameManager : MonoBehaviour
     public int GetPots()
     {
         return potCount;
-    }
-
-    public int money;
-    
-
-    public void UpdateAllUI()
-    {
-        UpdateMoneyUI();
-        UpdateSeedUI();
-        UpdateFlowerUI();
-        UpdateSelectedFlowerUI();
-    }
-
-    internal void AddFlower(int v)
-    {
-        throw new NotImplementedException();
     }
 }

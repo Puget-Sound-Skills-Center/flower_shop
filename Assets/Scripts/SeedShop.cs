@@ -109,7 +109,7 @@ public class SeedShop : MonoBehaviour
         var gm = GameManager.Instance;
         if (gm == null) return;
 
-        var flower = gm.selectedFlower;
+        var flower = gm.SelectedFlowerData;
         if (flower != null && gm.GetFlowerCount(flower) > 0)
         {
             gm.AddFlower(flower, -1);

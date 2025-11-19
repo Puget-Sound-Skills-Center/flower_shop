@@ -15,5 +15,11 @@ MonoBehaviour:
   flowerName: Forget-Me-Not
   growthStages: []
   readySprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  bouquetDefaultSprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  bouquetCutSprite: {fileID: -5522182773879512969, guid: aa1baac30027dd04a97e7dbeac7ba6cd, type: 3}
+  bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
+  bouquetRibbonSprite: {fileID: 0}
+  bouquetFinalSprite: {fileID: -5576425803151272151, guid: bcdbad706477bd349a6eb1c9449e2159, type: 3}
   growTime: 20
   sellValue: 5
+  seedCost: 2

@@ -3,10 +3,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewFlower", menuName = "Flower Shop/Flower")]
 public class FlowerData : ScriptableObject
 {
+    [Header("General Flower Information")]
     public string flowerName;
-    public Sprite[] growthStages;    // Sprites for growth stages
-    public Sprite readySprite;       // Final fully grown sprite
-    public float growTime = 20f;     // Growth duration in seconds
-    public int sellValue = 5;        // Value when sold
-    public int seedCost = 2;         // Seed Cost 
+
+    [Header("Growth Sprites")]
+    public Sprite[] growthStages;     // Sprites used while growing in a pot
+    public Sprite readySprite;        // Final fully grown sprite
+
+    [Header("Bouquet Desk Sprites")]
+    public Sprite bouquetDefaultSprite;   // When first selected
+    public Sprite bouquetCutSprite;       // Cut stage
+    public Sprite bouquetWrappedSprite;   // Wrapped stage
+    public Sprite bouquetRibbonSprite;    // Ribbon stage
+    public Sprite bouquetFinalSprite;     // Final bouquet to place on shelf
+
+    [Header("Flower Stats")]
+    public float growTime = 20f;
+    public int sellValue = 5;
+    public int seedCost = 2;
 }

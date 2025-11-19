@@ -14,6 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Anemone
   growthStages: []
-  readySprite: {fileID: -6704188033273865160, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  readySprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
+  bouquetDefaultSprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
+  bouquetCutSprite: {fileID: 2064869427882860362, guid: 18c01639425657a40bfaf79f7226be8e, type: 3}
+  bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
+  bouquetRibbonSprite: {fileID: 0}
+  bouquetFinalSprite: {fileID: -8465082214401789347, guid: c67e7390875bac949a99749f63907889, type: 3}
   growTime: 20
   sellValue: 5
+  seedCost: 2

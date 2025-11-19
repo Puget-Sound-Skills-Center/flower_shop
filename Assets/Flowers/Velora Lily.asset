@@ -15,6 +15,11 @@ MonoBehaviour:
   flowerName: 'Velora Lily '
   growthStages: []
   readySprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
+  bouquetDefaultSprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
+  bouquetCutSprite: {fileID: 7052456735273860388, guid: 4813ede1dae85ee4789eb6c5d3301127, type: 3}
+  bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
+  bouquetRibbonSprite: {fileID: 0}
+  bouquetFinalSprite: {fileID: 2894237443324729940, guid: 62dbcc2d9d547f4429a3295e16cb1c11, type: 3}
   growTime: 5
   sellValue: 5
   seedCost: 2

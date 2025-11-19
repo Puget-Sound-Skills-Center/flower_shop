@@ -15,6 +15,11 @@ MonoBehaviour:
   flowerName: Lily
   growthStages: []
   readySprite: {fileID: 2727736752311060635, guid: 62ac63902a9a6894090fd12f81996c10, type: 3}
+  bouquetDefaultSprite: {fileID: 2727736752311060635, guid: 62ac63902a9a6894090fd12f81996c10, type: 3}
+  bouquetCutSprite: {fileID: 3787106807330328857, guid: 75644183f6a8212489d4462c99e9220f, type: 3}
+  bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
+  bouquetRibbonSprite: {fileID: 0}
+  bouquetFinalSprite: {fileID: -1199220383107830346, guid: c1a4d7fe759640a42bfbce2eb3a1d2b6, type: 3}
   growTime: 20
   sellValue: 5
   seedCost: 2

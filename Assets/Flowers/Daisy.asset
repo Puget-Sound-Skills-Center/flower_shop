@@ -15,5 +15,11 @@ MonoBehaviour:
   flowerName: Daisy
   growthStages: []
   readySprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  bouquetDefaultSprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  bouquetCutSprite: {fileID: -4057024884422873338, guid: 2d742a6a7cbebd849945855374f365cd, type: 3}
+  bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
+  bouquetRibbonSprite: {fileID: 0}
+  bouquetFinalSprite: {fileID: -8217221404568717679, guid: 54bad4143114c8a4caffde9aa7145007, type: 3}
   growTime: 20
   sellValue: 5
+  seedCost: 2

@@ -146,6 +146,13 @@ public class Pot : MonoBehaviour
     // Called from UI button or script when planting
     public void StartGrowth()
     {
+        // Do NOT allow planting while already growing or finished
+        if (isGrowing || readyToHarvest)
+        {
+            Debug.Log("Cannot plant: pot is already in use.");
+            return;
+        }
+
         if (isDead)
         {
             ResetPotAfterDeath();

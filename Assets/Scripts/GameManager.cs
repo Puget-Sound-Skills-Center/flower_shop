@@ -30,6 +30,11 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI flowerText;
     public Image selectedFlowerIcon;
 
+    public List<FlowerData> seedTypes = new List<FlowerData>();
+    public int selectedSeedIndex = 0;
+
+
+
 
     // ------------------------------------------
     // Singleton Setup
@@ -95,12 +100,80 @@ public class GameManager : MonoBehaviour
         if (seedInventory.ContainsKey(flower) && seedInventory[flower] > 0)
         {
             seedInventory[flower]--;
+            // Automatically switch to next seed if seeds run out
+            if (seedInventory[flower] == 0 && SelectedFlowerData == flower)
+            {
+                AutoSelectNextAvailableSeed();
+            }
+
             UpdateSeedUI();
             return true;
         }
 
         return false;
     }
+
+    public void AutoSelectNextAvailableSeed()
+    {
+        if (seedTypes.Count == 0)
+            return;
+
+        int startIndex = selectedSeedIndex;
+
+        // Try all seeds until we find one with inventory
+        for (int i = 0; i < seedTypes.Count; i++)
+        {
+            int index = (startIndex + 1 + i) % seedTypes.Count;
+            FlowerData next = seedTypes[index];
+
+            if (GetSeedCount(next) > 0)
+            {
+                selectedSeedIndex = index;
+                SelectedFlowerData = next;
+                UpdateSelectedFlowerUI();
+                return;
+            }
+        }
+
+        // No seeds left at all
+        SelectedFlowerData = null;
+        UpdateSelectedFlowerUI();
+    }
+
+    private void Update()
+    {
+        HandleSeedHotkeys();
+    }
+
+    private void HandleSeedHotkeys()
+    {
+        // supports 1–9 hotkeys
+        for (int i = 0; i < seedTypes.Count && i < 9; i++)
+        {
+            if (Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha1 + i)))
+            {
+                SelectSeedByIndex(i);
+            }
+        }
+    }
+
+    public void SelectSeedByIndex(int index)
+    {
+        if (index < 0 || index >= seedTypes.Count)
+            return;
+
+        FlowerData flower = seedTypes[index];
+
+        // Only select if we have seeds, otherwise ignore
+        if (GetSeedCount(flower) > 0)
+        {
+            selectedSeedIndex = index;
+            SelectedFlowerData = flower;
+            UpdateSelectedFlowerUI();
+        }
+    }
+
+
 
     public int GetSeedCount(FlowerData flower)
     {

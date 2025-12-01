@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using System;
 
 public class ShopShelf : MonoBehaviour
 {
@@ -9,52 +11,40 @@ public class ShopShelf : MonoBehaviour
 
     private List<FlowerData> shelfBouquets = new List<FlowerData>();
 
-    /// <summary>
-    /// Refresh the shelf UI to match the current shelfBouquets list.
-    /// </summary>
     public void RefreshShelf()
     {
-        if (shelfArea == null || bouquetDisplayPrefab == null) return;
+        if (shelfArea == null || bouquetDisplayPrefab == null)
+        {
+            Debug.LogError("ShopShelf missing shelfArea or bouquetDisplayPrefab!");
+            return;
+        }
 
-        // Clear old buttons
+        // Destroy old buttons
         foreach (Transform child in shelfArea)
             Destroy(child.gameObject);
 
-        // Instantiate new buttons dynamically
+        // Spawn buttons
         foreach (var flower in shelfBouquets)
         {
-            GameObject bouquetObj = Instantiate(bouquetDisplayPrefab, shelfArea);
+            GameObject obj = Instantiate(bouquetDisplayPrefab, shelfArea);
 
-            // Get required components
-            ShelfBouquetButton buttonScript = bouquetObj.GetComponent<ShelfBouquetButton>();
-            UnityEngine.UI.Button uiButton = bouquetObj.GetComponent<UnityEngine.UI.Button>();
+            ShelfBouquetButton buttonScript = obj.GetComponent<ShelfBouquetButton>();
 
-            if (buttonScript != null && uiButton != null)
+            if (buttonScript == null)
             {
-                // Assign flower and shelf reference dynamically
-                buttonScript.flowerData = flower;
-                buttonScript.shopShelf = this;
-
-                // Remove any old listeners to avoid duplicates
-                uiButton.onClick.RemoveAllListeners();
-
-                // Assign GameManager method to OnClick dynamically
-                uiButton.onClick.AddListener(() =>
-                {
-                    GameManager.Instance.SellBouquetFromButton(buttonScript);
-                });
+                Debug.LogError("Prefab missing ShelfBouquetButton!");
+                continue;
             }
-            else
-            {
-                Debug.LogWarning("Bouquet prefab missing ShelfBouquetButton or Button component!");
-            }
+
+            // Assign runtime data
+            buttonScript.flowerData = flower;
+            buttonScript.shopShelf = this;
+
+            // OnClick is now handled INSIDE the prefab component
         }
     }
 
 
-    /// <summary>
-    /// Add a bouquet to the shelf and refresh UI
-    /// </summary>
     public void AddBouquetToShelf(FlowerData flower)
     {
         if (flower == null) return;
@@ -63,9 +53,6 @@ public class ShopShelf : MonoBehaviour
         RefreshShelf();
     }
 
-    /// <summary>
-    /// Remove bouquet from shelf using button reference
-    /// </summary>
     public void RemoveBouquetFromShelf(ShelfBouquetButton button)
     {
         if (button == null) return;
@@ -73,7 +60,12 @@ public class ShopShelf : MonoBehaviour
         FlowerData flower = button.GetFlowerData();
         if (flower != null && shelfBouquets.Contains(flower))
             shelfBouquets.Remove(flower);
-
+        RefreshShelf();
         Destroy(button.gameObject);
+    }
+
+    public static implicit operator ShopShelf(Transform v)
+    {
+        throw new NotImplementedException();
     }
 }

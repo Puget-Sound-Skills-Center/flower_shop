@@ -406,55 +406,88 @@ public class GameManager : MonoBehaviour
     // ------------------------------------------
     // Sell Bouquets
     // ------------------------------------------
-    public void SellBouquet(FlowerData flower, int pricePerBouquet)
+    public bool SellBouquet(FlowerData flower, int pricePerBouquet)
     {
         if (flower == null)
         {
-            Debug.LogWarning("GameManager.SellBouquet called with null FlowerData!");
-            return;
+            Debug.LogWarning("SellBouquet() called with NULL FlowerData!");
+            return false;
         }
 
         if (!bouquetInventory.ContainsKey(flower) || bouquetInventory[flower] <= 0)
         {
             Debug.LogWarning($"No bouquets of {flower.flowerName} to sell.");
-            return;
+            return false;
         }
 
-        // Remove 1 bouquet from inventory
         bouquetInventory[flower]--;
-
-        // Add money
         AddMoney(pricePerBouquet);
 
-        Debug.Log($"Sold 1 bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
+        Debug.Log($"Sold bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
+        return true;
     }
 
+
     // GameManager.cs
+    // ------------------------------------------
+    // Sell Bouquets (Button Version)
+    // ------------------------------------------
     public void SellBouquetFromButton(ShelfBouquetButton button)
     {
         if (button == null)
         {
-            Debug.LogWarning("SellBouquetFromButton: button is null!");
+            Debug.LogError("SellBouquetFromButton: BUTTON IS NULL");
             return;
         }
 
-        FlowerData flower = button.GetFlowerData();
+        FlowerData flower = button.flowerData;
         if (flower == null)
         {
-            Debug.LogWarning("SellBouquetFromButton: flowerData is null on the button!");
+            Debug.LogError("SellBouquetFromButton: BUTTON HAS NO FLOWER DATA (Prefab not assigned correctly)");
             return;
         }
 
-        // Optional: use button's sellPrice if defined there
         int price = button.sellPrice;
 
-        SellBouquet(flower, price);
-
-        // Remove from shop shelf visually
-        if (button.shopShelf != null)
+        // Attempt sale
+        if (!SellBouquet(flower, price))
         {
-            button.shopShelf.RemoveBouquetFromShelf(button);
+            Debug.LogWarning("SellBouquetFromButton: Sale failed, bouquet may not exist.");
+            return;
         }
+
+        // Remove display from shelf
+        if (button.shopShelf != null)
+            button.shopShelf.RemoveBouquetFromShelf(button);
+        Destroy(button.gameObject);
+
+    }
+
+
+    // ------------------------------------------
+    // Debug: Print Entire Bouquet Inventory
+    // ------------------------------------------
+    public void DebugBouquetInventory(string header = "")
+    {
+        Debug.Log("<color=magenta>========= Bouquet Inventory Debug =========</color>");
+        if (!string.IsNullOrEmpty(header))
+            Debug.Log("<color=white>" + header + "</color>");
+
+        if (bouquetInventory.Count == 0)
+        {
+            Debug.Log("No bouquet entries exist.");
+            return;
+        }
+
+        foreach (var kvp in bouquetInventory)
+        {
+            string name = kvp.Key != null ? kvp.Key.flowerName : "NULL-FLOWERKEY";
+            int count = kvp.Value;
+
+            Debug.Log($"Bouquet: {name}   Count: {count}");
+        }
+
+        Debug.Log("<color=magenta>===========================================</color>");
     }
 
 

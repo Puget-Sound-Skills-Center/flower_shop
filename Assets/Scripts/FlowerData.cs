@@ -21,4 +21,5 @@ public class FlowerData : ScriptableObject
     public float growTime = 20f;
     public int sellValue = 5;
     public int seedCost = 2;
+    internal int price;
 }

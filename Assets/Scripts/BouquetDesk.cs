@@ -111,10 +111,11 @@ public class BouquetDesk : MonoBehaviour
         if (nextButton != null)
             nextButton.interactable = true;
 
-        // 🔒 Disable all other selection buttons
-        foreach (var btn in flowerButtons)
-            btn.interactable = false;
+        // ❌ REMOVE this — it locks too early
+        // foreach (var btn in flowerButtons)
+        //     btn.interactable = false;
     }
+
 
 
     private void OnNextStage()
@@ -128,6 +129,11 @@ public class BouquetDesk : MonoBehaviour
         switch (currentStage)
         {
             case Stage.SelectFlower:
+
+                // 🔒 Now lock the buttons ONLY once transition starts
+                foreach (var btn in flowerButtons)
+                    btn.interactable = false;
+
                 StartCoroutine(DoStage(Stage.Cut, "Cutting flower...", selectedFlower.bouquetCutSprite));
                 break;
 
@@ -144,6 +150,7 @@ public class BouquetDesk : MonoBehaviour
                 break;
         }
     }
+
 
     private IEnumerator DoStage(Stage nextStage, string message, Sprite stageSprite)
     {

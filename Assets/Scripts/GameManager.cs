@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public int currentMoney;
 
     [Header("Selected Flower")]
-    public FlowerData SelectedFlowerData;   // <-- USED BY POTS!
+    public FlowerData SelectedFlowerData;
 
     [Header("Seed Inventory")]
     private Dictionary<FlowerData, int> seedInventory = new Dictionary<FlowerData, int>();
@@ -32,9 +32,6 @@ public class GameManager : MonoBehaviour
 
     public List<FlowerData> seedTypes = new List<FlowerData>();
     public int selectedSeedIndex = 0;
-
-
-
 
     // ------------------------------------------
     // Singleton Setup
@@ -147,15 +144,64 @@ public class GameManager : MonoBehaviour
 
     private void HandleSeedHotkeys()
     {
-        // supports 1–9 hotkeys
-        for (int i = 0; i < seedTypes.Count && i < 9; i++)
+        if (Input.GetKeyDown(KeyCode.A))
+            SelectPreviousAvailableSeed();
+
+        if (Input.GetKeyDown(KeyCode.D))
+            SelectNextAvailableSeed();
+    }
+
+    public void SelectNextAvailableSeed()
+    {
+        if (seedTypes.Count == 0) return;
+
+        int startIndex = selectedSeedIndex;
+
+        for (int i = 1; i <= seedTypes.Count; i++)
         {
-            if (Input.GetKeyDown((KeyCode)((int)KeyCode.Alpha1 + i)))
+            int index = (startIndex + i) % seedTypes.Count;
+            FlowerData flower = seedTypes[index];
+
+            if (GetSeedCount(flower) > 0)
             {
-                SelectSeedByIndex(i);
+                selectedSeedIndex = index;
+                SelectedFlowerData = flower;
+                UpdateSelectedFlowerUI();
+                return;
             }
         }
+
+        // If we found none, no seeds exist
+        SelectedFlowerData = null;
+        UpdateSelectedFlowerUI();
     }
+
+    public void SelectPreviousAvailableSeed()
+    {
+        if (seedTypes.Count == 0) return;
+
+        int startIndex = selectedSeedIndex;
+
+        for (int i = 1; i <= seedTypes.Count; i++)
+        {
+            int index = (startIndex - i + seedTypes.Count) % seedTypes.Count;
+            FlowerData flower = seedTypes[index];
+
+            if (GetSeedCount(flower) > 0)
+            {
+                selectedSeedIndex = index;
+                SelectedFlowerData = flower;
+                UpdateSelectedFlowerUI();
+                return;
+            }
+        }
+
+        // No seeds available at all
+        SelectedFlowerData = null;
+        UpdateSelectedFlowerUI();
+    }
+
+
 
     public void SelectSeedByIndex(int index)
     {
@@ -320,5 +366,118 @@ public class GameManager : MonoBehaviour
     public int GetPots()
     {
         return potCount;
+    }
+
+    // ------------------------------------------
+    // Sell Flowers
+    // ------------------------------------------
+    /// <summary>
+    /// Sells all flowers in inventory for the given price per flower.
+    /// Returns the total money earned.
+    /// </summary>
+    public int SellAllFlowers(int pricePerFlower)
+    {
+        int totalSold = 0;
+        int totalEarned = 0;
+
+        // Sell all flowers in inventory
+        var keys = new List<FlowerData>(flowerInventory.Keys);
+        foreach (var flower in keys)
+        {
+            int count = flowerInventory[flower];
+            if (count > 0)
+            {
+                int earned = count * pricePerFlower;
+                totalEarned += earned;
+                totalSold += count;
+                flowerInventory[flower] = 0;
+            }
+        }
+
+        if (totalEarned > 0)
+        {
+            AddMoney(totalEarned);
+            UpdateFlowerUI();
+        }
+
+        return totalEarned;
+    }
+
+    // ------------------------------------------
+    // Sell Bouquets
+    // ------------------------------------------
+    public void SellBouquet(FlowerData flower, int pricePerBouquet)
+    {
+        if (flower == null)
+        {
+            Debug.LogWarning("GameManager.SellBouquet called with null FlowerData!");
+            return;
+        }
+
+        if (!bouquetInventory.ContainsKey(flower) || bouquetInventory[flower] <= 0)
+        {
+            Debug.LogWarning($"No bouquets of {flower.flowerName} to sell.");
+            return;
+        }
+
+        // Remove 1 bouquet from inventory
+        bouquetInventory[flower]--;
+
+        // Add money
+        AddMoney(pricePerBouquet);
+
+        Debug.Log($"Sold 1 bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
+    }
+
+    // GameManager.cs
+    public void SellBouquetFromButton(ShelfBouquetButton button)
+    {
+        if (button == null)
+        {
+            Debug.LogWarning("SellBouquetFromButton: button is null!");
+            return;
+        }
+
+        FlowerData flower = button.GetFlowerData();
+        if (flower == null)
+        {
+            Debug.LogWarning("SellBouquetFromButton: flowerData is null on the button!");
+            return;
+        }
+
+        // Optional: use button's sellPrice if defined there
+        int price = button.sellPrice;
+
+        SellBouquet(flower, price);
+
+        // Remove from shop shelf visually
+        if (button.shopShelf != null)
+        {
+            button.shopShelf.RemoveBouquetFromShelf(button);
+        }
+    }
+
+
+
+    /// <summary>
+    /// Sells a specific flower type in inventory for the given price per flower.
+    /// Returns the money earned for that flower.
+    /// </summary>
+    public int SellFlowerType(FlowerData flower, int pricePerFlower)
+    {
+        if (flower == null || !flowerInventory.ContainsKey(flower) || flowerInventory[flower] <= 0)
+            return 0;
+
+        int count = flowerInventory[flower];
+        int earned = count * pricePerFlower;
+        flowerInventory[flower] = 0;
+
+        if (earned > 0)
+        {
+            AddMoney(earned);
+            UpdateFlowerUI();
+        }
+
+        return earned;
     }
 }

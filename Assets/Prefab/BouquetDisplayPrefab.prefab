@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 527344925571413407}
   - component: {fileID: 4004780214528375948}
   - component: {fileID: 83446851888488143}
-  - component: {fileID: -1729612457395270436}
   - component: {fileID: 4046332815948274380}
+  - component: {fileID: 549800329020666695}
   m_Layer: 0
   m_Name: BouquetDisplayPrefab
   m_TagString: Untagged
@@ -77,21 +77,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &-1729612457395270436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4453789654076676982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de1be6b7a5e9b3e439d8869b21807ab9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flowerData: {fileID: 11400000, guid: 5d4cbd698ffbef84d9d94780a14b777f, type: 2}
-  shopShelf: {fileID: 0}
-  sellPrice: 50
 --- !u!114 &4046332815948274380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,3 +121,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &549800329020666695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4453789654076676982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1be6b7a5e9b3e439d8869b21807ab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flowerData: {fileID: 0}
+  shopShelf: {fileID: 0}
+  sellPrice: 30

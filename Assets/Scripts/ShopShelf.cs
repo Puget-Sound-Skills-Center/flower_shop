@@ -13,6 +13,14 @@ public class ShopShelf : MonoBehaviour
 
     public void RefreshShelf()
     {
+
+        Debug.Log("Refreshing shelf. Items: " + shelfBouquets.Count);
+
+        foreach (var f in shelfBouquets)
+        {
+            Debug.Log("Item in shelf: " + (f == null ? "NULL" : f.name));
+        }
+
         if (shelfArea == null || bouquetDisplayPrefab == null)
         {
             Debug.LogError("ShopShelf missing shelfArea or bouquetDisplayPrefab!");
@@ -43,6 +51,8 @@ public class ShopShelf : MonoBehaviour
             // OnClick is now handled INSIDE the prefab component
         }
     }
+
+
 
 
     public void AddBouquetToShelf(FlowerData flower)

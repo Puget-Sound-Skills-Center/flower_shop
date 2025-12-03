@@ -6,7 +6,7 @@ public class ShelfBouquetButton : MonoBehaviour
 {
     [Header("Assigned at runtime")]
     [SerializeField] private FlowerData flowerData;
-    [SerializeField] private ShopShelf shelf;
+    [SerializeField] private ShopShelf shopShelf;
 
     [Header("Pricing")]
     public int sellPrice = 30;
@@ -15,7 +15,7 @@ public class ShelfBouquetButton : MonoBehaviour
 
     // Public accessors
     public FlowerData FlowerData => flowerData;
-    public ShopShelf Shelf => shelf;
+    public ShopShelf Shelf => shopShelf;
 
     private bool initialized = false;
 
@@ -33,7 +33,7 @@ public class ShelfBouquetButton : MonoBehaviour
     public void Initialize(FlowerData flower, ShopShelf parentShelf, int price = 30)
     {
         flowerData = flower;
-        shelf = parentShelf;
+        shopShelf = parentShelf;
         sellPrice = price;
 
         if (button == null) button = GetComponent<Button>();

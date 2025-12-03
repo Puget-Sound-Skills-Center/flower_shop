@@ -440,28 +440,31 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        FlowerData flower = button.flowerData;
+        FlowerData flower = button.FlowerData;
         if (flower == null)
         {
-            Debug.LogError("SellBouquetFromButton: BUTTON HAS NO FLOWER DATA (Prefab not assigned correctly)");
+            Debug.LogError("SellBouquetFromButton: BUTTON HAS NO FLOWER DATA");
             return;
         }
 
         int price = button.sellPrice;
 
-        // Attempt sale
+        // Attempt to sell
         if (!SellBouquet(flower, price))
         {
-            Debug.LogWarning("SellBouquetFromButton: Sale failed, bouquet may not exist.");
+            Debug.LogWarning("SellBouquetFromButton: Sale failed. No bouquets in inventory?");
             return;
         }
 
-        // Remove display from shelf
-        if (button.shopShelf != null)
-            button.shopShelf.RemoveBouquetFromShelf(button);
-        Destroy(button.gameObject);
+        // Remove the UI button from the shelf
+        if (button.Shelf != null)
+            button.Shelf.RemoveBouquetFromShelf(button);
 
+        // Destroy the button object
+        Destroy(button.gameObject);
     }
+
+
 
 
     // ------------------------------------------

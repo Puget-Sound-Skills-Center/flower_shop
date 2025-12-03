@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4004780214528375948}
   - component: {fileID: 83446851888488143}
   - component: {fileID: 4046332815948274380}
-  - component: {fileID: 549800329020666695}
+  - component: {fileID: 8849760344731406245}
   m_Layer: 0
   m_Name: BouquetDisplayPrefab
   m_TagString: Untagged
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &549800329020666695
+--- !u!114 &8849760344731406245
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -134,5 +134,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerData: {fileID: 0}
-  shopShelf: {fileID: 0}
+  shelf: {fileID: 0}
   sellPrice: 30

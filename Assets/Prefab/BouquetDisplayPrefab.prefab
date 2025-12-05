@@ -134,5 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerData: {fileID: 0}
-  shelf: {fileID: 0}
-  sellPrice: 30
+  bouquetImage: {fileID: 83446851888488143}

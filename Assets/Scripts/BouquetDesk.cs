@@ -19,6 +19,8 @@ public class BouquetDesk : MonoBehaviour
     [Header("Bouquet Shelf UI")]
     public Transform bouquetShelfArea;
     public GameObject bouquetDisplayPrefab;
+    [Header("Shop Reference")]
+    public ShopShelf shopShelf; // Assign in Inspector
 
     [Header("Settings")]
     public float stageDelay = 1f;
@@ -100,7 +102,9 @@ public class BouquetDesk : MonoBehaviour
 
     private void SelectFlower(FlowerData flower)
     {
-        selectedFlower = flower;
+        if (flower == null) return;
+
+        selectedFlower = flower; // store the reference
 
         if (flowerPreview != null)
             flowerPreview.sprite = flower.bouquetDefaultSprite;
@@ -110,11 +114,8 @@ public class BouquetDesk : MonoBehaviour
 
         if (nextButton != null)
             nextButton.interactable = true;
-
-        // ❌ REMOVE this — it locks too early
-        // foreach (var btn in flowerButtons)
-        //     btn.interactable = false;
     }
+
 
 
 
@@ -173,9 +174,20 @@ public class BouquetDesk : MonoBehaviour
         var gm = GameManager.Instance;
 
         gm.AddFlower(selectedFlower, -1); // consume flower
-        gm.AddBouquet(selectedFlower);   // add bouquet
+        gm.AddBouquet(selectedFlower);    // add bouquet to inventory
 
-        UpdateBouquetShelfUI();
+        // Send the bouquet to the real shop shelf
+        if (shopShelf != null)
+        {
+            if (shopShelf.bouquetDisplayPrefab != null)
+                shopShelf.AddBouquetToShelf(selectedFlower);
+            else
+                Debug.LogWarning("ShopShelf: bouquetDisplayPrefab not assigned!");
+        }
+        else
+        {
+            Debug.LogWarning("BouquetDesk: shopShelf not assigned!");
+        }
 
         stageText.text = $"Bouquet of {selectedFlower.flowerName} completed!";
 
@@ -185,23 +197,8 @@ public class BouquetDesk : MonoBehaviour
         StartCoroutine(CloseAfterDelay());
     }
 
-    private void UpdateBouquetShelfUI()
-    {
-        foreach (Transform child in bouquetShelfArea)
-            Destroy(child.gameObject);
 
-        foreach (var kvp in GameManager.Instance.GetBouquetInventory())
-        {
-            for (int i = 0; i < kvp.Value; i++)
-            {
-                GameObject obj = Instantiate(bouquetDisplayPrefab, bouquetShelfArea);
-                var img = obj.GetComponent<Image>();
 
-                if (img != null)
-                    img.sprite = kvp.Key.bouquetFinalSprite;
-            }
-        }
-    }
 
     private IEnumerator CloseAfterDelay()
     {

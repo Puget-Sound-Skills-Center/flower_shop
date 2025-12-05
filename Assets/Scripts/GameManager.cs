@@ -283,9 +283,9 @@ public class GameManager : MonoBehaviour
             bouquetInventory[flower] = 0;
 
         bouquetInventory[flower]++;
-
-        Debug.Log($"Added bouquet for {flower.name}. Total: {bouquetInventory[flower]}");
+        Debug.Log($"Added bouquet for {flower.flowerName}. Total: {bouquetInventory[flower]}");
     }
+
 
     public Dictionary<FlowerData, int> GetBouquetInventory()
     {
@@ -426,45 +426,6 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Sold bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
         return true;
     }
-
-
-    // GameManager.cs
-    // ------------------------------------------
-    // Sell Bouquets (Button Version)
-    // ------------------------------------------
-    public void SellBouquetFromButton(ShelfBouquetButton button)
-    {
-        if (button == null)
-        {
-            Debug.LogError("SellBouquetFromButton: BUTTON IS NULL");
-            return;
-        }
-
-        FlowerData flower = button.FlowerData;
-        if (flower == null)
-        {
-            Debug.LogError("SellBouquetFromButton: BUTTON HAS NO FLOWER DATA");
-            return;
-        }
-
-        int price = button.sellPrice;
-
-        // Attempt to sell
-        if (!SellBouquet(flower, price))
-        {
-            Debug.LogWarning("SellBouquetFromButton: Sale failed. No bouquets in inventory?");
-            return;
-        }
-
-        // Remove the UI button from the shelf
-        if (button.Shelf != null)
-            button.Shelf.RemoveBouquetFromShelf(button);
-
-        // Destroy the button object
-        Destroy(button.gameObject);
-    }
-
-
 
 
     // ------------------------------------------

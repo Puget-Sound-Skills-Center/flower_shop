@@ -18,7 +18,7 @@ MonoBehaviour:
   bouquetDefaultSprite: {fileID: 6808667342081170315, guid: a63c9782be55dee4fa86f4a57de274ba, type: 3}
   bouquetCutSprite: {fileID: 869482356720291441, guid: 824d0c37756346049b5acc3148897571, type: 3}
   bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
-  bouquetRibbonSprite: {fileID: 0}
+  bouquetRibbonSprite: {fileID: -9151831542723488907, guid: 334a5278621cbd84cbb9be5369c7ea0e, type: 3}
   bouquetFinalSprite: {fileID: -3049259129333600170, guid: 9351d6016f646794f8a61f508744d0d0, type: 3}
   growTime: 20
   sellValue: 5

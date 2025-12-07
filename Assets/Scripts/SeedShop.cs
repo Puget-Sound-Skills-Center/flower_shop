@@ -101,53 +101,6 @@ public class SeedShop : MonoBehaviour
         }
     }
 
-    // -------- SELL FLOWER --------
-    public void SellFlower()
-    {
-        if (GameManager.Instance == null) return;
-
-        var gm = GameManager.Instance;
-        if (gm == null) return;
-
-        var flower = gm.SelectedFlowerData;
-        if (flower != null && gm.GetFlowerCount(flower) > 0)
-        {
-            gm.AddFlower(flower, -1);
-            gm.AddMoney(sellPrice);
-
-
-            ShowSellPopup($"${sellPrice} Sold!", true);
-        }
-        else
-        {
-            ShowSellPopup("No flowers to sell!", false);
-        }
-    }
-
-    // -------- POPUP HANDLER --------
-    private void ShowSellPopup(string message, bool success)
-    {
-        if (sellPopupPrefab == null)
-        {
-            Debug.LogWarning("SellPopup prefab not assigned!");
-            return;
-        }
-
-        Transform spawn = sellPopupSpawnPoint != null ? sellPopupSpawnPoint : transform;
-        GameObject popup = Instantiate(sellPopupPrefab, spawn.position, Quaternion.identity);
-
-        Canvas canvas = targetCanvas != null ? targetCanvas : FindObjectOfType<Canvas>();
-        if (canvas != null)
-            popup.transform.SetParent(canvas.transform, false);
-
-        TextMeshProUGUI popupText = popup.GetComponent<TextMeshProUGUI>();
-        if (popupText != null)
-        {
-            popupText.text = message;
-            popupText.color = success ? new Color(0.1f, 1f, 0.1f) : new Color(1f, 0.3f, 0.3f);
-        }
-    }
-
     // -------- BUY FEEDBACK --------
     private void ShowBuyFeedback(string message)
     {

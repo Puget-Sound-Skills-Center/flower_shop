@@ -22,5 +22,5 @@ public class FlowerData : ScriptableObject
     public int sellValue = 5;
     public int seedCost = 2;
     internal int price;
-    internal int bouquetSellPrice;
+    public int bouquetSellPrice = 20;  // default value
 }

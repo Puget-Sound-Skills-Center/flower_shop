@@ -21,6 +21,9 @@ public class ShopShelf : MonoBehaviour
 
         GameObject display = Instantiate(bouquetDisplayPrefab, shelfArea);
         display.name = $"Bouquet_{flower.flowerName}";
+        var image = display.GetComponent<UnityEngine.UI.Image>();
+        if (image != null)
+            image.sprite = flower.bouquetFinalSprite;
 
         var button = display.GetComponent<ShelfBouquetButton>();
         if (button != null)

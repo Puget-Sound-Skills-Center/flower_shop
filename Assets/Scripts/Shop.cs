@@ -41,7 +41,10 @@ public class Shop : MonoBehaviour
         {
             gm.AddMoney(totalEarned);
             if (sellResultText != null)
-                sellResultText.text = $"Sold {totalFlowers} flowers for ${totalEarned}!";
+                SellPopupManager.Instance.ShowPopup(
+                    $"+${totalEarned} Sold!",
+                    sellButton.transform.position
+                );
         }
         else
         {

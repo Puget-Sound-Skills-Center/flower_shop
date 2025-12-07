@@ -1,49 +1,32 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Button))]
 public class ShelfBouquetButton : MonoBehaviour
 {
-    private Button button;
-
-    // This will be filled by ShopShelf when the bouquet is spawned
     public FlowerData flowerData;
 
-    [Header("UI Reference")]
-    public Image bouquetImage; // assign in prefab
+    private Button button;
+    private Image outline;
+
+    public bool isSelected = false;
 
     private void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnClickSell);
+        outline = GetComponent<Image>(); // or add a child outline image
 
-        // Set correct bouquet image
-        if (flowerData != null && bouquetImage != null)
-        {
-            bouquetImage.sprite = flowerData.bouquetFinalSprite;
-            bouquetImage.enabled = true;
-        }
+        button.onClick.AddListener(ToggleSelect);
     }
 
-    private void OnClickSell()
+    private void ToggleSelect()
     {
-        if (flowerData == null)
-        {
-            Debug.LogError("ShelfBouquetButton has NO FlowerData assigned!");
-            return;
-        }
+        isSelected = !isSelected;
 
-        // Sell from GameManager using the correct reference
-        bool success = GameManager.Instance.SellBouquet(flowerData, pricePerBouquet: 25);
+        // visual selection highlight
+        if (outline != null)
+            outline.color = isSelected ? new Color(1f, 1f, 0.4f, 1f) : Color.white;
 
-        if (success)
-        {
-            Debug.Log($"Sold bouquet of {flowerData.flowerName}");
-            Destroy(gameObject);
-        }
-        else
-        {
-            Debug.LogWarning("Trying to sell a bouquet that does not exist in inventory.");
-        }
+        // inform manager
+        MultiSellManager.Instance.UpdateSelection(this);
     }
 }

@@ -134,4 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerData: {fileID: 0}
-  bouquetImage: {fileID: 83446851888488143}
+  isSelected: 0

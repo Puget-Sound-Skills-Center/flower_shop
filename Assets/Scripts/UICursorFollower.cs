@@ -75,6 +75,11 @@ public class UICursorFollower : MonoBehaviour
         cursorRect.pivot = pivot;
     }
 
+    public Vector2 GetCursorPosition()
+    {
+        return cursorRect.anchoredPosition;
+    }
+
     public void SetCursorVisible(bool visible)
     {
         cursorImage.enabled = visible;

@@ -26,7 +26,7 @@ public class BouquetDesk : MonoBehaviour
     [Header("Settings")]
     public float stageDelay = 1f;
 
-    private Stage currentStage;
+    public Stage currentStage;
     private FlowerData selectedFlower;
 
     private List<Button> flowerButtons = new List<Button>();
@@ -120,7 +120,7 @@ public class BouquetDesk : MonoBehaviour
 
 
 
-    private void OnNextStage()
+    public void OnNextStage()
     {
         if (selectedFlower == null)
         {
@@ -152,7 +152,7 @@ public class BouquetDesk : MonoBehaviour
                 if (flowerPreview != null)
                     flowerPreview.sprite = selectedFlower.bouquetFinalSprite;
 
-                stageText.text = "Stage: Review — Click NEXT to finalize the bouquet";
+                stageText.text = "Stage: Review...";
                 break;
 
 

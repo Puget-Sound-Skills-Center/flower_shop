@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class BouquetDesk : MonoBehaviour
 {
-    public enum Stage { SelectFlower, Cut, Wrap, Ribbon, Complete }
+    public enum Stage { SelectFlower, Cut, Wrap, Ribbon, Review, Complete }
 
     [Header("UI References")]
     public GameObject bouquetPanel;
@@ -15,6 +15,7 @@ public class BouquetDesk : MonoBehaviour
     public Transform flowerSelectionArea;
     public Button nextButton;
     public Button closeButton;
+    public FlowerData SelectedFlower => selectedFlower;
 
     [Header("Bouquet Shelf UI")]
     public Transform bouquetShelfArea;
@@ -130,8 +131,6 @@ public class BouquetDesk : MonoBehaviour
         switch (currentStage)
         {
             case Stage.SelectFlower:
-
-                // 🔒 Now lock the buttons ONLY once transition starts
                 foreach (var btn in flowerButtons)
                     btn.interactable = false;
 
@@ -147,6 +146,17 @@ public class BouquetDesk : MonoBehaviour
                 break;
 
             case Stage.Ribbon:
+                currentStage = Stage.Review;
+
+                // ⭐ SHOW FINAL BOUQUET SPRITE HERE ⭐
+                if (flowerPreview != null)
+                    flowerPreview.sprite = selectedFlower.bouquetFinalSprite;
+
+                stageText.text = "Stage: Review — Click NEXT to finalize the bouquet";
+                break;
+
+
+            case Stage.Review:
                 FinishBouquet();
                 break;
         }
@@ -194,7 +204,12 @@ public class BouquetDesk : MonoBehaviour
         selectedFlower = null;
         currentStage = Stage.Complete;
 
-        StartCoroutine(CloseAfterDelay());
+        // Change text and disable NEXT (bouquet is done)
+        stageText.text = "Bouquet completed! Click CLOSE to exit.";
+        nextButton.interactable = false;
+
+
+        //StartCoroutine(CloseAfterDelay());
     }
 
 

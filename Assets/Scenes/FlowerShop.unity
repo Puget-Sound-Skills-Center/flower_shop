@@ -3031,6 +3031,7 @@ GameObject:
   - component: {fileID: 755365192}
   - component: {fileID: 755365194}
   - component: {fileID: 755365193}
+  - component: {fileID: 755365197}
   m_Layer: 5
   m_Name: FlowerPreviewArea
   m_TagString: Untagged
@@ -3135,6 +3136,19 @@ RectTransform:
   m_AnchoredPosition: {x: -288, y: 0.0000038147}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &755365197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755365191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 567e49b24615ec54ab9adaa70442be7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipOffset: {x: 15, y: -15}
 --- !u!1 &758250677
 GameObject:
   m_ObjectHideFlags: 0

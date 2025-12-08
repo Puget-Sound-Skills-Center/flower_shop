@@ -5,6 +5,10 @@ public class FlowerData : ScriptableObject
 {
     [Header("General Flower Information")]
     public string flowerName;
+    [Header("Tooltip / Info Panel")]
+    public GameObject tooltipPrefab;
+    [TextArea(3, 6)]
+    public string tooltipDescription;
 
     [Header("Growth Sprites")]
     public Sprite[] growthStages;     // Sprites used while growing in a pot

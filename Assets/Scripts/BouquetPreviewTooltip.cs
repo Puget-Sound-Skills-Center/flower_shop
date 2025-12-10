@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BouquetPreviewTooltip : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
@@ -9,7 +10,7 @@ public class BouquetPreviewTooltip : MonoBehaviour,
     private UICursorFollower cursor;
 
     [Header("Tooltip Prefab (assign manually)")]
-    public GameObject tooltipPrefab;   // <-- NEW: assign in inspector
+    public GameObject tooltipPrefab;   // <-- assign in inspector
 
     [Header("Highlight")]
     public GameObject highlightFrame;  // optional
@@ -19,8 +20,37 @@ public class BouquetPreviewTooltip : MonoBehaviour,
         desk = GetComponentInParent<BouquetDesk>();
         cursor = FindObjectOfType<UICursorFollower>();
 
+        // Ensure this UI element can receive pointer events.
+        var img = GetComponent<Image>();
+        if (img == null)
+        {
+            img = gameObject.AddComponent<Image>();
+            img.color = new Color(0f, 0f, 0f, 0f); // fully transparent
+            img.raycastTarget = true;
+        }
+        else
+        {
+            img.raycastTarget = true;
+        }
+
         if (highlightFrame != null)
             highlightFrame.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        CloseTooltip();
+        if (highlightFrame != null)
+            highlightFrame.SetActive(false);
+    }
+
+    private void Update()
+    {
+        // Close tooltip automatically if desk stage leaves Review (prevents stale tooltip)
+        if (IsTooltipOpen() && (desk == null || desk.currentStage != BouquetDesk.Stage.Review))
+        {
+            CloseTooltip();
+        }
     }
 
     // ------------------ HOVER HIGHLIGHT ------------------
@@ -44,6 +74,12 @@ public class BouquetPreviewTooltip : MonoBehaviour,
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        ToggleTooltip();
+    }
+
+    // Public helper so other scripts (e.g. PreviewClickHandler) can open/close the tooltip programmatically.
+    public void ToggleTooltip()
+    {
         // Only allow tooltips during Review stage
         if (desk == null || desk.currentStage != BouquetDesk.Stage.Review)
             return;
@@ -52,14 +88,18 @@ public class BouquetPreviewTooltip : MonoBehaviour,
         if (flower == null)
             return;
 
-        // Close old tooltip if open
-        if (currentTooltip != null)
+        // Toggle: Close old tooltip if open
+        if (IsTooltipOpen())
         {
-            Destroy(currentTooltip);
-            currentTooltip = null;
+            CloseTooltip();
             return;
         }
 
+        OpenTooltip(flower);
+    }
+
+    private void OpenTooltip(FlowerData flower)
+    {
         // Must assign a prefab manually
         if (tooltipPrefab == null)
         {
@@ -67,26 +107,59 @@ public class BouquetPreviewTooltip : MonoBehaviour,
             return;
         }
 
-        Canvas canvas = desk.GetComponentInParent<Canvas>();
+        // Find Canvas to parent tooltip under
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null)
+            canvas = FindObjectOfType<Canvas>();
+
         if (canvas == null)
         {
-            Debug.LogError("BouquetPreviewTooltip: No parent Canvas found!");
+            Debug.LogError("BouquetPreviewTooltip: No Canvas found to parent tooltip!");
             return;
         }
 
         // Spawn tooltip
         currentTooltip = Instantiate(tooltipPrefab, canvas.transform);
         RectTransform tipRect = currentTooltip.GetComponent<RectTransform>();
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
-        // Position near custom UI cursor if available
+        // Position: prefer custom UI cursor position when available, otherwise convert screen point.
         if (cursor != null)
+        {
             tipRect.anchoredPosition = cursor.GetCursorPosition() + new Vector2(25f, -25f);
+        }
         else
-            tipRect.position = Input.mousePosition;
+        {
+            Vector2 localPoint;
+            bool ok = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect,
+                Input.mousePosition,
+                canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
+                out localPoint);
+
+            if (ok)
+                tipRect.anchoredPosition = localPoint + new Vector2(25f, -25f);
+            else
+                tipRect.position = Input.mousePosition; // fallback
+        }
 
         // Fill tooltip content
         var tooltip = currentTooltip.GetComponent<FlowerTooltip>();
         if (tooltip != null)
             tooltip.Setup(flower);
+    }
+
+    private void CloseTooltip()
+    {
+        if (currentTooltip != null)
+        {
+            Destroy(currentTooltip);
+            currentTooltip = null;
+        }
+    }
+
+    private bool IsTooltipOpen()
+    {
+        return currentTooltip != null;
     }
 }

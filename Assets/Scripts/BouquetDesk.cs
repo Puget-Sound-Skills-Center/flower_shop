@@ -28,7 +28,7 @@ public class BouquetDesk : MonoBehaviour
     public float stageDelay = 1f;
 
     public Stage currentStage;
-    private FlowerData selectedFlower;
+    public FlowerData selectedFlower;
     private List<Button> flowerButtons = new List<Button>();
 
     private void Start()

@@ -9,6 +9,7 @@ public class BouquetPreviewTooltip : MonoBehaviour,
     private BouquetDesk desk;
     private UICursorFollower cursor;
 
+
     [Header("Tooltip Prefab (assign manually)")]
     public GameObject tooltipPrefab;   // <-- assign in inspector
 
@@ -84,7 +85,7 @@ public class BouquetPreviewTooltip : MonoBehaviour,
         if (desk == null || desk.currentStage != BouquetDesk.Stage.Review)
             return;
 
-        var flower = desk.SelectedFlower;
+        var flower = desk.selectedFlower;
         if (flower == null)
             return;
 

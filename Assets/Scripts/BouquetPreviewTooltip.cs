@@ -3,36 +3,31 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class BouquetPreviewTooltip : MonoBehaviour,
-    IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+    IPointerEnterHandler, IPointerExitHandler
 {
     private GameObject currentTooltip;
     private BouquetDesk desk;
     private UICursorFollower cursor;
 
+    [Header("Tooltip Prefab")]
+    public GameObject tooltipPrefab;
 
-    [Header("Tooltip Prefab (assign manually)")]
-    public GameObject tooltipPrefab;   // <-- assign in inspector
-
-    [Header("Highlight")]
-    public GameObject highlightFrame;  // optional
+    [Header("Highlight Frame (optional)")]
+    public GameObject highlightFrame;
 
     private void Start()
     {
         desk = GetComponentInParent<BouquetDesk>();
         cursor = FindObjectOfType<UICursorFollower>();
 
-        // Ensure this UI element can receive pointer events.
+        // Ensure this area can receive hover raycasts
         var img = GetComponent<Image>();
         if (img == null)
         {
             img = gameObject.AddComponent<Image>();
-            img.color = new Color(0f, 0f, 0f, 0f); // fully transparent
-            img.raycastTarget = true;
+            img.color = new Color(0f, 0f, 0f, 0f);
         }
-        else
-        {
-            img.raycastTarget = true;
-        }
+        img.raycastTarget = true;
 
         if (highlightFrame != null)
             highlightFrame.SetActive(false);
@@ -47,22 +42,20 @@ public class BouquetPreviewTooltip : MonoBehaviour,
 
     private void Update()
     {
-        // Close tooltip automatically if desk stage leaves Review (prevents stale tooltip)
-        if (IsTooltipOpen() && (desk == null || desk.currentStage != BouquetDesk.Stage.Review))
+        if (IsTooltipOpen() &&
+            (desk == null || desk.currentStage != BouquetDesk.Stage.Review))
         {
             CloseTooltip();
         }
     }
 
-    // ------------------ HOVER HIGHLIGHT ------------------
+    // ------------------- Hover Highlight -------------------
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (desk != null && desk.currentStage == BouquetDesk.Stage.Review)
-        {
             if (highlightFrame != null)
                 highlightFrame.SetActive(true);
-        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -71,80 +64,62 @@ public class BouquetPreviewTooltip : MonoBehaviour,
             highlightFrame.SetActive(false);
     }
 
-    // ------------------ CLICK → SHOW TOOLTIP ------------------
+    // ------------------- Called by Hidden Button -------------------
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        ToggleTooltip();
-    }
-
-    // Public helper so other scripts (e.g. PreviewClickHandler) can open/close the tooltip programmatically.
     public void ToggleTooltip()
     {
-        // Only allow tooltips during Review stage
         if (desk == null || desk.currentStage != BouquetDesk.Stage.Review)
             return;
 
-        var flower = desk.selectedFlower;
+        var flower = desk.SelectedFlower; // ← rely on real property
         if (flower == null)
             return;
 
-        // Toggle: Close old tooltip if open
         if (IsTooltipOpen())
-        {
             CloseTooltip();
-            return;
-        }
-
-        OpenTooltip(flower);
+        else
+            OpenTooltip(flower);
     }
 
     private void OpenTooltip(FlowerData flower)
     {
-        // Must assign a prefab manually
         if (tooltipPrefab == null)
         {
-            Debug.LogError("BouquetPreviewTooltip: No tooltip prefab assigned in inspector!");
+            Debug.LogError("BouquetPreviewTooltip: Missing tooltipPrefab!");
             return;
         }
 
-        // Find Canvas to parent tooltip under
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas == null)
             canvas = FindObjectOfType<Canvas>();
 
         if (canvas == null)
         {
-            Debug.LogError("BouquetPreviewTooltip: No Canvas found to parent tooltip!");
+            Debug.LogError("BouquetPreviewTooltip: No Canvas found!");
             return;
         }
 
-        // Spawn tooltip
         currentTooltip = Instantiate(tooltipPrefab, canvas.transform);
         RectTransform tipRect = currentTooltip.GetComponent<RectTransform>();
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
-        // Position: prefer custom UI cursor position when available, otherwise convert screen point.
         if (cursor != null)
         {
-            tipRect.anchoredPosition = cursor.GetCursorPosition() + new Vector2(25f, -25f);
+            tipRect.anchoredPosition =
+                cursor.GetCursorPosition() + new Vector2(25f, -25f);
         }
         else
         {
             Vector2 localPoint;
-            bool ok = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 canvasRect,
                 Input.mousePosition,
                 canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera,
                 out localPoint);
 
-            if (ok)
-                tipRect.anchoredPosition = localPoint + new Vector2(25f, -25f);
-            else
-                tipRect.position = Input.mousePosition; // fallback
+            tipRect.anchoredPosition = localPoint + new Vector2(25f, -25f);
         }
 
-        // Fill tooltip content
         var tooltip = currentTooltip.GetComponent<FlowerTooltip>();
         if (tooltip != null)
             tooltip.Setup(flower);

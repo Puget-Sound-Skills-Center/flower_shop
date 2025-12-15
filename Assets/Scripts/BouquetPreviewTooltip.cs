@@ -6,7 +6,8 @@ public class BouquetPreviewTooltip : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler
 {
     private GameObject currentTooltip;
-    private BouquetDesk desk;
+    [Header("Assign this directly (do not rely on GetComponentInParent)")]
+    public BouquetDesk desk;                       // assign in Inspector
     private UICursorFollower cursor;
 
     [Header("Tooltip Prefab")]
@@ -17,10 +18,19 @@ public class BouquetPreviewTooltip : MonoBehaviour,
 
     private void Start()
     {
-        desk = GetComponentInParent<BouquetDesk>();
+        // Prefer explicit assignment in inspector. If missing, attempt a fallback lookup but warn.
+        if (desk == null)
+        {
+            desk = GetComponentInParent<BouquetDesk>();
+            if (desk != null)
+                Debug.LogWarning("BouquetPreviewTooltip: 'desk' was not assigned in Inspector — auto-found via GetComponentInParent. Assign BouquetDesk in the Inspector to avoid hierarchy dependence.");
+            else
+                Debug.LogWarning("BouquetPreviewTooltip: 'desk' not assigned in Inspector and not found in parents. Assign BouquetDesk on this component in the Inspector.");
+        }
+
         cursor = FindObjectOfType<UICursorFollower>();
 
-        // Ensure this area can receive hover raycasts
+        // Ensure this area can receive hover raycasts (editor should ideally have a Graphic).
         var img = GetComponent<Image>();
         if (img == null)
         {
@@ -54,8 +64,10 @@ public class BouquetPreviewTooltip : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (desk != null && desk.currentStage == BouquetDesk.Stage.Review)
+        {
             if (highlightFrame != null)
                 highlightFrame.SetActive(true);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -68,10 +80,16 @@ public class BouquetPreviewTooltip : MonoBehaviour,
 
     public void ToggleTooltip()
     {
-        if (desk == null || desk.currentStage != BouquetDesk.Stage.Review)
+        if (desk == null)
+        {
+            Debug.LogWarning("BouquetPreviewTooltip.ToggleTooltip: 'desk' is null. Assign BouquetDesk in the Inspector.");
+            return;
+        }
+
+        if (desk.currentStage != BouquetDesk.Stage.Review)
             return;
 
-        var flower = desk.SelectedFlower; // ← rely on real property
+        var flower = desk.SelectedFlower;
         if (flower == null)
             return;
 
@@ -129,7 +147,12 @@ public class BouquetPreviewTooltip : MonoBehaviour,
     {
         if (currentTooltip != null)
         {
-            Destroy(currentTooltip);
+            var anim = currentTooltip.GetComponent<TooltipFadeUp>();
+            if (anim != null)
+                anim.PlayFadeOutAndDestroy();
+            else
+                Destroy(currentTooltip);
+
             currentTooltip = null;
         }
     }

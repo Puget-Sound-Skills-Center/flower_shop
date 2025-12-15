@@ -6,7 +6,15 @@ public class TooltipButtonTrigger : MonoBehaviour
 
     public void OnButtonClick()
     {
-        if (previewTooltip != null)
-            previewTooltip.ToggleTooltip();
+        Debug.Log("BUTTON CLICKED");
+
+        if (previewTooltip == null)
+        {
+            Debug.LogError("previewTooltip is NULL");
+            return;
+        }
+
+        previewTooltip.ToggleTooltip();
     }
+
 }

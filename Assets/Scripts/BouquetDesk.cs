@@ -132,6 +132,7 @@ public class BouquetDesk : MonoBehaviour
                 break;
 
             case Stage.Ribbon:
+                StartCoroutine(DoStage(Stage.Review, "Finalizing bouquet...", selectedFlower.bouquetFinalSprite));
                 currentStage = Stage.Review;
                 // ⭐ Show final bouquet sprite in review ⭐
                 if (flowerPreview != null)

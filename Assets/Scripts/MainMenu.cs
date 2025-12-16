@@ -15,6 +15,13 @@ public class MainMenu : MonoBehaviour
 
     private Resolution[] resolutions;
 
+    AudioManager audioManager;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     private void Start()
     {
         // Hide settings at start
@@ -38,41 +45,23 @@ public class MainMenu : MonoBehaviour
                 currentResolutionIndex = i;
             }
         }
-
-        resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
-        resolutionDropdown.onValueChanged.AddListener(SetResolution);
-
-        // Sync sliders with AudioManager
-        if (AudioManager.Instance != null)
-        {
-            if (musicSlider != null)
-            {
-                musicSlider.value = AudioManager.Instance.musicVolume;
-                musicSlider.onValueChanged.AddListener(AudioManager.Instance.SetMusicVolume);
-            }
-
-            if (sfxSlider != null)
-            {
-                sfxSlider.value = AudioManager.Instance.sfxVolume;
-                sfxSlider.onValueChanged.AddListener(AudioManager.Instance.SetSFXVolume);
-            }
-        }
     }
 
     public void PlayGame()
     {
+        audioManager.PlaySFX(audioManager.buttonClick);
         SceneManager.LoadScene("FlowerShop");
     }
 
     public void OpenOptions()
     {
+        audioManager.PlaySFX(audioManager.buttonClick);
         if (settingsPanel != null) settingsPanel.SetActive(true);
     }
 
     public void CloseOptions()
     {
+        audioManager.PlaySFX(audioManager.buttonClick);
         if (settingsPanel != null) settingsPanel.SetActive(false);
     }
 
@@ -85,6 +74,7 @@ public class MainMenu : MonoBehaviour
 
     public void QuitGame()
     {
+        audioManager.PlaySFX(audioManager.buttonClick);
         Debug.Log("Quit Game");
         Application.Quit();
     }

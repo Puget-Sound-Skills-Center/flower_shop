@@ -15,7 +15,10 @@ MonoBehaviour:
   flowerName: 'Velora Lily '
   tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
   tooltipDescription: This is a flower
-  growthStages: []
+  growthStages:
+  - {fileID: -3070474897925258016, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  - {fileID: -5593663558324774884, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
+  - {fileID: -6866173276986519652, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   readySprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
   bouquetDefaultSprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
   bouquetCutSprite: {fileID: 7052456735273860388, guid: 4813ede1dae85ee4789eb6c5d3301127, type: 3}

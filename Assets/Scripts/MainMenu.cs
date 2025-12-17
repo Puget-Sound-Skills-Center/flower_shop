@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
+using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
@@ -9,8 +10,6 @@ public class MainMenu : MonoBehaviour
     public GameObject settingsPanel;
 
     [Header("Settings UI")]
-    public Slider musicSlider;
-    public Slider sfxSlider;
     public TMP_Dropdown resolutionDropdown;
 
     private Resolution[] resolutions;
@@ -22,18 +21,17 @@ public class MainMenu : MonoBehaviour
         audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
 
+    Resolution[] reolutions;
+
     private void Start()
     {
-        // Hide settings at start
-        if (settingsPanel != null) settingsPanel.SetActive(false);
+       resolutions = Screen.resolutions;
 
-        // Populate resolutions dropdown
-        resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
-        var options = new System.Collections.Generic.List<string>();
-        int currentResolutionIndex = 0;
+        List<string> options = new List<string>();
 
+        int currentResolutionIndex = 0;
         for (int i = 0; i < resolutions.Length; i++)
         {
             string option = resolutions[i].width + " x " + resolutions[i].height;
@@ -45,6 +43,10 @@ public class MainMenu : MonoBehaviour
                 currentResolutionIndex = i;
             }
         }
+
+        resolutionDropdown.AddOptions(options);
+        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.RefreshShownValue();
     }
 
     public void PlayGame()
@@ -65,17 +67,16 @@ public class MainMenu : MonoBehaviour
         if (settingsPanel != null) settingsPanel.SetActive(false);
     }
 
-    public void SetResolution(int resolutionIndex)
-    {
-        Resolution res = resolutions[resolutionIndex];
-        Screen.SetResolution(res.width, res.height, Screen.fullScreenMode, res.refreshRate);
-        Debug.Log("Setting resolution to: " + res.width + "x" + res.height + " @ " + res.refreshRate + "Hz");
-    }
-
     public void QuitGame()
     {
         audioManager.PlaySFX(audioManager.buttonClick);
         Debug.Log("Quit Game");
         Application.Quit();
+    }
+
+    public void SetResolution (int resolutionIndex)
+    {
+        Resolution resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 }

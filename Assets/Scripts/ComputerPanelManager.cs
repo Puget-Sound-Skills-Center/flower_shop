@@ -10,11 +10,15 @@ public class ComputerPanelManager : MonoBehaviour
     public CanvasGroup panelCanvasGroup;
     public Button closeButton;
 
+    [SerializeField] private PanelTab currentTab;
+
     [Header("Tabs")]
     public GameObject seedTabContent;
     public GameObject potsTabContent;
+    public GameObject billTabContent;
     public Button seedTabButton;
     public Button potsTabButton;
+    public Button billsTabButton;
 
     [Header("Tab Panel Sprite")]
     public Image panelBackgroundImage; // Assign the panel's Image component here
@@ -30,7 +34,6 @@ public class ComputerPanelManager : MonoBehaviour
 
     private bool isOpen = false;
     private Coroutine fadeRoutine;
-    private bool showingSeeds = true;
 
     private void Awake()
     {
@@ -46,17 +49,22 @@ public class ComputerPanelManager : MonoBehaviour
         if (seedTabButton != null)
         {
             seedTabButton.onClick.RemoveAllListeners();
-            seedTabButton.onClick.AddListener(() => SwitchTab(true));
+            seedTabButton.onClick.AddListener(() => SwitchTab(PanelTab.Seeds));
         }
 
         if (potsTabButton != null)
         {
             potsTabButton.onClick.RemoveAllListeners();
-            potsTabButton.onClick.AddListener(() => SwitchTab(false));
+            potsTabButton.onClick.AddListener(() => SwitchTab(PanelTab.Pots));
+        }
+        if (billsTabButton != null)
+        {
+            billsTabButton.onClick.RemoveAllListeners();
+            billsTabButton.onClick.AddListener(() => SwitchTab(PanelTab.Bills));
         }
 
         // Start on the seeds tab
-        SwitchTab(true);
+        SwitchTab(PanelTab.Seeds);
     }
 
     public void OpenPanel()
@@ -74,7 +82,6 @@ public class ComputerPanelManager : MonoBehaviour
         }
 
         isOpen = true;
-        SwitchTab(true);
     }
 
     public void ClosePanel()
@@ -116,52 +123,45 @@ public class ComputerPanelManager : MonoBehaviour
         computerPanel.SetActive(false);
     }
 
-    // 🌱 TAB SWITCHING
-    private void SwitchTab(bool showSeeds)
+    // Panel Tab Enum
+    public enum PanelTab
     {
-        showingSeeds = showSeeds;
-
-        if (EventSystem.current != null)
-            EventSystem.current.SetSelectedGameObject(null);
-
-        // Hide all tab content first
-        if (seedTabContent != null) seedTabContent.SetActive(false);
-        if (potsTabContent != null) potsTabContent.SetActive(false);
-
-        // Show selected tab
-        if (showSeeds)
-        {
-            seedTabContent?.SetActive(true);
-            if (panelBackgroundImage != null && seedTabSprite != null)
-                panelBackgroundImage.sprite = seedTabSprite;
-        }
-        else
-        {
-            potsTabContent?.SetActive(true);
-            if (panelBackgroundImage != null && potsTabSprite != null)
-                panelBackgroundImage.sprite = potsTabSprite;
-
-            // 🪴 Assign GrowingAreaManager to all PotShopItem prefabs currently in the PotsTabContent
-            if (growingAreaManager != null && potsTabContent != null)
-            {
-                foreach (Transform child in potsTabContent.transform)
-                {
-                    PotShopItem shopItem = child.GetComponent<PotShopItem>();
-                    if (shopItem != null)
-                    {
-                        shopItem.growingAreaManager = growingAreaManager;
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning("ComputerPanelManager: GrowingAreaManager or potsTabContent not assigned.");
-            }
-        }
-
-        HighlightTabButton(seedTabButton, showSeeds);
-        HighlightTabButton(potsTabButton, !showSeeds);
+        Seeds,
+        Pots,
+        Bills
     }
+
+    // 🌱 TAB SWITCHING
+    public void SwitchTab(PanelTab tab)
+    {
+        currentTab = tab;
+
+        // Disable all tab contents first
+        seedTabContent.SetActive(false);
+        potsTabContent.SetActive(false);
+        billTabContent.SetActive(false);
+
+        // Enable selected tab + swap sprite
+        switch (tab)
+        {
+            case PanelTab.Seeds:
+                seedTabContent.SetActive(true);
+                panelBackgroundImage.sprite = seedTabSprite;
+                break;
+
+            case PanelTab.Pots:
+                potsTabContent.SetActive(true);
+                panelBackgroundImage.sprite = potsTabSprite;
+                break;
+
+            case PanelTab.Bills:
+                billTabContent.SetActive(true);
+                // Optional: bills sprite
+                break;
+        }
+    }
+
+
 
     private void HighlightTabButton(Button button, bool active)
     {

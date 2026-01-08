@@ -52,7 +52,7 @@ public class PotShopItem : MonoBehaviour
             ownedText.text = $"Owned: {owned}";
     }
 
-    private void BuyPot()
+    public void BuyPot()
     {
         if (growingAreaManager == null || growingPotPrefab == null)
         {

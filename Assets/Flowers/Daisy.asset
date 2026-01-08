@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Daisy
   m_EditorClassIdentifier: 
   flowerName: Daisy
+  tooltipPrefab: {fileID: 0}
+  tooltipDescription: 
   growthStages: []
   readySprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   bouquetDefaultSprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
@@ -23,3 +25,4 @@ MonoBehaviour:
   growTime: 20
   sellValue: 5
   seedCost: 2
+  bouquetSellPrice: 20

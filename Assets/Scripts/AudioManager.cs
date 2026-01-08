@@ -8,8 +8,10 @@ public class AudioManager : MonoBehaviour
 
     [Header("Audio Clip")]
     public AudioClip backgroundMusic;
-    public AudioClip buttonClick; 
+    public AudioClip buttonClick;
+    public AudioClip flowerStartGrowth;
     public AudioClip flowerFinishGrowth;
+    public AudioClip sellBouquet;
 
     public static AudioManager instance;
 

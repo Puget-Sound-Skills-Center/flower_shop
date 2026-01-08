@@ -7,9 +7,13 @@ public class MultiSellManager : MonoBehaviour
 
     private List<ShelfBouquetButton> selectedBouquets = new List<ShelfBouquetButton>();
 
+    AudioManager audioManager;
+
     private void Awake()
     {
         Instance = this;
+
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
     }
 
     public void UpdateSelection(ShelfBouquetButton bouquet)
@@ -38,6 +42,8 @@ public class MultiSellManager : MonoBehaviour
         }
 
         selectedBouquets.Clear();
+
+        audioManager.PlaySFX(audioManager.sellBouquet);
 
         SellPopupManager.Instance.ShowPopup(
             $"+${totalEarned} (bouquets sold)",

@@ -11,8 +11,12 @@ public class RoomManager : MonoBehaviour
 
     public static event Action OnRoomSwitched; // Add this event
 
+    AudioManager audioManager;
+
     private void Awake()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         if (Instance == null)
         {
             Instance = this;
@@ -56,6 +60,7 @@ public class RoomManager : MonoBehaviour
         // Enable the target room
         if (rooms[roomIndex] != null)
         {
+            audioManager.PlaySFX(audioManager.openDoor);
             rooms[roomIndex].SetActive(true);
             currentRoomIndex = roomIndex;
             OnRoomSwitched?.Invoke(); // Notify listeners

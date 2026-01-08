@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip flowerStartGrowth;
     public AudioClip flowerFinishGrowth;
     public AudioClip sellBouquet;
+    public AudioClip openDoor;
 
     public static AudioManager instance;
 

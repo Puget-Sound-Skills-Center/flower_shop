@@ -49,8 +49,12 @@ public class Pot : MonoBehaviour
     private double growDuration = 0.0;
     private FlowerData currentFlower;
 
+    AudioManager audioManager;
+
     private void Awake()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         uiImage = GetComponentInChildren<Image>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -176,6 +180,7 @@ public class Pot : MonoBehaviour
         currentFlower = flower;
         growDuration = Mathf.Max(0.1f, flower.growTime);
         plantedAtReal = (GlobalTime.Instance != null) ? GlobalTime.Instance.RealNow : Time.realtimeSinceStartupAsDouble;
+        audioManager.PlaySFX(audioManager.flowerStartGrowth);
 
         isGrowing = true;
         readyToHarvest = false;
@@ -272,6 +277,7 @@ public class Pot : MonoBehaviour
         isGrowing = false;
         readyToHarvest = false;
         currentFlower = null;
+        audioManager.PlaySFX(audioManager.flowerFinishGrowth);
 
         // Reset visuals
         if (emptyPotSprite != null) SetSprite(emptyPotSprite);

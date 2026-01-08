@@ -15,6 +15,7 @@ public class BouquetDesk : MonoBehaviour
     public Transform flowerSelectionArea;
     public Button nextButton;
     public Button closeButton;
+    public GameObject inputBlocker;
     public FlowerData SelectedFlower => selectedFlower;
 
     [Header("Bouquet Shelf UI")]
@@ -36,6 +37,9 @@ public class BouquetDesk : MonoBehaviour
         if (bouquetPanel != null)
             bouquetPanel.SetActive(false);
 
+        if (inputBlocker != null)
+            inputBlocker.SetActive(false);
+
         if (nextButton != null)
             nextButton.onClick.AddListener(OnNextStage);
 
@@ -47,6 +51,9 @@ public class BouquetDesk : MonoBehaviour
     {
         if (bouquetPanel != null)
             bouquetPanel.SetActive(true);
+
+        if (inputBlocker != null)
+            inputBlocker.SetActive(true);
 
         currentStage = Stage.SelectFlower;
         stageText.text = "Stage: Select a Flower";
@@ -180,5 +187,6 @@ public class BouquetDesk : MonoBehaviour
     public void ClosePanel()
     {
         bouquetPanel.SetActive(false);
+        inputBlocker.SetActive(false);
     }
 }

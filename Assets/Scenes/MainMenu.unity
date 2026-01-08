@@ -3442,7 +3442,9 @@ MonoBehaviour:
   SFXSource: {fileID: 827706444}
   backgroundMusic: {fileID: 8300000, guid: 59bfe70b560605a4b84cafbe499b5405, type: 3}
   buttonClick: {fileID: 8300000, guid: 9621b215d839b394db8a70811c45db27, type: 3}
+  flowerStartGrowth: {fileID: 0}
   flowerFinishGrowth: {fileID: 0}
+  sellBouquet: {fileID: 8300000, guid: 95ecd57816bc9c94da8f03622fe6af8c, type: 3}
 --- !u!4 &1452687214
 Transform:
   m_ObjectHideFlags: 0

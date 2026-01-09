@@ -422,7 +422,7 @@ public class GameManager : MonoBehaviour
 
         bouquetInventory[flower]--;
         AddMoney(pricePerBouquet);
-
+        BillManager.Instance.NotifyAction();
         Debug.Log($"Sold bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
         return true;
     }

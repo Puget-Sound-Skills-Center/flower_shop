@@ -3442,10 +3442,10 @@ MonoBehaviour:
   SFXSource: {fileID: 827706444}
   backgroundMusic: {fileID: 8300000, guid: 59bfe70b560605a4b84cafbe499b5405, type: 3}
   buttonClick: {fileID: 8300000, guid: 9621b215d839b394db8a70811c45db27, type: 3}
-  flowerStartGrowth: {fileID: 8300000, guid: c858b18dc0103f446874fb2a68767548, type: 3}
+  flowerStartGrowth: {fileID: 8300000, guid: 4e86fd3d233d3a549ae89c2cc35d98e9, type: 3}
   flowerFinishGrowth: {fileID: 8300000, guid: 64e14a132b56d694aa126c4fb1f4d818, type: 3}
   sellBouquet: {fileID: 8300000, guid: 95ecd57816bc9c94da8f03622fe6af8c, type: 3}
-  openDoor: {fileID: 8300000, guid: 3eb1cc8ca2dbf9e4c8779a1844527c8f, type: 3}
+  openDoor: {fileID: 8300000, guid: 0469e44c6a0d4e745a105ec6e4881e69, type: 3}
 --- !u!4 &1452687214
 Transform:
   m_ObjectHideFlags: 0

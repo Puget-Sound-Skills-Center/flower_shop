@@ -22,7 +22,7 @@ public class BillManager : MonoBehaviour
     }
 
     // 🔔 Call this when a meaningful action happens
-    public void NotifyAction()
+    public void NotifyPlayerBillDue()
     {
         foreach (var bill in bills)
         {
@@ -30,7 +30,10 @@ public class BillManager : MonoBehaviour
                 continue;
 
             bill.actionsRemaining--;
-
+            if (bill.actionsRemaining <= 3)
+            {
+                NotifyPlayerBillDue(bill);
+            }
             if (bill.actionsRemaining <= 0)
             {
                 HandleOverdueBill(bill);
@@ -62,5 +65,11 @@ public class BillManager : MonoBehaviour
 
         // ⚠️ TEMP TEST PENALTY
         Application.Quit();
+    }
+
+    public void NotifyPlayerBillDue(BillData bill)
+    {
+        Debug.LogError($"BILL OVERDUE SOON: {bill.billName}");
+
     }
 }

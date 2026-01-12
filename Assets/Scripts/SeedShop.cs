@@ -83,7 +83,7 @@ public class SeedShop : MonoBehaviour
         {
             GameManager.Instance.AddSeed(flower, 1);
             ShowBuyFeedback($"Bought 1 {flower?.flowerName ?? flower?.name ?? "seed"}!");
-            BillManager.Instance.NotifyAction();
+            BillManager.Instance.NotifyPlayerBillDue();
         }
         else
         {

@@ -5338,7 +5338,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -488, y: 229}
+  m_AnchoredPosition: {x: -484, y: 231}
   m_SizeDelta: {x: 116.051, y: 20.9899}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1068449089
@@ -5507,6 +5507,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bills:
   - {fileID: 11400000, guid: 0ae64cc071d3c2e4092cf0c1684634e4, type: 2}
+  PayBillButton: {fileID: 1809871492}
+  selectedBill: {fileID: 11400000, guid: 0ae64cc071d3c2e4092cf0c1684634e4, type: 2}
 --- !u!1 &1072221484
 GameObject:
   m_ObjectHideFlags: 0
@@ -8200,7 +8202,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1809871493}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1068449093}
+        m_TargetAssemblyTypeName: BillManager, Assembly-CSharp
+        m_MethodName: PaySelectedBill
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1809871493
 MonoBehaviour:
   m_ObjectHideFlags: 0

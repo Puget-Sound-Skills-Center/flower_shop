@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Rent
   m_EditorClassIdentifier: 
   billName: Rent
-  baseAmount: 200
+  baseAmount: 50
   recurringIncrease: 20
-  actionsUntilDue: 10
-  actionsRemaining: 0
-  currentAmount: 200
+  actionsUntilDue: 5
+  actionsRemaining: 5
+  currentAmount: 70
   isPaid: 0

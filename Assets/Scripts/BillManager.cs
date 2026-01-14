@@ -12,7 +12,6 @@ public class BillManager : MonoBehaviour
     [Header("PayButton")]
     public Button PayBillButton;
 
-    [Header("bills")]
     public BillData selectedBill;
 
     private void Awake()

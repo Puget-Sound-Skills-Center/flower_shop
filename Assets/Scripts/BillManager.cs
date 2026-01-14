@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -11,8 +12,10 @@ public class BillManager : MonoBehaviour
 
     [Header("PayButton")]
     public Button PayBillButton;
-
     public BillData selectedBill;
+    public TMP_Text rentDueText;
+
+    public BillData billData;
 
     private void Awake()
     {
@@ -68,6 +71,7 @@ public class BillManager : MonoBehaviour
 
     public bool PayBill(BillData bill)
     {
+
         var gm = GameManager.Instance;
 
         if (gm == null)
@@ -79,6 +83,7 @@ public class BillManager : MonoBehaviour
         bill.isPaid = true;
         bill.StartNewCycle();
 
+        rentDueText.text = "Bill Paid!";
         Debug.Log($"Paid {bill.billName}");
 
         return true;
@@ -103,7 +108,6 @@ public class BillManager : MonoBehaviour
         PayBill(selectedBill);
     }
 
-
     private void HandleOverdueBill(BillData bill)
     {
         Debug.LogError($"BILL OVERDUE: {bill.billName}");
@@ -116,5 +120,10 @@ public class BillManager : MonoBehaviour
     {
         Debug.LogError($"BILL OVERDUE SOON: {bill.billName}");
 
+    }
+
+    public void setRentText()
+    {
+        rentDueText.text = "Rent due in " + $"${billData.actionsRemaining}" + " actions!";
     }
 }

@@ -10,6 +10,8 @@ public class ComputerPanelManager : MonoBehaviour
     public CanvasGroup panelCanvasGroup;
     public Button closeButton;
 
+    public BillManager billManager;
+
     [SerializeField] private PanelTab currentTab;
 
     [Header("Tabs")]
@@ -24,6 +26,7 @@ public class ComputerPanelManager : MonoBehaviour
     public Image panelBackgroundImage; // Assign the panel's Image component here
     public Sprite seedTabSprite;       // Sprite for the seeds tab
     public Sprite potsTabSprite;       // Sprite for the pots tab
+    public Sprite billsTabSprite;
 
     [Header("Growing Area Reference")]
     public GrowingAreaManager growingAreaManager;
@@ -156,7 +159,8 @@ public class ComputerPanelManager : MonoBehaviour
 
             case PanelTab.Bills:
                 billTabContent.SetActive(true);
-                // Optional: bills sprite
+                panelBackgroundImage.sprite = billsTabSprite;
+               // billManager.setRentText();
                 break;
         }
     }

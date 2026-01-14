@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Bills/Bill")]
@@ -30,4 +31,5 @@ public class BillData : ScriptableObject
         actionsRemaining = actionsUntilDue;
         isPaid = false;
     }
+
 }

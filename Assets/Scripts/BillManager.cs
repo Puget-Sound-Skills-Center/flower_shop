@@ -17,8 +17,12 @@ public class BillManager : MonoBehaviour
 
     public BillData billData;
 
+    public AudioManager audioManager;
+
     private void Awake()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -82,6 +86,7 @@ public class BillManager : MonoBehaviour
 
         bill.isPaid = true;
         bill.StartNewCycle();
+        audioManager.PlaySFX(audioManager.sellBouquet);
 
         rentDueText.text = "Bill Paid!";
         Debug.Log($"Paid {bill.billName}");

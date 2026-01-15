@@ -38,8 +38,12 @@ public class ComputerPanelManager : MonoBehaviour
     private bool isOpen = false;
     private Coroutine fadeRoutine;
 
+    public AudioManager audioManager;
+
     private void Awake()
     {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         if (computerPanel != null)
             computerPanel.SetActive(false);
 
@@ -76,6 +80,7 @@ public class ComputerPanelManager : MonoBehaviour
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         computerPanel.SetActive(true);
+        audioManager.PlaySFX(audioManager.buttonClick);
 
         if (panelCanvasGroup != null)
         {
@@ -101,6 +106,7 @@ public class ComputerPanelManager : MonoBehaviour
         }
         else
         {
+            audioManager.PlaySFX(audioManager.buttonClick);
             computerPanel.SetActive(false);
         }
 
@@ -150,17 +156,20 @@ public class ComputerPanelManager : MonoBehaviour
             case PanelTab.Seeds:
                 seedTabContent.SetActive(true);
                 panelBackgroundImage.sprite = seedTabSprite;
+                audioManager.PlaySFX(audioManager.buttonClick);
                 break;
 
             case PanelTab.Pots:
                 potsTabContent.SetActive(true);
                 panelBackgroundImage.sprite = potsTabSprite;
+                audioManager.PlaySFX(audioManager.buttonClick);
                 break;
 
             case PanelTab.Bills:
                 billTabContent.SetActive(true);
                 panelBackgroundImage.sprite = billsTabSprite;
-               // billManager.setRentText();
+                audioManager.PlaySFX(audioManager.buttonClick);
+                // billManager.setRentText();
                 break;
         }
     }

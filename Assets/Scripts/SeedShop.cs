@@ -29,6 +29,13 @@ public class SeedShop : MonoBehaviour
     [Header("UI Canvas")]
     public Canvas targetCanvas; // Assign main UI Canvas in Inspector
 
+    public AudioManager audioManager;
+
+    private void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     // -------- BUY SEED --------
     public void ShowBuyConfirmation(FlowerData flower, Transform spawnPoint)
     {
@@ -51,6 +58,7 @@ public class SeedShop : MonoBehaviour
         {
             currentConfirmation = Instantiate(confirmationWindowPrefab);
             currentConfirmation.transform.SetParent(canvas.transform, false);
+            audioManager.PlaySFX(audioManager.buttonClick);
 
             RectTransform popupRect = currentConfirmation.GetComponent<RectTransform>();
             if (popupRect != null)
@@ -83,6 +91,7 @@ public class SeedShop : MonoBehaviour
         {
             GameManager.Instance.AddSeed(flower, 1);
             ShowBuyFeedback($"Bought 1 {flower?.flowerName ?? flower?.name ?? "seed"}!");
+            audioManager.PlaySFX(audioManager.sellBouquet);
             BillManager.Instance.NotifyPlayerBillDue();
         }
         else
@@ -97,6 +106,7 @@ public class SeedShop : MonoBehaviour
     {
         if (currentConfirmation != null)
         {
+            audioManager.PlaySFX(audioManager.buttonClick);
             Destroy(currentConfirmation);
             currentConfirmation = null;
         }

@@ -16,7 +16,6 @@ public class BillManager : MonoBehaviour
     public TMP_Text rentDueText;
 
     public BillData billData;
-
     public AudioManager audioManager;
 
     private void Awake()
@@ -50,6 +49,8 @@ public class BillManager : MonoBehaviour
             Debug.LogError("PayBillButton is NULL");
         }
 
+        // 🔔 NEW: Show bill status immediately on game start
+        RefreshBillsOnGameStart();
     }
 
 
@@ -62,22 +63,55 @@ public class BillManager : MonoBehaviour
                 continue;
 
             bill.actionsRemaining--;
+
+            if (bill.actionsRemaining <= 3)
+                NotifyPlayerBillDue(bill);
+
+            if (bill.actionsRemaining <= 0)
+                HandleOverdueBill(bill);
+        }
+
+        // 🔁 Refresh UI if selected bill changed
+        UpdateRentDueText();
+    }
+
+    // Added overload to handle single-bill notifications.
+    private void NotifyPlayerBillDue(BillData bill)
+    {
+        if (bill == null)
+            return;
+
+        // Basic notification behavior: log and refresh UI if the notified bill is selected.
+        Debug.LogWarning($"{bill.billName} due in {Math.Max(0, bill.actionsRemaining)} actions. Amount: ${bill.currentAmount}");
+
+        if (selectedBill == bill)
+            UpdateRentDueText();
+
+        // Extend this method to show UI notifications, sounds, tooltips, etc.
+    }
+
+    private void RefreshBillsOnGameStart()
+    {
+        foreach (var bill in bills)
+        {
+            if (bill.isPaid)
+                continue;
+
+            // Warn player immediately if bill is already close
             if (bill.actionsRemaining <= 3)
             {
                 NotifyPlayerBillDue(bill);
             }
-            if (bill.actionsRemaining <= 0)
-            {
-                HandleOverdueBill(bill);
-            }
         }
+
+        // Update UI text if a bill is selected
+        UpdateRentDueText();
     }
+
 
     public bool PayBill(BillData bill)
     {
-
         var gm = GameManager.Instance;
-
         if (gm == null)
             return false;
 
@@ -88,17 +122,20 @@ public class BillManager : MonoBehaviour
         bill.StartNewCycle();
         audioManager.PlaySFX(audioManager.sellBouquet);
 
-        rentDueText.text = "Bill Paid!";
         Debug.Log($"Paid {bill.billName}");
 
+        UpdateRentDueText();
         return true;
     }
+
 
     public void SelectBill(BillData bill)
     {
         selectedBill = bill;
         Debug.Log($"Selected bill: {bill.billName}");
+        UpdateRentDueText();
     }
+
 
     public void PaySelectedBill()
     {
@@ -121,14 +158,25 @@ public class BillManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void NotifyPlayerBillDue(BillData bill)
+    private void UpdateRentDueText()
     {
-        Debug.LogError($"BILL OVERDUE SOON: {bill.billName}");
+        if (rentDueText == null)
+            return;
 
-    }
+        if (selectedBill == null)
+        {
+            rentDueText.text = "Select a bill to view details";
+            return;
+        }
 
-    public void setRentText()
-    {
-        rentDueText.text = "Rent due in " + $"${billData.actionsRemaining}" + " actions!";
+        if (selectedBill.isPaid)
+        {
+            rentDueText.text = $"{selectedBill.billName}: PAID";
+            return;
+        }
+
+        rentDueText.text =
+            $"{selectedBill.billName} due in {selectedBill.actionsRemaining} actions\n" +
+            $"Amount: ${selectedBill.currentAmount}";
     }
 }

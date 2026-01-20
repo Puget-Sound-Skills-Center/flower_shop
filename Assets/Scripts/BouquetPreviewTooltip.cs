@@ -123,8 +123,12 @@ public class BouquetPreviewTooltip : MonoBehaviour,
 
         if (cursor != null)
         {
-            tipRect.anchoredPosition =
-                cursor.GetCursorPosition() + new Vector2(25f, -25f);
+            // Use the cursor's RectTransform position as a fallback for GetCursorPosition
+            RectTransform cursorRect = cursor.GetComponent<RectTransform>();
+            if (cursorRect != null)
+                tipRect.anchoredPosition = cursorRect.anchoredPosition + new Vector2(25f, -25f);
+            else
+                tipRect.anchoredPosition = new Vector2(25f, -25f);
         }
         else
         {

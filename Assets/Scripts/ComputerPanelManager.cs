@@ -174,8 +174,6 @@ public class ComputerPanelManager : MonoBehaviour
         }
     }
 
-
-
     private void HighlightTabButton(Button button, bool active)
     {
         if (button == null) return;

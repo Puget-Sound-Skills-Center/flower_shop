@@ -6,8 +6,6 @@ using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    [Header("Panels")]
-    public GameObject settingsPanel;
 
     [Header("Settings UI")]
     public TMP_Dropdown resolutionDropdown;
@@ -58,14 +56,15 @@ public class MainMenu : MonoBehaviour
     public void OpenOptions()
     {
         audioManager.PlaySFX(audioManager.buttonClick);
-        if (settingsPanel != null) settingsPanel.SetActive(true);
+        SettingsManager.Instance.Open();
     }
 
     public void CloseOptions()
     {
         audioManager.PlaySFX(audioManager.buttonClick);
-        if (settingsPanel != null) settingsPanel.SetActive(false);
+        SettingsManager.Instance.Close();
     }
+
 
     public void QuitGame()
     {

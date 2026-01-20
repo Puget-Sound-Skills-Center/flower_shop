@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
@@ -9,30 +8,40 @@ using UnityEngine.UI;
 public class BillManager : MonoBehaviour
 {
     public static BillManager Instance;
+
+    [Header("Bills")]
     public List<BillData> bills;
 
-    [Header("PayButton")]
-    public Button PayBillButton;
-    public BillData selectedBill;
+    [Header("UI")]
+    public Button payBillButton;
     public TMP_Text rentDueText;
-    private const string NOT_DUE_TEXT = "NOT DUE YET";
-    private const string DUE_NOW_TEXT = "DUE NOW";
+    public GameObject NotifyTab;
 
+    [Header("Notify Settings")]
+    public int notifyThreshold = 3;
+    public float slideDuration = 0.35f;
+    public float notifyHoldTime = 2.5f;
+    public float hiddenX = 300f;
+    public float visibleX = -20f;
 
-    [Header("Bill UI Colors")]
+    [Header("Colors")]
     public Color paidColor = Color.green;
-    public Color warningColor = new Color(1f, 0.65f, 0f); // orange/yellow
+    public Color warningColor = new Color(1f, 0.65f, 0f);
     public Color urgentColor = Color.red;
     public Color normalColor = Color.white;
+    public Color overdueColor = new Color(0.5f, 0f, 0f); // dark red
 
+    [Header("Selection")]
+    public BillData selectedBill;
 
-    public BillData billData;
-    public AudioManager audioManager;
+    private RectTransform notifyRect;
+    private CanvasGroup notifyGroup;
+    private Coroutine notifyRoutine;
+
+    private BillData _billPendingNextCycle;
 
     private void Awake()
     {
-        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
-
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -43,138 +52,156 @@ public class BillManager : MonoBehaviour
 
         foreach (var bill in bills)
             bill.Initialize();
+
+        // NotifyTab setup
+        if (NotifyTab != null)
+        {
+            notifyRect = NotifyTab.GetComponent<RectTransform>();
+            notifyGroup = NotifyTab.GetComponent<CanvasGroup>();
+
+            if (notifyGroup == null)
+                notifyGroup = NotifyTab.AddComponent<CanvasGroup>();
+
+            notifyRect.anchoredPosition =
+                new Vector2(hiddenX, notifyRect.anchoredPosition.y);
+
+            notifyGroup.alpha = 0f;
+            NotifyTab.SetActive(false);
+        }
     }
 
     private void Start()
     {
-        Debug.Log("BillManager START");
-
-        if (PayBillButton != null)
+        if (payBillButton != null)
         {
-            PayBillButton.onClick.RemoveAllListeners();
-            PayBillButton.onClick.AddListener(PaySelectedBill);
-            Debug.Log("PayBillButton listener added");
-        }
-        else
-        {
-            Debug.LogError("PayBillButton is NULL");
+            payBillButton.onClick.RemoveAllListeners();
+            payBillButton.onClick.AddListener(PaySelectedBill);
         }
 
-        // 🔔 NEW: Show bill status immediately on game start
-        RefreshBillsOnGameStart();
-    }
-
-
-    // 🔔 Call this when a meaningful action happens
-    public void NotifyPlayerBillDue()
-    {
-        foreach (var bill in bills)
-        {
-            if (bill.isPaid)
-                continue;
-
-            bill.actionsRemaining--;
-
-            if (bill.actionsRemaining <= 3)
-                NotifyPlayerBillDue(bill);
-
-            if (bill.actionsRemaining <= 0)
-                HandleOverdueBill(bill);
-        }
-
-        // 🔁 Refresh UI if selected bill changed
         UpdateRentDueText();
     }
 
-    // Added overload to handle single-bill notifications.
-    private void NotifyPlayerBillDue(BillData bill)
-    {
-        if (bill == null)
-            return;
-
-        // Basic notification behavior: log and refresh UI if the notified bill is selected.
-        Debug.LogWarning($"{bill.billName} due in {Math.Max(0, bill.actionsRemaining)} actions. Amount: ${bill.currentAmount}");
-
-        if (selectedBill == bill)
-            UpdateRentDueText();
-
-        // Extend this method to show UI notifications, sounds, tooltips, etc.
-    }
-
-    private void RefreshBillsOnGameStart()
+    /// <summary>
+    /// Call from meaningful player actions (buy seed, harvest, sell, etc.)
+    /// </summary>
+    public void RecordPlayerAction(int count = 1)
     {
         foreach (var bill in bills)
         {
             if (bill.isPaid)
                 continue;
 
-            // Warn player immediately if bill is already close
-            if (bill.actionsRemaining <= 3)
+            bill.ConsumeActions(count);
+
+            if (bill.IsDue())
             {
-                NotifyPlayerBillDue(bill);
+                HandleOverdueBill(bill);
+                continue;
+            }
+
+            if (bill.actionsRemaining <= notifyThreshold && !bill.warningShown)
+            {
+                bill.warningShown = true;
+                ShowNotifyTab(bill);
             }
         }
-        // Update UI text if a bill is selected
+
         UpdateRentDueText();
     }
 
+    // ─────────────────────────────
+    // 🔔 Notify Tab Animation
+    // ─────────────────────────────
 
-    public bool PayBill(BillData bill)
+    private void ShowNotifyTab(BillData bill)
     {
-        var gm = GameManager.Instance;
-        if (gm == null)
-            return false;
+        if (NotifyTab == null)
+            return;
 
-        if (!gm.SpendMoney(bill.currentAmount))
-            return false;
+        if (notifyRoutine != null)
+            StopCoroutine(notifyRoutine);
 
-        bill.isPaid = true;
-
-        audioManager.PlaySFX(audioManager.sellBouquet);
-
-        Debug.Log($"Paid {bill.billName}");
-
-        // 🔁 Update UI immediately
-        UpdateRentDueText();
-
-        // ⏳ Start next cycle AFTER UI feedback (or later via game logic)
-        StartCoroutine(StartNextCycleDelayed(bill, 1.5f));
-
-        return true;
+        notifyRoutine = StartCoroutine(NotifyTabRoutine(bill));
     }
 
-    private IEnumerator StartNextCycleDelayed(BillData bill, float delay)
+    private IEnumerator NotifyTabRoutine(BillData bill)
     {
-        yield return new WaitForSeconds(delay);
+        NotifyTab.SetActive(true);
 
-        bill.StartNewCycle();
+        // Update text inside tab
+        TMP_Text text = NotifyTab.GetComponentInChildren<TMP_Text>();
+        if (text != null)
+            text.text = $"{bill.billName} due in {bill.actionsRemaining} actions!";
 
-        // If still selected, refresh UI again
-        if (selectedBill == bill)
-            UpdateRentDueText();
+        // Slide in
+        yield return SlideNotify(hiddenX, visibleX, 0f, 1f);
+
+        // Hold
+        yield return new WaitForSeconds(notifyHoldTime);
+
+        // Slide out
+        yield return SlideNotify(visibleX, hiddenX, 1f, 0f);
+
+        NotifyTab.SetActive(false);
+        notifyRoutine = null;
     }
+
+    private IEnumerator SlideNotify(
+        float fromX,
+        float toX,
+        float fromAlpha,
+        float toAlpha
+    )
+    {
+        float t = 0f;
+
+        Vector2 startPos = notifyRect.anchoredPosition;
+        Vector2 endPos = new Vector2(toX, startPos.y);
+
+        notifyRect.anchoredPosition = new Vector2(fromX, startPos.y);
+        notifyGroup.alpha = fromAlpha;
+
+        while (t < slideDuration)
+        {
+            t += Time.deltaTime;
+            float p = Mathf.Clamp01(t / slideDuration);
+            float eased = Mathf.SmoothStep(0f, 1f, p);
+
+            notifyRect.anchoredPosition =
+                Vector2.Lerp(
+                    new Vector2(fromX, startPos.y),
+                    endPos,
+                    eased
+                );
+
+            notifyGroup.alpha = Mathf.Lerp(fromAlpha, toAlpha, eased);
+            yield return null;
+        }
+
+        notifyRect.anchoredPosition = endPos;
+        notifyGroup.alpha = toAlpha;
+    }
+
+    // ─────────────────────────────
+    // 💸 Billing Logic
+    // ─────────────────────────────
 
     public void SelectBill(BillData bill)
     {
         selectedBill = bill;
-        Debug.Log($"Selected bill: {bill.billName}");
         UpdateRentDueText();
     }
 
-
-    public void PaySelectedBill()
+    private void PaySelectedBill()
     {
-        if (selectedBill == null)
-            return;
-
-        if (selectedBill.isPaid)
+        if (selectedBill == null || selectedBill.isPaid)
             return;
 
         if (selectedBill.actionsRemaining > 0)
         {
             rentDueText.text =
                 $"{selectedBill.billName}: NOT DUE YET\n" +
-                $"Come back in {selectedBill.actionsRemaining} actions";
+                $"Due in {selectedBill.actionsRemaining} actions";
 
             rentDueText.color = warningColor;
             return;
@@ -183,43 +210,34 @@ public class BillManager : MonoBehaviour
         PayBill(selectedBill);
     }
 
+    private void PayBill(BillData bill)
+    {
+        var gm = GameManager.Instance;
+        if (gm == null || !gm.SpendMoney(bill.currentAmount))
+            return;
+
+        bill.isPaid = true;
+        UpdateRentDueText();
+
+        _billPendingNextCycle = bill;
+        Invoke(nameof(DelayedNextCycle), 1.5f);
+    }
+
+    private void DelayedNextCycle()
+    {
+        if (_billPendingNextCycle != null)
+        {
+            _billPendingNextCycle.StartNewCycle();
+            _billPendingNextCycle = null;
+            UpdateRentDueText();
+        }
+    }
+
     private void HandleOverdueBill(BillData bill)
     {
         Debug.LogError($"BILL OVERDUE: {bill.billName}");
-
-        // ⚠️ TEMP TEST PENALTY
-        Application.Quit();
+        Application.Quit(); // TEMP
     }
-
-    private void UpdatePayButtonState()
-    {
-        if (PayBillButton == null)
-            return;
-
-        if (selectedBill == null)
-        {
-            PayBillButton.interactable = false;
-            return;
-        }
-
-        // ❌ Cannot pay if already paid
-        if (selectedBill.isPaid)
-        {
-            PayBillButton.interactable = false;
-            return;
-        }
-
-        // ❌ Cannot pay if not yet due
-        if (selectedBill.actionsRemaining > 0)
-        {
-            PayBillButton.interactable = false;
-            return;
-        }
-
-        // ✅ Bill is due or overdue
-        PayBillButton.interactable = true;
-    }
-
 
     private void UpdateRentDueText()
     {
@@ -228,57 +246,57 @@ public class BillManager : MonoBehaviour
 
         if (selectedBill == null)
         {
-            rentDueText.text = "Select a bill to view details";
+            rentDueText.text = "Select a bill";
             rentDueText.color = normalColor;
-            UpdatePayButtonState();
+            payBillButton.interactable = false;
             return;
         }
 
-        // ✅ PAID
         if (selectedBill.isPaid)
         {
             rentDueText.text =
-                $"{selectedBill.billName}: PAID\nNext cycle started";
-
+                $"{selectedBill.billName}: PAID\nNext cycle starting...";
             rentDueText.color = paidColor;
-            UpdatePayButtonState();
+            payBillButton.interactable = false;
             return;
         }
 
         int actionsLeft = selectedBill.actionsRemaining;
 
-        // ❌ NOT DUE YET
         if (actionsLeft > 3)
         {
             rentDueText.text =
-                $"{selectedBill.billName}: {NOT_DUE_TEXT}\n" +
+                $"{selectedBill.billName}: NOT DUE\n" +
                 $"Due in {actionsLeft} actions\n" +
                 $"Amount: ${selectedBill.currentAmount}";
-
             rentDueText.color = normalColor;
-            UpdatePayButtonState();
-            return;
+            payBillButton.interactable = false;
         }
-
-        // ⚠️ WARNING (approaching due)
-        if (actionsLeft > 0)
+        else if (actionsLeft > 0)
         {
             rentDueText.text =
-                $"{selectedBill.billName} due soon\n" +
+                $"{selectedBill.billName}: DUE SOON\n" +
                 $"Due in {actionsLeft} actions\n" +
                 $"Amount: ${selectedBill.currentAmount}";
-
             rentDueText.color = warningColor;
-            UpdatePayButtonState();
-            return;
+            payBillButton.interactable = false;
         }
-
-        // 🚨 DUE NOW
-        rentDueText.text =
-            $"{selectedBill.billName}: {DUE_NOW_TEXT}\n" +
-            $"Amount: ${selectedBill.currentAmount}";
-
-        rentDueText.color = urgentColor;
-        UpdatePayButtonState();
+        else if (actionsLeft <= 0)
+        {
+            rentDueText.text =
+                $"{selectedBill.billName}: DUE NOW\n" +
+                $"Amount: ${selectedBill.currentAmount}";
+            rentDueText.color = urgentColor;
+            payBillButton.interactable = true;
+        }
+        else // actionsLeft < 0
+        {
+            rentDueText.text =
+                $"{selectedBill.billName}: OVERDUE\n" +
+                $"Amount: ${selectedBill.currentAmount}";
+            rentDueText.color = overdueColor;
+            payBillButton.interactable = true;
+            Debug.LogError($"BILL PAST DUE: {selectedBill.billName}");
+        }
     }
 }

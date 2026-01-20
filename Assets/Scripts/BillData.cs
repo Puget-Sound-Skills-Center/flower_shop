@@ -1,35 +1,47 @@
-using TMPro;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Bills/Bill")]
+[CreateAssetMenu(fileName = "NewBill", menuName = "Bills/Bill Data")]
 public class BillData : ScriptableObject
 {
     [Header("Bill Info")]
     public string billName;
     public int baseAmount;
 
-    [Header("Recurring Rules")]
-    public int recurringIncrease;          // how much it increases each cycle
+    [Header("Cycle Settings")]
+    public int actionsPerCycle = 10;
 
-    [Header("Action-Based Deadline")]
-    public int actionsUntilDue;             // e.g. 10 sales
-    [HideInInspector] public int actionsRemaining;
+    [Header("Recurring")]
+    public int recurringIncrease = 0;
 
     [HideInInspector] public int currentAmount;
+    [HideInInspector] public int actionsRemaining;
     [HideInInspector] public bool isPaid;
+    [HideInInspector] public bool warningShown;
+
+    public void Initialize()
+    {
+        isPaid = false;
+        currentAmount = baseAmount;
+        actionsRemaining = actionsPerCycle;
+        warningShown = false;
+    }
 
     public void StartNewCycle()
     {
         isPaid = false;
-        actionsRemaining = actionsUntilDue;
         currentAmount += recurringIncrease;
+        actionsRemaining = actionsPerCycle;
+        warningShown = false;
     }
 
-    public void Initialize()
+    public void ConsumeActions(int count)
     {
-        currentAmount = baseAmount;
-        actionsRemaining = actionsUntilDue;
-        isPaid = false;
+        if (isPaid)
+            return;
+
+        actionsRemaining = Mathf.Max(0, actionsRemaining - count);
     }
 
+    public bool IsDue() => actionsRemaining <= 0 && !isPaid;
+    public bool IsDueSoon() => actionsRemaining <= 3 && actionsRemaining > 0 && !isPaid;
 }

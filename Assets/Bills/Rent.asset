@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   billName: Rent
   baseAmount: 50
-  recurringIncrease: 20
-  actionsUntilDue: 5
+  actionsPerCycle: 5
+  recurringIncrease: 10
+  currentAmount: 50
   actionsRemaining: 5
-  currentAmount: 70
   isPaid: 0
+  warningShown: 0

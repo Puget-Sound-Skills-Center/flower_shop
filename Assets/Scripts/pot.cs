@@ -278,7 +278,7 @@ public class Pot : MonoBehaviour
         readyToHarvest = false;
         currentFlower = null;
         audioManager.PlaySFX(audioManager.flowerFinishGrowth);
-        BillManager.Instance.NotifyPlayerBillDue();
+        BillManager.Instance.RecordPlayerAction();
 
         // Reset visuals
         if (emptyPotSprite != null) SetSprite(emptyPotSprite);

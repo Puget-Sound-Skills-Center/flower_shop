@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Anemone
   m_EditorClassIdentifier: 
   flowerName: Anemone
+  tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
+  tooltipDescription: 
   growthStages: []
   readySprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
   bouquetDefaultSprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
@@ -23,3 +25,4 @@ MonoBehaviour:
   growTime: 20
   sellValue: 5
   seedCost: 2
+  bouquetSellPrice: 5

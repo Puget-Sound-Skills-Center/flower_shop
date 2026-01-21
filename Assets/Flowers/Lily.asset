@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Lily
   m_EditorClassIdentifier: 
   flowerName: Lily
+  tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
+  tooltipDescription: 
   growthStages: []
   readySprite: {fileID: 2727736752311060635, guid: 62ac63902a9a6894090fd12f81996c10, type: 3}
   bouquetDefaultSprite: {fileID: 2727736752311060635, guid: 62ac63902a9a6894090fd12f81996c10, type: 3}
@@ -22,4 +24,5 @@ MonoBehaviour:
   bouquetFinalSprite: {fileID: -1199220383107830346, guid: c1a4d7fe759640a42bfbce2eb3a1d2b6, type: 3}
   growTime: 20
   sellValue: 5
-  seedCost: 2
+  seedCost: 10
+  bouquetSellPrice: 21

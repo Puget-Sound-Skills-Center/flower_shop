@@ -27,5 +27,5 @@ MonoBehaviour:
   bouquetFinalSprite: {fileID: 2894237443324729940, guid: 62dbcc2d9d547f4429a3295e16cb1c11, type: 3}
   growTime: 5
   sellValue: 5
-  seedCost: 2
-  bouquetSellPrice: 20
+  seedCost: 36
+  bouquetSellPrice: 50

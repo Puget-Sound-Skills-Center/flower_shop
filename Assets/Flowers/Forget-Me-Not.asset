@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Forget-Me-Not
   m_EditorClassIdentifier: 
   flowerName: Forget-Me-Not
+  tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
+  tooltipDescription: 
   growthStages: []
   readySprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   bouquetDefaultSprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
@@ -22,4 +24,5 @@ MonoBehaviour:
   bouquetFinalSprite: {fileID: -5576425803151272151, guid: bcdbad706477bd349a6eb1c9449e2159, type: 3}
   growTime: 20
   sellValue: 5
-  seedCost: 2
+  seedCost: 6
+  bouquetSellPrice: 13

@@ -23,7 +23,6 @@ public class FlowerData : ScriptableObject
 
     [Header("Flower Stats")]
     public float growTime = 20f;
-    public int sellValue = 5;
     public int seedCost = 2;
     internal int price;
     public int bouquetSellPrice = 20;  // default value

@@ -70,7 +70,7 @@ public class SeedShop : MonoBehaviour
 
         TextMeshProUGUI confirmText = currentConfirmation.GetComponentInChildren<TextMeshProUGUI>();
         if (confirmText != null)
-            confirmText.text = $"Buy 1 {flower.name} seed for ${seedCost}?";
+            confirmText.text = $"Buy 1 {flower.name} seed for ${flower.seedCost}?";
 
         ConfirmationWindow window = currentConfirmation.GetComponent<ConfirmationWindow>();
         if (window != null)
@@ -87,7 +87,7 @@ public class SeedShop : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        if (GameManager.Instance.SpendMoney(seedCost))
+        if (GameManager.Instance.SpendMoney(flower.seedCost))
         {
             GameManager.Instance.AddSeed(flower, 1);
             ShowBuyFeedback($"Bought 1 {flower?.flowerName ?? flower?.name ?? "seed"}!");

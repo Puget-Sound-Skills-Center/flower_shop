@@ -136,7 +136,6 @@ public class BouquetDesk : MonoBehaviour
 
             case Stage.Wrap:
                 StartCoroutine(DoStage(Stage.Ribbon, "Adding ribbon...", selectedFlower.bouquetRibbonSprite));
-                
                 break;
 
             case Stage.Ribbon:

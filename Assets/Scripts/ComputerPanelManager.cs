@@ -9,6 +9,7 @@ public class ComputerPanelManager : MonoBehaviour
     public GameObject computerPanel;
     public CanvasGroup panelCanvasGroup;
     public Button closeButton;
+    public GameObject tutorialText;
 
     public BillManager billManager;
 
@@ -80,6 +81,7 @@ public class ComputerPanelManager : MonoBehaviour
 
         if (fadeRoutine != null) StopCoroutine(fadeRoutine);
         computerPanel.SetActive(true);
+        tutorialText.SetActive(false);
         audioManager.PlaySFX(audioManager.buttonClick);
 
         if (panelCanvasGroup != null)

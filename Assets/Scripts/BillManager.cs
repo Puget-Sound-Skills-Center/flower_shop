@@ -17,6 +17,7 @@ public class BillManager : MonoBehaviour
     public TMP_Text rentDueText;
     public GameObject NotifyTab;
 
+
     [Header("Notify Settings")]
     public int notifyThreshold = 3;
     public float slideDuration = 0.35f;
@@ -197,16 +198,6 @@ public class BillManager : MonoBehaviour
         if (selectedBill == null || selectedBill.isPaid)
             return;
 
-        if (selectedBill.actionsRemaining > 0)
-        {
-            rentDueText.text =
-                $"{selectedBill.billName}: NOT DUE YET\n" +
-                $"Due in {selectedBill.actionsRemaining} actions";
-
-            rentDueText.color = warningColor;
-            return;
-        }
-
         PayBill(selectedBill);
     }
 
@@ -248,7 +239,6 @@ public class BillManager : MonoBehaviour
         {
             rentDueText.text = "Select a bill";
             rentDueText.color = normalColor;
-            payBillButton.interactable = false;
             return;
         }
 
@@ -257,7 +247,6 @@ public class BillManager : MonoBehaviour
             rentDueText.text =
                 $"{selectedBill.billName}: PAID\nNext cycle starting...";
             rentDueText.color = paidColor;
-            payBillButton.interactable = false;
             return;
         }
 
@@ -270,7 +259,6 @@ public class BillManager : MonoBehaviour
                 $"Due in {actionsLeft} actions\n" +
                 $"Amount: ${selectedBill.currentAmount}";
             rentDueText.color = normalColor;
-            payBillButton.interactable = false;
         }
         else if (actionsLeft > 0)
         {
@@ -278,8 +266,7 @@ public class BillManager : MonoBehaviour
                 $"{selectedBill.billName}: DUE SOON\n" +
                 $"Due in {actionsLeft} actions\n" +
                 $"Amount: ${selectedBill.currentAmount}";
-            rentDueText.color = warningColor;
-            payBillButton.interactable = false;
+            rentDueText.color = warningColor;   
         }
         else if (actionsLeft <= 0)
         {

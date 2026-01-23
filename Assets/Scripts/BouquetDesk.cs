@@ -144,12 +144,18 @@ public class BouquetDesk : MonoBehaviour
                 // ⭐ Show final bouquet sprite in review ⭐
                 if (flowerPreview != null)
                     flowerPreview.sprite = selectedFlower.bouquetFinalSprite;
-                stageText.text = "Stage: Review... Click preview to see tooltip.";
+                stageText.text = "Stage: Review... Click to preview.";
                 break;
 
             case Stage.Review:
                 FinishBouquet();
                 break;
+
+            case Stage.Complete:
+                StartCoroutine(DoStage(Stage.Review, "Sent to the shelf!", selectedFlower.bouquetFinalSprite));
+                FinishBouquet();
+                break;
+
         }
     }
 
@@ -175,13 +181,13 @@ public class BouquetDesk : MonoBehaviour
         if (shopShelf != null && shopShelf.bouquetDisplayPrefab != null)
             shopShelf.AddBouquetToShelf(selectedFlower);
 
-        stageText.text = $"Bouquet of {selectedFlower.flowerName} completed!";
+        stageText.text = $"Bouquet of {selectedFlower.flowerName} completed! Close the desk!";
 
         selectedFlower = null;
         currentStage = Stage.Complete;
 
         // Disable NEXT button; player closes manually
-        nextButton.interactable = false;
+        nextButton.interactable = false; 
     }
 
     public void ClosePanel()

@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Anemone
   tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
-  tooltipDescription: 
+  tooltipDescription: "Common - Highly invasive\n\r\nThe purple anemone flower has
+    vibrant violent-to-plum petals with dramatic dark disk centers. They're usually
+    known to grow 10 - 24 inches tall within the early spring season. They're known
+    to symbolize protection, trust and anticipation.\r"
   growthStages: []
   readySprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
   bouquetDefaultSprite: {fileID: -6084724317734482331, guid: ae054bad4e22f274ba44237997c7406a, type: 3}
@@ -22,7 +25,7 @@ MonoBehaviour:
   bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
   bouquetRibbonSprite: {fileID: -9151831542723488907, guid: 334a5278621cbd84cbb9be5369c7ea0e, type: 3}
   bouquetFinalSprite: {fileID: -8465082214401789347, guid: c67e7390875bac949a99749f63907889, type: 3}
+  wiltedSprite: {fileID: 5141279069064207298, guid: 2716314fbbb44bf459c6bee64a36ada6, type: 3}
   growTime: 20
-  sellValue: 5
   seedCost: 2
   bouquetSellPrice: 5

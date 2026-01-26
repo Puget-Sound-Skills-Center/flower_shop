@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dcse3olmodwmp"
+path="res://.godot/imported/Opening door-Trimmed by FlexClip.mp3-113f7017bdf1d9aacf4ee4662d1f89ed.mp3str"
+
+[deps]
+
+source_file="res://GitHub/flower_shop/Assets/Sounds/Opening door-Trimmed by FlexClip.mp3"
+dest_files=["res://.godot/imported/Opening door-Trimmed by FlexClip.mp3-113f7017bdf1d9aacf4ee4662d1f89ed.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

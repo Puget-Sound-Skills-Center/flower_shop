@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://h3ts5idbfauo"
+path="res://.godot/imported/Mouse Click.mp3-a7456933d5d76dd715adf0a6e99b7bbd.mp3str"
+
+[deps]
+
+source_file="res://GitHub/flower_shop/Assets/Sounds/Mouse Click.mp3"
+dest_files=["res://.godot/imported/Mouse Click.mp3-a7456933d5d76dd715adf0a6e99b7bbd.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

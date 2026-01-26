@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://q03pj45uf7bu"
+path="res://.godot/imported/Dirt sound-Trimmed by FlexClip.mp3-e18a1c081248e641f17478d1715dce8f.mp3str"
+
+[deps]
+
+source_file="res://GitHub/flower_shop/Assets/Sounds/Dirt sound-Trimmed by FlexClip.mp3"
+dest_files=["res://.godot/imported/Dirt sound-Trimmed by FlexClip.mp3-e18a1c081248e641f17478d1715dce8f.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

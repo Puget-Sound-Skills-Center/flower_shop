@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI seedText;
     public TextMeshProUGUI flowerText;
+    public TextMeshProUGUI bouquetText;
     public Image selectedFlowerIcon;
 
     public List<FlowerData> seedTypes = new List<FlowerData>();
@@ -284,6 +285,7 @@ public class GameManager : MonoBehaviour
 
         bouquetInventory[flower]++;
         Debug.Log($"Added bouquet for {flower.flowerName}. Total: {bouquetInventory[flower]}");
+        UpdateBouquet();
     }
 
 
@@ -300,6 +302,16 @@ public class GameManager : MonoBehaviour
     {
         if (moneyText != null)
             moneyText.text = "$" + currentMoney;
+    }
+
+
+    private void UpdateBouquet()
+    {
+        if (bouquetText == null) return;
+        int total = 0;
+        foreach (var kvp in bouquetInventory)
+            total += kvp.Value;
+        bouquetText.text = "Bouquets: " + total;
     }
 
     private void UpdateSeedUI()
@@ -348,6 +360,7 @@ public class GameManager : MonoBehaviour
         UpdateMoneyUI();
         UpdateSeedUI();
         UpdateFlowerUI();
+        UpdateBouquet();
         UpdateSelectedFlowerUI();
     }
 
@@ -424,6 +437,7 @@ public class GameManager : MonoBehaviour
         AddMoney(pricePerBouquet);
         BillManager.Instance.RecordPlayerAction();
         Debug.Log($"Sold bouquet of {flower.flowerName} for ${pricePerBouquet}. Remaining: {bouquetInventory[flower]}");
+        UpdateBouquet();
         return true;
     }
 

@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Daisy
   tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
-  tooltipDescription: 
+  tooltipDescription: "Extremely common - Highly invasive\n\r\nDaisies have thin
+    white florets surrounding a yellow center with spoon shaped leaves. These white
+    petaled flowers can grow up to 12 to 48 inches tall and are seen blooming during
+    the late spring throughout the summer season. They\u2019re known to symbolize
+    purity, innocence and new beginnings.\r"
   growthStages: []
   readySprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   bouquetDefaultSprite: {fileID: 2320208460551569422, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
@@ -22,7 +26,7 @@ MonoBehaviour:
   bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
   bouquetRibbonSprite: {fileID: -9151831542723488907, guid: 334a5278621cbd84cbb9be5369c7ea0e, type: 3}
   bouquetFinalSprite: {fileID: -8217221404568717679, guid: 54bad4143114c8a4caffde9aa7145007, type: 3}
+  wiltedSprite: {fileID: -8230771727446877061, guid: 347da2dd70b5d0c44b8c7ed1f49fafb2, type: 3}
   growTime: 20
-  sellValue: 5
   seedCost: 4
   bouquetSellPrice: 8

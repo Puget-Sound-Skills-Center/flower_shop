@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flowerName: Forget-Me-Not
   tooltipPrefab: {fileID: 272410217005930379, guid: dde8c5e9625273a4c85a0bc50b8a72e5, type: 3}
-  tooltipDescription: 
+  tooltipDescription: "Common - invasive\r\nForget Me Nots have small, typically
+    azure blue petals with yellow centers. These 5 loped flowers can grow up to 5
+    - 6 inches tall and are usually blooming densely in the spring and early summer
+    season. They're known to symbolize enduring love, remembrance and fidelity.\r"
   growthStages: []
   readySprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
   bouquetDefaultSprite: {fileID: -8028117340043738692, guid: 0ef85c7675e9c614382c9633c1bb82d9, type: 3}
@@ -22,7 +25,7 @@ MonoBehaviour:
   bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
   bouquetRibbonSprite: {fileID: -9151831542723488907, guid: 334a5278621cbd84cbb9be5369c7ea0e, type: 3}
   bouquetFinalSprite: {fileID: -5576425803151272151, guid: bcdbad706477bd349a6eb1c9449e2159, type: 3}
+  wiltedSprite: {fileID: -5427261945882834721, guid: 5dda1f19a13a7fe46859a5b9f665546c, type: 3}
   growTime: 20
-  sellValue: 5
   seedCost: 6
   bouquetSellPrice: 13

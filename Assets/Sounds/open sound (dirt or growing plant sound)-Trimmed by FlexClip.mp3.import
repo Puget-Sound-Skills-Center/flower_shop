@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cp5pbtsmdnx6n"
+path="res://.godot/imported/open sound (dirt or growing plant sound)-Trimmed by FlexClip.mp3-1d66a20d05194437db71e0b83d64dbdc.mp3str"
+
+[deps]
+
+source_file="res://GitHub/flower_shop/Assets/Sounds/open sound (dirt or growing plant sound)-Trimmed by FlexClip.mp3"
+dest_files=["res://.godot/imported/open sound (dirt or growing plant sound)-Trimmed by FlexClip.mp3-1d66a20d05194437db71e0b83d64dbdc.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

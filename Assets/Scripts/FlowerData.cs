@@ -21,6 +21,9 @@ public class FlowerData : ScriptableObject
     public Sprite bouquetRibbonSprite;    // Ribbon stage
     public Sprite bouquetFinalSprite;     // Final bouquet to place on shelf
 
+    [Header("Death Sprites")]
+    public Sprite wiltedSprite;      // Optional per-flower wilted sprite (preferred over pot-level)
+
     [Header("Flower Stats")]
     public float growTime = 20f;
     public int seedCost = 2;

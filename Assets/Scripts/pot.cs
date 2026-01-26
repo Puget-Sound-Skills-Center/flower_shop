@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -25,7 +25,7 @@ public class Pot : MonoBehaviour
 
     [Header("Flower Death Settings")]
     public float timeToDie = 30f; // seconds before flower dies if not harvested
-    public Sprite wiltedSprite;   // optional sprite when flower dies
+    public Sprite wiltedSprite;   // optional sprite when flower dies (fallback if FlowerData.wiltedSprite not set)
 
     [Header("Flower Death Visuals")]
     public Sprite[] dyingStages;  // Sprites to show as flower wilt
@@ -82,9 +82,15 @@ public class Pot : MonoBehaviour
         isGrowing = false;
         readyToHarvest = false;
         isDead = true;           // mark as dead
+
+        // Prefer per-flower wilted sprite if present, otherwise fall back to pot-level sprite
+        Sprite spriteToUse = (currentFlower != null && currentFlower.wiltedSprite != null)
+            ? currentFlower.wiltedSprite
+            : wiltedSprite;
+
         currentFlower = null;
 
-        SetSprite(wiltedSprite);
+        SetSprite(spriteToUse);
         if (timerText != null)
             timerText.text = "";
     }

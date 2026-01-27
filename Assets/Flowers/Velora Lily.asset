@@ -28,7 +28,7 @@ MonoBehaviour:
   bouquetDefaultSprite: {fileID: -1990689788646146361, guid: e50a49123c169bf4ea68f5c712d30d98, type: 3}
   bouquetCutSprite: {fileID: 7052456735273860388, guid: 4813ede1dae85ee4789eb6c5d3301127, type: 3}
   bouquetWrappedSprite: {fileID: 598047570895753637, guid: d6f3f0fef675102439230d996df80fef, type: 3}
-  bouquetRibbonSprite: {fileID: -9151831542723488907, guid: 334a5278621cbd84cbb9be5369c7ea0e, type: 3}
+  bouquetRibbonSprite: {fileID: 8628134161918480894, guid: 660010155ca19694091e7e1b1c6d3992, type: 3}
   bouquetFinalSprite: {fileID: 2894237443324729940, guid: 62dbcc2d9d547f4429a3295e16cb1c11, type: 3}
   wiltedSprite: {fileID: 6972893566341678290, guid: d799bddccef29d74fa5ec1c67aff3c3b, type: 3}
   growTime: 20
